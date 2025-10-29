@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduHeTech - Learn & Earn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3b82f6; /* Blue 500 */
+            --secondary-color: #1d4ed8; /* Blue 700 */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+            min-height: 100vh;
+        }
+        .scrollable-content {
+            max-height: calc(100vh - 80px); /* Adjust based on header height */
+            overflow-y: auto;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-radius: 0.5rem;
+            color: white;
+            transition: transform 0.1s ease;
+        }
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+        }
+        /* Custom modal overlay styling */
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            z-index: 50;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Global State and Data Management Scripts (LocalStorage) -->
+    <script>
+        // --- Local Storage Keys ---
+        const LS_USERS = 'eduhetech_users_v2'; // Storage for all user accounts
+        const LS_WITHDRAWALS = 'eduhetech_withdrawals_v2'; // Storage for admin panel requests
+        const LS_LESSONS = 'eduhetech_lessons_v2';
+        const LS_QUIZZES = 'eduhetech_quizzes_v2';
+        const SS_CURRENT_USER_ID = 'eduhetech_current_user_id'; // Session storage for login status
+
+        // --- Constants ---
+        const MONETAG_LINKS = [
+            'https://otieu.com/4/10070319', 'https://otieu.com/4/10070318', 'https://otieu.com/4/10070317',
+            'https://otieu.com/4/10070316', 'https://otieu.com/4/10070315', 'https://otieu.com/4/10070314',
+            'https://otieu.com/4/7667810', 'https://otieu.com/4/7667754', 'https://otieu.com/4/7667716',
+            'https://otieu.com/4/7667811'
+        ];
+        const BASE_POINTS_REWARDS = {
+            lesson: 10,
+            quiz: 50,
+            ad: 20,
+            dailyLogin: 5,
+            referral: 100
+        };
+        const MIN_WITHDRAWAL_POINTS = 500000; // $5
+
+        // --- Global State Management ---
+        window.state = {
+            user: null, // Current logged-in user object
+            currentView: 'loading',
+            isLoading: false,
+            quizData: null,
+            allUsers: {}, // Map of all users (for leaderboards/referrals)
+            withdrawalRequests: [],
+            lessons: [],
+            quizzes: []
+        };
+
+        let userId = sessionStorage.getItem(SS_CURRENT_USER_ID);
+
+        // --- Data Persistence Layer (LocalStorage) ---
+
+        function loadAllUsers() {
+            try {
+                const usersJson = localStorage.getItem(LS_USERS);
+                return usersJson ? JSON.parse(usersJson) : {};
+            } catch (e) {
+                console.error("Error loading users from LS:", e);
+                return {};
+            }
+        }
+
+        function saveAllUsers(users) {
+            try {
+                localStorage.setItem(LS_USERS, JSON.stringify(users));
+                state.allUsers = users; // Keep state in sync
+            } catch (e) {
+                console.error("Error saving users to LS:", e);
+            }
+        }
+
+        function loadCollection(key) {
+            try {
+                const dataJson = localStorage.getItem(key);
+                return dataJson ? JSON.parse(dataJson) : [];
+            } catch (e) {
+                console.error(`Error loading collection ${key} from LS:`, e);
+                return [];
+            }
+        }
+
+        function saveCollection(key, data) {
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+            } catch (e) {
+                console.error(`Error saving collection ${key} to LS:`, e);
+            }
+        }
+
+        function initMockData() {
+            // Check and initialize Lessons
+            if (loadCollection(LS_LESSONS).length === 0) {
+                const mockLessons = [
+                    { id: 'l1', title: 'Introduction to Web Dev', category: 'Tech & Digital Skills', content: 'Learn the basics of HTML, CSS, and JavaScript.', order: 1 },
+                    { id: 'l2', title: 'The Power of Nutrition', category: 'Health & Wellness', content: 'Discover how a balanced diet can boost your energy.', order: 2 },
+                    { id: 'l3', title: 'World Geography Facts', category: 'General Knowledge', content: 'Test your knowledge on capital cities and world landmarks.', order: 3 }
+                ];
+                saveCollection(LS_LESSONS, mockLessons);
+            }
+
+            // Check and initialize Quizzes
+            if (loadCollection(LS_QUIZZES).length === 0) {
+                const mockQuiz = {
+                    id: 'q1',
+                    title: 'Web Basics Quiz',
+                    questions: [
+                        { q: 'What does HTML stand for?', options: ['Hyper Text Markup Language', 'High Tech Modern Language', 'Home Tool Management Link'], answer: 'Hyper Text Markup Language' },
+                        { q: 'What is the main language for styling a web page?', options: ['JavaScript', 'Python', 'CSS'], answer: 'CSS' },
+                        { q: 'Which tag is used to define an image?', options: ['<picture>', '<img>', '<src>'], answer: '<img>' },
+                        { q: 'Which year was JavaScript invented?', options: ['2005', '1995', '1989'], answer: '1995' },
+                        { q: 'What is the correct way to link an external script file?', options: ['<script url=...>', '<script src=...>', '<link rel=... >'], answer: '<script src=...>' }
+                    ]
+                };
+                saveCollection(LS_QUIZZES, [mockQuiz]);
+            }
+        }
+
+        // --- Utility Functions ---
+
+        function render() {
+            const appContainer = document.getElementById('app');
+            if (!appContainer) return;
+            appContainer.innerHTML = '';
+            showLoading(state.isLoading);
+
+            if (!state.user) {
+                appContainer.innerHTML = renderAuthScreen();
+                attachAuthListeners();
+            } else if (state.currentView === 'loading') {
+                appContainer.innerHTML = '<div class="flex flex-col items-center justify-center h-full p-8"><i class="fas fa-spinner fa-spin text-4xl text-blue-500"></i><p class="mt-4 text-gray-500">Loading Dashboard...</p></div>';
+            } else {
+                appContainer.innerHTML = renderHeader() + renderContent();
+                attachNavListeners();
+                attachContentListeners();
+            }
+        }
+
+        function showLoading(show) {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.style.display = show ? 'flex' : 'none';
+            }
+        }
+
+        function showModal(content, onConfirm = null) {
+            const modal = document.getElementById('global-modal');
+            const modalContent = document.getElementById('modal-content');
+            const modalConfirm = document.getElementById('modal-confirm');
+
+            if (!modal || !modalContent) return;
+
+            modalContent.innerHTML = content;
+            modal.classList.remove('hidden');
+
+            if (onConfirm) {
+                modalConfirm.classList.remove('hidden');
+                modalConfirm.onclick = () => {
+                    onConfirm();
+                    modal.classList.add('hidden');
+                    modalConfirm.onclick = null;
+                };
+            } else {
+                modalConfirm.classList.add('hidden');
+                modalConfirm.onclick = null;
+            }
+        }
+
+        function hideModal() {
+            document.getElementById('global-modal').classList.add('hidden');
+        }
+
+        function formatPoints(points) {
+            return points.toLocaleString();
+        }
+
+        function generateUniqueId() {
+            return 'user-' + Date.now().toString(36) + Math.random().toString(36).substring(2);
+        }
+
+        // --- Core Application Logic ---
+
+        function updateLeaderboards() {
+            const allUsersArray = Object.values(state.allUsers);
+
+            state.leaderboard = allUsersArray
+                .sort((a, b) => b.eduPoints - a.eduPoints)
+                .slice(0, 10);
+
+            state.topReferrers = allUsersArray
+                .sort((a, b) => b.referralCount - a.referralCount)
+                .slice(0, 10);
+        }
+
+        function initializeData() {
+            initMockData();
+
+            state.allUsers = loadAllUsers();
+            state.lessons = loadCollection(LS_LESSONS).sort((a, b) => a.order - b.order);
+            state.quizzes = loadCollection(LS_QUIZZES);
+            state.withdrawalRequests = loadCollection(LS_WITHDRAWALS);
+
+            userId = sessionStorage.getItem(SS_CURRENT_USER_ID);
+
+            if (!userId || !state.allUsers[userId]) {
+                state.user = null;
+                state.currentView = 'auth';
+                render();
+                return;
+            }
+
+            state.user = state.allUsers[userId];
+
+            // Check Daily Bonus
+            const today = new Date().toDateString();
+            const lastLoginDate = new Date(state.user.lastLogin).toDateString();
+            if (today !== lastLoginDate) {
+                addPoints('Daily Login Bonus', BASE_POINTS_REWARDS.dailyLogin);
+                state.user.lastLogin = Date.now();
+                saveUser(state.user);
+            }
+
+            updateLeaderboards();
+            state.currentView = 'dashboard';
+            render();
+        }
+
+        function saveUser(user) {
+            state.allUsers[user.userId] = user;
+            saveAllUsers(state.allUsers);
+        }
+
+        function addPoints(action, points) {
+            if (!state.user) return;
+            showLoading(true);
+
+            // Update user data
+            state.user.eduPoints += points;
+            const historyEntry = { action, points, timestamp: Date.now() };
+            if (!state.user.history) state.user.history = [];
+            state.user.history.push(historyEntry);
+
+            // Save and re-render
+            saveUser(state.user);
+            updateLeaderboards();
+
+            render();
+
+            // Simple animation feedback
+            document.getElementById('coin-animation').innerHTML = `<p class="text-xl text-green-500 font-bold">+${points} EduPoints!</p>`;
+            setTimeout(() => document.getElementById('coin-animation').innerHTML = '', 1500);
+
+            showLoading(false);
+        }
+
+        function rewardPoints(targetUserId, points, action) {
+            const targetUser = state.allUsers[targetUserId];
+            if (!targetUser) return;
+
+            targetUser.eduPoints += points;
+            const historyEntry = { action, points, timestamp: Date.now() };
+            if (!targetUser.history) targetUser.history = [];
+            targetUser.history.push(historyEntry);
+
+            saveUser(targetUser);
+            updateLeaderboards();
+        }
+
+        function trackReferral(referrerId) {
+            const targetUser = state.allUsers[referrerId];
+            if (!targetUser) return;
+
+            targetUser.referralCount = (targetUser.referralCount || 0) + 1;
+            saveUser(targetUser);
+            updateLeaderboards();
+        }
+
+
+        // --- Auth/UI Rendering Functions (No Change) ---
+        function renderAuthScreen() {
+            return `
+                <div class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+                    <div class="w-full max-w-md card p-8 space-y-6">
+                        <h1 class="text-3xl font-extrabold text-center text-blue-600">EduHeTech</h1>
+                        <p class="text-center text-gray-500">Learn & Earn with EduPoints!</p>
+
+                        <div id="auth-form-container" class="space-y-4">
+                            <!-- Auth Form will be rendered here -->
+                        </div>
+
+                        <div class="text-center">
+                            <button id="toggle-auth" class="text-sm text-blue-500 hover:text-blue-700">Need an account? Sign Up</button>
+                        </div>
+                        <p class="text-center text-xs text-red-500">Note: Data is stored only on this browser (Local Storage).</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLoginForm() {
+            return `
+                <h2 class="text-2xl font-bold text-center">Log In</h2>
+                <input type="email" id="login-email" placeholder="Email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                <input type="password" id="login-password" placeholder="Password" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                <button id="login-btn" class="w-full p-3 btn-primary font-semibold">Log In</button>
+                <div id="auth-error-message" class="text-red-500 text-sm text-center"></div>
+            `;
+        }
+
+        function renderSignupForm() {
+            return `
+                <h2 class="text-2xl font-bold text-center">Sign Up</h2>
+                <input type="text" id="signup-name" placeholder="Name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                <input type="email" id="signup-email" placeholder="Email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                <input type="password" id="signup-password" placeholder="Password (min 6 chars)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                <input type="text" id="signup-referral" placeholder="Referral Code (Optional)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                <button id="signup-btn" class="w-full p-3 btn-primary font-semibold">Sign Up</button>
+                <div id="auth-error-message" class="text-red-500 text-sm text-center"></div>
+            `;
+        }
+
+        function renderHeader() {
+            const { name, eduPoints } = state.user;
+            const viewName = state.currentView.charAt(0).toUpperCase() + state.currentView.slice(1);
+
+            return `
+                <header class="bg-white shadow-md p-4 sticky top-0 z-10 flex justify-between items-center">
+                    <h1 class="text-xl font-bold text-blue-600">${viewName}</h1>
+                    <div class="flex items-center space-x-3">
+                        <div class="flex flex-col items-end">
+                            <span class="text-sm font-semibold truncate max-w-28">${name}</span>
+                            <span class="text-xs text-green-600 font-bold">${formatPoints(eduPoints)} Pts</span>
+                        </div>
+                        <button id="logout-btn" class="text-gray-500 hover:text-red-500 p-2 rounded-full">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                </header>
+                <div id="coin-animation" class="fixed top-20 right-4 p-2 z-50"></div>
+            `;
+        }
+
+        function renderContent() {
+            let mainContent = '';
+            switch(state.currentView) {
+                case 'dashboard':
+                    mainContent = renderDashboard();
+                    break;
+                case 'learn':
+                    mainContent = renderLearnSection();
+                    break;
+                case 'quiz':
+                    mainContent = renderQuizSection();
+                    break;
+                case 'ads':
+                    mainContent = renderAdsSection();
+                    break;
+                case 'referral':
+                    mainContent = renderReferralSection();
+                    break;
+                case 'rewards':
+                    mainContent = renderRewardsSection();
+                    break;
+                case 'leaderboard':
+                    mainContent = renderLeaderboard();
+                    break;
+                case 'admin':
+                    mainContent = renderAdminPanel();
+                    break;
+                default:
+                    mainContent = renderDashboard();
+            }
+
+            return `
+                <div class="flex">
+                    <!-- Sidebar/Bottom Nav (Mobile-First) -->
+                    ${renderSidebar()}
+                    <!-- Main Content Area -->
+                    <main class="flex-1 p-4 sm:p-6 pb-20 sm:pb-4 scrollable-content" id="main-content">
+                        ${mainContent}
+                    </main>
+                </div>
+            `;
+        }
+
+        function renderSidebar() {
+            const navItems = [
+                { id: 'dashboard', icon: 'fas fa-home', label: 'Home' },
+                { id: 'learn', icon: 'fas fa-graduation-cap', label: 'Learn' },
+                { id: 'quiz', icon: 'fas fa-question-circle', label: 'Quiz' },
+                { id: 'ads', icon: 'fas fa-ad', label: 'Ads' },
+                { id: 'referral', icon: 'fas fa-share-alt', label: 'Refer' },
+                { id: 'rewards', icon: 'fas fa-coins', label: 'Rewards' },
+                { id: 'leaderboard', icon: 'fas fa-trophy', label: 'Leaderboard' }
+            ];
+
+            // Simplified Admin check for localStorage demo
+            if (state.user?.email === 'admin@eduhetech.com') {
+                navItems.push({ id: 'admin', icon: 'fas fa-user-shield', label: 'Admin' });
+            }
+
+            // Mobile Bottom Navigation Bar (Visible on small screens)
+            const mobileNav = `
+                <nav class="fixed bottom-0 left-0 right-0 bg-white border-t sm:hidden z-20 shadow-lg">
+                    <div class="flex justify-around">
+                        ${navItems.map(item => `
+                            <button data-view="${item.id}" class="nav-item flex flex-col items-center p-2 text-xs ${state.currentView === item.id ? 'text-blue-600 font-bold' : 'text-gray-500 hover:text-blue-500'}">
+                                <i class="${item.icon} text-lg"></i>
+                                <span>${item.label}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </nav>
+            `;
+
+            // Desktop Sidebar (Hidden on small screens) - Not used in single mobile-first view, but kept for future expansion
+            const desktopSidebar = '';
+
+            return mobileNav + desktopSidebar;
+        }
+
+        // --- Dashboard View ---
+        function renderDashboard() {
+            const { eduPoints, name, history } = state.user;
+            const usdEquivalent = (eduPoints / 100000).toFixed(2);
+            const progress = Math.min(100, (eduPoints / MIN_WITHDRAWAL_POINTS) * 100);
+
+            const achievements = getAchievements();
+
+            return `
+                <section class="space-y-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Welcome, ${name.split(' ')[0]}!</h2>
+
+                    <!-- Total EduPoints Card -->
+                    <div class="card p-6 flex items-center justify-between bg-blue-500 text-white">
+                        <div>
+                            <p class="text-sm opacity-80">Total EduPoints</p>
+                            <h3 class="text-4xl font-extrabold">${formatPoints(eduPoints)}</h3>
+                            <p class="text-sm opacity-80 mt-1">~ $${usdEquivalent} USD</p>
+                        </div>
+                        <i class="fas fa-coins text-5xl opacity-50"></i>
+                    </div>
+
+                    <!-- Withdrawal Progress Bar -->
+                    <div class="card p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <p class="text-sm font-semibold">Withdrawal Goal</p>
+                            <p class="text-xs text-gray-500">${formatPoints(MIN_WITHDRAWAL_POINTS)} Pts ($5)</p>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-green-500 h-3 rounded-full transition-all duration-500" style="width: ${progress}%"></div>
+                        </div>
+                        <p class="text-xs text-center mt-2 ${progress >= 100 ? 'text-green-600 font-bold' : 'text-gray-500'}">
+                            ${progress < 100 ? `${progress.toFixed(1)}% complete` : 'GOAL ACHIEVED!'}
+                        </p>
+                        <button data-view="rewards" class="w-full mt-4 p-3 ${progress >= 100 ? 'btn-primary nav-item' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}" ${progress < 100 ? 'disabled' : ''}>
+                            Withdraw Now
+                        </button>
+                    </div>
+
+                    <!-- Achievements/Badges -->
+                    <h3 class="text-xl font-bold mt-6">My Badges</h3>
+                    <div class="grid grid-cols-3 gap-4">
+                        ${achievements.map(a => `
+                            <div class="flex flex-col items-center p-3 card text-center ${a.earned ? 'bg-yellow-50 text-yellow-700 border-2 border-yellow-400' : 'bg-gray-100 text-gray-400'}">
+                                <i class="${a.icon} text-3xl mb-2"></i>
+                                <p class="text-xs font-semibold">${a.name}</p>
+                                <p class="text-xs mt-1 ${a.earned ? 'font-bold' : ''}">${a.earned ? 'Earned!' : `Goal: ${a.goal}`}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Recent Activities -->
+                    <h3 class="text-xl font-bold mt-6">Recent Activities</h3>
+                    <div class="card p-4 space-y-3">
+                        ${(history || []).slice(-5).reverse().map(item => `
+                            <div class="flex justify-between items-center text-sm border-b pb-2 last:border-b-0 last:pb-0">
+                                <span class="text-gray-600">${item.action}</span>
+                                <span class="font-bold text-green-600">+${item.points} Pts</span>
+                            </div>
+                        `).join('')}
+                        ${(history || []).length === 0 ? '<p class="text-gray-500 text-sm text-center">No recent activity yet.</p>' : ''}
+                    </div>
+                </section>
+            `;
+        }
+
+        function getAchievements() {
+            const history = state.user.history || [];
+            const quizCount = history.filter(h => h.action.includes('Quiz Completed')).length;
+            const lessonCount = history.filter(h => h.action.includes('Lesson Completed')).length;
+            const adCount = history.filter(h => h.action.includes('Ad Watched')).length;
+
+            return [
+                { name: 'Quiz Master', icon: 'fas fa-brain', goal: '100 Quizzes', earned: quizCount >= 100 },
+                { name: 'Fast Learner', icon: 'fas fa-rocket', goal: '50 Lessons', earned: lessonCount >= 50 },
+                { name: 'Ad Explorer', icon: 'fas fa-compass', goal: '100 Ads', earned: adCount >= 100 }
+            ];
+        }
+
+        // --- Learn Section View (Uses state.lessons) ---
+        function renderLearnSection() {
+            const categories = ['Health & Wellness', 'Tech & Digital Skills', 'General Knowledge'];
+            const { lessons, user } = state;
+
+            return `
+                <section class="space-y-6">
+                    <h2 class="text-2xl font-bold">Learning Modules</h2>
+                    <p class="text-gray-600">Complete lessons to earn ${BASE_POINTS_REWARDS.lesson} EduPoints each.</p>
+
+                    ${categories.map(category => {
+                        const filteredLessons = lessons.filter(l => l.category === category);
+                        if (filteredLessons.length === 0) return '';
+
+                        return `
+                            <div class="space-y-3">
+                                <h3 class="text-xl font-bold text-blue-600 mt-4">${category}</h3>
+                                ${filteredLessons.map(lesson => {
+                                    const isCompleted = (user.history || []).some(h => h.action === `Lesson Completed: ${lesson.title}`);
+                                    return `
+                                        <div class="card p-4 flex flex-col space-y-2 ${isCompleted ? 'border-l-4 border-green-500 bg-green-50' : 'border-l-4 border-blue-400'}">
+                                            <p class="font-semibold">${lesson.title}</p>
+                                            <p class="text-sm text-gray-500">${lesson.content.substring(0, 80)}...</p>
+                                            ${isCompleted ? `
+                                                <div class="flex items-center text-green-600 font-bold text-sm mt-2">
+                                                    <i class="fas fa-check-circle mr-2"></i> Completed!
+                                                </div>
+                                            ` : `
+                                                <button data-lesson-title="${lesson.title}" class="btn-primary mark-lesson-btn p-2 text-sm self-start">
+                                                    Mark as Completed (+${BASE_POINTS_REWARDS.lesson} Pts)
+                                                </button>
+                                            `}
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `;
+                    }).join('')}
+                </section>
+            `;
+        }
+
+        // --- Quiz Section View ---
+        function renderQuizSection() {
+            const { quizzes } = state;
+            const currentQuiz = quizzes[0]; // Always use the first mock quiz for simplicity
+
+            if (!currentQuiz) {
+                return '<div class="card p-6 text-center text-gray-500">No quizzes available yet. Check back soon!</div>';
+            }
+
+            if (!state.quizData || state.quizData.id !== currentQuiz.id || state.quizData.isComplete) {
+                // Initialize/Reset Quiz
+                state.quizData = { id: currentQuiz.id, answers: Array(currentQuiz.questions.length).fill(null), isComplete: false, results: null, currentQ: 0 };
+            }
+
+            const { questions } = currentQuiz;
+            const { currentQ, answers, results } = state.quizData;
+
+            if (results) {
+                // Results Screen
+                const correctCount = results.filter(r => r.isCorrect).length;
+                return `
+                    <section class="space-y-6">
+                        <h2 class="text-2xl font-bold text-center">Quiz Results</h2>
+                        <div class="card p-6 text-center space-y-4">
+                            <i class="fas fa-check-circle text-6xl ${correctCount > 3 ? 'text-green-500' : 'text-yellow-500'}"></i>
+                            <h3 class="text-xl font-bold">You scored ${correctCount} out of ${questions.length}!</h3>
+                            ${correctCount > 3 ? `
+                                <p class="text-green-600 font-semibold">Congratulations! You earned ${BASE_POINTS_REWARDS.quiz} EduPoints!</p>
+                            ` : `
+                                <p class="text-red-500 font-semibold">Keep learning and try again!</p>
+                            `}
+                            <div class="flex justify-center space-x-4">
+                                <button id="retry-quiz-btn" class="p-3 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600">Retry</button>
+                                <button id="next-quiz-btn" class="p-3 btn-primary font-semibold">Next Quiz</button>
+                            </div>
+                        </div>
+                    </section>
+                `;
+            }
+
+            const q = questions[currentQ];
+            const progress = ((currentQ + 1) / questions.length) * 100;
+
+            return `
+                <section class="space-y-6">
+                    <h2 class="text-2xl font-bold">${currentQuiz.title}</h2>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div class="bg-blue-500 h-2.5 rounded-full" style="width: ${progress}%"></div>
+                    </div>
+                    <p class="text-sm text-gray-500 text-right">Question ${currentQ + 1} of ${questions.length}</p>
+
+                    <div class="card p-6 space-y-6">
+                        <h3 class="text-xl font-semibold">${q.q}</h3>
+                        <div class="space-y-3">
+                            ${q.options.map(option => `
+                                <button data-option="${option}" class="quiz-option w-full p-3 text-left border rounded-lg transition-all duration-150 ${answers[currentQ] === option ? 'bg-blue-100 border-blue-500 font-bold' : 'bg-gray-50 hover:bg-blue-50'}">
+                                    ${option}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div class="flex justify-between pt-4 border-t">
+                            <button id="prev-q-btn" class="p-2 text-gray-500 ${currentQ === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:text-blue-600'}" ${currentQ === 0 ? 'disabled' : ''}>
+                                <i class="fas fa-arrow-left mr-2"></i> Previous
+                            </button>
+                            ${currentQ < questions.length - 1 ? `
+                                <button id="next-q-btn" class="p-2 btn-primary font-semibold disabled:opacity-50" ${!answers[currentQ] ? 'disabled' : ''}>
+                                    Next <i class="fas fa-arrow-right ml-2"></i>
+                                </button>
+                            ` : `
+                                <button id="submit-quiz-btn" class="p-2 btn-primary font-semibold disabled:opacity-50" ${!answers[currentQ] ? 'disabled' : ''}>
+                                    View Result
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        // --- Ads Section View (No Change) ---
+        function renderAdsSection() {
+            return `
+                <section class="space-y-6">
+                    <h2 class="text-2xl font-bold">Watch & Earn</h2>
+                    <p class="text-gray-600">Click below to view a partner advertisement. You will be rewarded **+${BASE_POINTS_REWARDS.ad} EduPoints** after a 5-second viewing period.</p>
+
+                    <div class="card p-6 text-center space-y-4">
+                        <i class="fas fa-ad text-6xl text-blue-500"></i>
+                        <p class="font-semibold text-lg">Earn EduPoints Now!</p>
+                        <p class="text-sm text-gray-500">Please remain on the ad page for at least 5 seconds to qualify for the reward.</p>
+                        <button id="watch-ad-btn" class="w-full p-4 btn-primary font-bold">
+                            Watch Ad & Earn (+${BASE_POINTS_REWARDS.ad} Pts)
+                        </button>
+                        <p id="ad-status" class="text-sm text-red-500"></p>
+                    </div>
+                </section>
+            `;
+        }
+
+        // --- Referral Section View (Uses state.topReferrers) ---
+        function renderReferralSection() {
+            const { referralCode, referralCount } = state.user;
+            // NOTE: Referral link uses the local user ID as a parameter. It will only reward the referrer IF the new user signs up on the SAME device.
+            const referralLink = `${window.location.origin}${window.location.pathname}?ref=${referralCode}`;
+
+            return `
+                <section class="space-y-6">
+                    <h2 class="text-2xl font-bold">Refer & Earn</h2>
+                    <p class="text-gray-600">Share your unique link and earn **+${BASE_POINTS_REWARDS.referral} EduPoints** for every friend who signs up (on this device).</p>
+
+                    <div class="card p-6 space-y-4">
+                        <h3 class="text-xl font-semibold">Your Referral Code</h3>
+                        <div class="flex items-center space-x-2 bg-gray-100 p-3 rounded-lg border border-dashed border-gray-400 overflow-hidden">
+                            <input type="text" id="referral-link-input" value="${referralLink}" readonly class="flex-1 bg-transparent text-sm truncate focus:outline-none"/>
+                            <button id="copy-referral-btn" class="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600" title="Copy Link">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <p id="copy-status" class="text-sm text-green-500 font-semibold"></p>
+
+                        <div class="flex justify-between pt-4 border-t">
+                            <div class="text-center">
+                                <p class="text-3xl font-bold text-blue-600">${referralCount}</p>
+                                <p class="text-sm text-gray-500">Total Referrals</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-3xl font-bold text-green-600">${formatPoints(referralCount * BASE_POINTS_REWARDS.referral)}</p>
+                                <p class="text-sm text-gray-500">Points Earned</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-bold mt-6">Top Referrers Leaderboard (Simulated)</h3>
+                    <div class="card p-4 space-y-2">
+                        ${state.topReferrers.map((user, index) => `
+                            <div class="flex justify-between items-center text-sm ${index < 3 ? 'font-bold text-blue-600' : 'text-gray-700'} border-b pb-2 last:border-b-0">
+                                <span class="w-1/12">${index + 1}.</span>
+                                <span class="w-7/12 truncate">${user.name}</span>
+                                <span class="w-4/12 text-right">${user.referralCount} Referrals</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+            `;
+        }
+
+        // --- Rewards/Withdrawal View (Uses state.withdrawalRequests) ---
+        function renderRewardsSection() {
+            const { eduPoints } = state.user;
+            const canWithdraw = eduPoints >= MIN_WITHDRAWAL_POINTS;
+            const usdEquivalent = (eduPoints / 100000).toFixed(2);
+            const minimumWithdrawalUsd = (MIN_WITHDRAWAL_POINTS / 100000).toFixed(2);
+
+            return `
+                <section class="space-y-6">
+                    <h2 class="text-2xl font-bold">Withdraw EduPoints</h2>
+                    <div class="card p-6 bg-blue-50 text-blue-700 space-y-2">
+                        <p class="text-sm font-semibold">Your Current Balance</p>
+                        <h3 class="text-3xl font-bold">${formatPoints(eduPoints)} EduPoints</h3>
+                        <p class="text-lg font-medium">~ $${usdEquivalent} USD</p>
+                        <p class="text-xs text-red-500 pt-2">Minimum Withdrawal: ${formatPoints(MIN_WITHDRAWAL_POINTS)} EduPoints ($${minimumWithdrawalUsd})</p>
+                    </div>
+
+                    <!-- Withdrawal Form -->
+                    <div class="card p-6 space-y-4">
+                        <h3 class="text-xl font-semibold">Submit Withdrawal Request</h3>
+
+                        <div id="withdrawal-message" class="hidden p-3 rounded-lg text-sm font-semibold"></div>
+
+                        <label class="block text-sm font-medium text-gray-700">Withdrawal Amount (Points)</label>
+                        <input type="number" id="withdrawal-amount" placeholder="e.g. 500000" min="${MIN_WITHDRAWAL_POINTS}" value="${canWithdraw ? MIN_WITHDRAWAL_POINTS : ''}" class="w-full p-3 border rounded-lg focus:ring-blue-500" ${!canWithdraw ? 'disabled' : ''}>
+
+                        <label class="block text-sm font-medium text-gray-700">Payment Method</label>
+                        <select id="withdrawal-method" class="w-full p-3 border rounded-lg focus:ring-blue-500" ${!canWithdraw ? 'disabled' : ''}>
+                            <option value="USDT TRC20">USDT (TRC20)</option>
+                            <option value="Paystack">Paystack (Nigeria Only)</option>
+                            <option value="Stripe">Stripe (Global Bank Transfer)</option>
+                        </select>
+
+                        <label class="block text-sm font-medium text-gray-700">Payment Address / Account Details</label>
+                        <textarea id="withdrawal-details" rows="3" placeholder="USDT Wallet Address, or Bank/Paystack/Stripe details..." class="w-full p-3 border rounded-lg focus:ring-blue-500" ${!canWithdraw ? 'disabled' : ''}></textarea>
+
+                        <button id="submit-withdrawal-btn" class="w-full p-3 font-bold ${canWithdraw ? 'btn-primary' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}" ${!canWithdraw ? 'disabled' : ''}>
+                            ${canWithdraw ? 'Submit Withdrawal Request' : 'Insufficient Points'}
+                        </button>
+                    </div>
+
+                    <!-- Payout History -->
+                    <h3 class="text-xl font-bold mt-6">Payout History (Simulated)</h3>
+                    <div class="card p-4 space-y-3">
+                        ${(state.user.history || []).filter(h => h.action.includes('Withdrawal')).slice(-5).reverse().map(item => `
+                            <div class="flex justify-between items-center text-sm border-b pb-2 last:border-b-0 last:pb-0">
+                                <span class="text-gray-600">${item.action.replace('Withdrawal Request:', 'Requested:')}</span>
+                                <span class="font-bold text-red-600">-${formatPoints(Math.abs(item.points))} Pts</span>
+                                <span class="text-xs text-gray-500">${new Date(item.timestamp).toLocaleDateString()}</span>
+                            </div>
+                        `).join('')}
+                        ${(state.user.history || []).filter(h => h.action.includes('Withdrawal')).length === 0 ? '<p class="text-gray-500 text-sm text-center">No withdrawal requests yet.</p>' : ''}
+                    </div>
+                </section>
+            `;
+        }
+
+        // --- Leaderboard View (Uses state.leaderboard) ---
+        function renderLeaderboard() {
+            return `
+                <section class="space-y-6">
+                    <h2 class="text-2xl font-bold">EduHeTech Leaderboard (Simulated)</h2>
+                    <p class="text-gray-600">Top learners by Total EduPoints. (Based on users stored in this browser's local storage).</p>
+
+                    <div class="card p-4 space-y-3">
+                        ${state.leaderboard.map((user, index) => `
+                            <div class="flex justify-between items-center text-base ${index === 0 ? 'text-yellow-600 text-lg font-extrabold' : index === 1 ? 'text-gray-500 font-bold' : index === 2 ? 'text-yellow-800 font-bold' : 'text-gray-700'} border-b pb-3 last:border-b-0">
+                                <span class="w-1/12">${index === 0 ? '<i class="fas fa-crown"></i>' : index + 1 + '.'}</span>
+                                <span class="w-7/12 truncate">${user.name}</span>
+                                <span class="w-4/12 text-right font-bold">${formatPoints(user.eduPoints)} Pts</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+            `;
+        }
+
+        // --- Admin Panel View (Simulated) ---
+        function renderAdminPanel() {
+             if (state.user?.email !== 'admin@eduhetech.com') return '<div class="card p-6 text-red-500 text-center">Access Denied: Admin privileges required.</div>';
+
+             // Filter for pending requests
+             const pendingRequests = state.withdrawalRequests.filter(req => req.status === 'Pending');
+
+             return `
+                <section class="space-y-6">
+                    <h2 class="text-2xl font-bold text-red-600">Admin Panel (LocalStorage Demo)</h2>
+                    <p class="text-gray-600">Manage pending withdrawal requests stored locally.</p>
+
+                    <h3 class="text-xl font-bold mt-4">Pending Withdrawals (${pendingRequests.length})</h3>
+                    <div class="card p-4 space-y-4">
+                        ${pendingRequests.length > 0 ? pendingRequests.map(req => `
+                            <div class="border-b pb-3 last:border-b-0 space-y-1">
+                                <p class="font-semibold text-base">${formatPoints(req.amount)} Pts ($${(req.amount / 100000).toFixed(2)})</p>
+                                <p class="text-sm">User ID: <span class="font-mono text-xs">${req.userId.substring(0, 8)}...</span></p>
+                                <p class="text-sm">Method: ${req.method}</p>
+                                <p class="text-sm text-gray-600">Details: ${req.details.substring(0, 50)}...</p>
+                                <button data-request-id="${req.id}" data-user-id="${req.userId}" data-amount="${req.amount}" class="admin-approve-btn p-2 bg-green-500 text-white rounded-lg text-xs hover:bg-green-600">Approve & Pay (Simulated)</button>
+                            </div>
+                        `).join('') : '<p class="text-gray-500 text-sm text-center">No pending withdrawal requests.</p>'}
+                    </div>
+                </section>
+             `;
+        }
+
+        // --- Event Handlers (Updated for LocalStorage) ---
+
+        function attachAuthListeners() {
+            const container = document.getElementById('auth-form-container');
+            const toggleBtn = document.getElementById('toggle-auth');
+            let isLogin = true;
+
+            const updateForm = () => {
+                container.innerHTML = isLogin ? renderLoginForm() : renderSignupForm();
+                toggleBtn.textContent = isLogin ? 'Need an account? Sign Up' : 'Already have an account? Log In';
+                attachFormListeners();
+            };
+
+            const attachFormListeners = () => {
+                document.getElementById('login-btn')?.addEventListener('click', handleLogin);
+                document.getElementById('signup-btn')?.addEventListener('click', handleSignup);
+            };
+
+            toggleBtn?.addEventListener('click', () => {
+                isLogin = !isLogin;
+                updateForm();
+            });
+
+            updateForm();
+        }
+
+        function handleAuthError(message) {
+            const errorEl = document.getElementById('auth-error-message');
+            if (errorEl) errorEl.textContent = message;
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            const allUsers = loadAllUsers();
+            const user = Object.values(allUsers).find(u => u.email === email && u.password === password);
+
+            if (user) {
+                sessionStorage.setItem(SS_CURRENT_USER_ID, user.userId);
+                initializeData(); // Re-initialize state and render
+            } else {
+                handleAuthError('Login failed: Invalid email or password.');
+            }
+        }
+
+        function handleSignup() {
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const referrerId = document.getElementById('signup-referral').value;
+
+            if (!name || !email || password.length < 6) {
+                handleAuthError('Please fill out all fields and ensure the password is at least 6 characters.');
+                return;
+            }
+
+            const allUsers = loadAllUsers();
+            if (Object.values(allUsers).some(u => u.email === email)) {
+                handleAuthError('This email is already registered.');
+                return;
+            }
+
+            const newUserId = generateUniqueId();
+            const newUser = {
+                userId: newUserId,
+                name: name,
+                email: email,
+                password: password, // Store password in plain text for demo, NEVER do this in production
+                eduPoints: 0,
+                referralCount: 0,
+                referralCode: newUserId,
+                lastLogin: Date.now(),
+                history: [],
+                createdAt: Date.now()
+            };
+
+            allUsers[newUserId] = newUser;
+            saveAllUsers(allUsers);
+
+            // Handle referral bonus for the referrer (must be in local storage)
+            if (referrerId && allUsers[referrerId]) {
+                rewardPoints(referrerId, BASE_POINTS_REWARDS.referral, 'Referral Bonus');
+                trackReferral(referrerId);
+                showModal(`<div class="text-green-600 font-semibold text-center">Success!</div><p class="mt-2 text-sm">${name}, your account is created. Your referrer (${referrerId.substring(0, 8)}...) has been rewarded!</p>`);
+            } else {
+                 showModal(`<div class="text-green-600 font-semibold text-center">Account Created</div><p class="mt-2 text-sm">Welcome ${name}! You can now log in.</p>`);
+            }
+
+            // Log in the new user automatically
+            sessionStorage.setItem(SS_CURRENT_USER_ID, newUserId);
+            initializeData();
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem(SS_CURRENT_USER_ID);
+            state.user = null;
+            state.currentView = 'auth';
+            render();
+        }
+
+        function attachNavListeners() {
+            document.querySelectorAll('.nav-item').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const newView = e.currentTarget.dataset.view;
+                    if (newView) {
+                        state.currentView = newView;
+                        render();
+                    }
+                });
+            });
+            document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
+        }
+
+        function attachContentListeners() {
+            // Learn Section
+            document.querySelectorAll('.mark-lesson-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => handleMarkLesson(e.currentTarget.dataset.lessonTitle));
+            });
+            // Quiz Section
+            document.querySelectorAll('.quiz-option').forEach(btn => {
+                btn.addEventListener('click', (e) => handleQuizOption(e.currentTarget.dataset.option));
+            });
+            document.getElementById('prev-q-btn')?.addEventListener('click', () => updateQuizView(-1));
+            document.getElementById('next-q-btn')?.addEventListener('click', () => updateQuizView(1));
+            document.getElementById('submit-quiz-btn')?.addEventListener('click', handleSubmitQuiz);
+            document.getElementById('retry-quiz-btn')?.addEventListener('click', handleRetryQuiz);
+            document.getElementById('next-quiz-btn')?.addEventListener('click', handleNextQuiz);
+            // Ads Section
+            document.getElementById('watch-ad-btn')?.addEventListener('click', handleWatchAd);
+            // Referral Section
+            document.getElementById('copy-referral-btn')?.addEventListener('click', handleCopyReferralLink);
+            // Rewards Section
+            document.getElementById('submit-withdrawal-btn')?.addEventListener('click', handleSubmitWithdrawal);
+            // Admin Panel
+            document.querySelectorAll('.admin-approve-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => handleApproveWithdrawal(e.currentTarget.dataset.requestId, e.currentTarget.dataset.userId, parseInt(e.currentTarget.dataset.amount)));
+            });
+        }
+
+        async function handleMarkLesson(lessonTitle) {
+            const action = `Lesson Completed: ${lessonTitle}`;
+            if ((state.user.history || []).some(h => h.action === action)) {
+                showModal('<div class="text-yellow-600 font-semibold text-center">Already Completed</div><p class="mt-2 text-sm">You have already completed this lesson and received the reward.</p>');
+                return;
+            }
+            addPoints(action, BASE_POINTS_REWARDS.lesson);
+            showModal(`<div class="text-green-600 font-semibold text-center">Lesson Complete!</div><p class="mt-2 text-sm">You earned ${BASE_POINTS_REWARDS.lesson} EduPoints.</p>`);
+        }
+
+        function handleQuizOption(option) {
+            if (state.quizData.results) return;
+            state.quizData.answers[state.quizData.currentQ] = option;
+            render();
+        }
+
+        function updateQuizView(direction) {
+            state.quizData.currentQ += direction;
+            render();
+        }
+
+        function handleSubmitQuiz() {
+            const currentQuiz = state.quizzes[0];
+            if (!currentQuiz || !state.quizData.answers.every(a => a !== null)) {
+                showModal('<div class="text-red-600 font-semibold text-center">Incomplete Quiz</div><p class="mt-2 text-sm">Please answer all questions before submitting.</p>');
+                return;
+            }
+
+            const adLink = MONETAG_LINKS[Math.floor(Math.random() * MONETAG_LINKS.length)];
+            const adWindow = window.open(adLink, '_blank');
+
+            showModal(`
+                <div class="text-center space-y-3">
+                    <i class="fas fa-money-bill-wave text-5xl text-red-500"></i>
+                    <h3 class="text-xl font-bold">Viewing Results...</h3>
+                    <p>Please wait for **<span id="ad-timer" class="font-bold text-red-500">5</span>** seconds for the ad to load before closing the ad window.</p>
+                    <div id="progress-bar" class="w-full h-2 bg-gray-200 rounded-full"><div id="progress-fill" class="h-2 bg-blue-500 rounded-full transition-all duration-1000"></div></div>
+                </div>
+            `);
+
+            let timer = 5;
+            const interval = setInterval(() => {
+                timer--;
+                const timerEl = document.getElementById('ad-timer');
+                const progressEl = document.getElementById('progress-fill');
+                if (timerEl) timerEl.textContent = timer;
+                if (progressEl) progressEl.style.width = `${((5 - timer) / 5) * 100}%`;
+
+                if (timer <= 0) {
+                    clearInterval(interval);
+                    hideModal();
+                    adWindow?.close();
+                    processQuizResults(currentQuiz);
+                }
+            }, 1000);
+        }
+
+        function processQuizResults(quiz) {
+            const results = quiz.questions.map((q, index) => ({
+                isCorrect: q.answer === state.quizData.answers[index]
+            }));
+
+            state.quizData.isComplete = true;
+            state.quizData.results = results;
+            state.quizData.answers = Array(quiz.questions.length).fill(null);
+            state.quizData.currentQ = 0;
+
+            const correctCount = results.filter(r => r.isCorrect).length;
+            if (correctCount > 3) {
+                addPoints(`Quiz Completed: ${quiz.title} (${correctCount}/${quiz.questions.length})`, BASE_POINTS_REWARDS.quiz);
+            }
+
+            render();
+        }
+
+        function handleRetryQuiz() {
+            state.quizData.results = null;
+            state.quizData.isComplete = false;
+            state.quizData.currentQ = 0;
+            render();
+        }
+
+        function handleNextQuiz() {
+            state.quizData.results = null;
+            state.quizData.isComplete = false;
+            state.quizData.currentQ = 0;
+            render();
+        }
+
+        function handleWatchAd() {
+            const adLink = MONETAG_LINKS[Math.floor(Math.random() * MONETAG_LINKS.length)];
+            const adWindow = window.open(adLink, '_blank');
+            const adBtn = document.getElementById('watch-ad-btn');
+            const adStatus = document.getElementById('ad-status');
+
+            if (adBtn) adBtn.disabled = true;
+            if (adStatus) adStatus.textContent = "Loading Ad... Please wait 5 seconds.";
+
+            showModal(`
+                <div class="text-center space-y-3">
+                    <i class="fas fa-stopwatch text-5xl text-blue-500"></i>
+                    <h3 class="text-xl font-bold">Ad View Timer</h3>
+                    <p>You will be rewarded in **<span id="ad-timer" class="font-bold text-red-500">5</span>** seconds. Please do not close the ad window yet.</p>
+                    <div id="progress-bar" class="w-full h-2 bg-gray-200 rounded-full"><div id="progress-fill" class="h-2 bg-green-500 rounded-full transition-all duration-1000"></div></div>
+                </div>
+            `);
+
+            let timer = 5;
+            const interval = setInterval(() => {
+                timer--;
+                const timerEl = document.getElementById('ad-timer');
+                const progressEl = document.getElementById('progress-fill');
+                if (timerEl) timerEl.textContent = timer;
+                if (progressEl) progressEl.style.width = `${((5 - timer) / 5) * 100}%`;
+
+                if (timer <= 0) {
+                    clearInterval(interval);
+                    hideModal();
+                    adWindow?.close();
+                    handleAdReward(adBtn, adStatus);
+                }
+            }, 1000);
+        }
+
+        function handleAdReward(btn, status) {
+            addPoints('Ad Watched', BASE_POINTS_REWARDS.ad);
+            if (btn) btn.disabled = false;
+            if (status) status.textContent = `Reward successful! +${BASE_POINTS_REWARDS.ad} EduPoints earned.`;
+            setTimeout(() => { if (status) status.textContent = ''; }, 3000);
+        }
+
+        function handleCopyReferralLink() {
+            const input = document.getElementById('referral-link-input');
+            const status = document.getElementById('copy-status');
+
+            if (input) {
+                input.select();
+                document.execCommand('copy');
+                status.textContent = 'Copied to clipboard!';
+                setTimeout(() => status.textContent = '', 2000);
+            }
+        }
+
+        function handleSubmitWithdrawal() {
+            const amountEl = document.getElementById('withdrawal-amount');
+            const methodEl = document.getElementById('withdrawal-method');
+            const detailsEl = document.getElementById('withdrawal-details');
+            const messageEl = document.getElementById('withdrawal-message');
+
+            const amount = parseInt(amountEl.value);
+            const method = methodEl.value;
+            const details = detailsEl.value.trim();
+
+            if (!amount || amount < MIN_WITHDRAWAL_POINTS || amount > state.user.eduPoints || !details) {
+                messageEl.textContent = 'Please enter a valid amount (min 500k) and payment details.';
+                messageEl.classList.remove('hidden', 'bg-green-100', 'text-green-700');
+                messageEl.classList.add('bg-red-100', 'text-red-700');
+                return;
+            }
+
+            showModal(`
+                <div class="text-center space-y-3">
+                    <i class="fas fa-hand-holding-usd text-5xl text-yellow-600"></i>
+                    <h3 class="text-xl font-bold">Confirm Withdrawal</h3>
+                    <p>Are you sure you want to withdraw **${formatPoints(amount)}** EduPoints ($${(amount / 100000).toFixed(2)}) via **${method}**?</p>
+                </div>
+            `, () => {
+                showLoading(true);
+                try {
+                    // 1. Create Withdrawal Request in Local Storage
+                    const withdrawalRequest = {
+                        id: generateUniqueId(),
+                        userId: state.user.userId,
+                        userName: state.user.name,
+                        amount: amount,
+                        method: method,
+                        details: details,
+                        status: 'Pending',
+                        timestamp: Date.now()
+                    };
+                    state.withdrawalRequests.push(withdrawalRequest);
+                    saveCollection(LS_WITHDRAWALS, state.withdrawalRequests);
+
+                    // 2. Deduct Points from User
+                    state.user.eduPoints -= amount;
+                    if (!state.user.history) state.user.history = [];
+                    state.user.history.push({ action: `Withdrawal Request: ${method}`, points: -amount, timestamp: Date.now() });
+
+                    saveUser(state.user);
+
+                    // 3. Update local state and UI
+                    messageEl.textContent = 'Withdrawal request submitted successfully! Points deducted. Review via the Admin Panel (if you are the admin user).';
+                    messageEl.classList.remove('hidden', 'bg-red-100', 'text-red-700');
+                    messageEl.classList.add('bg-green-100', 'text-green-700');
+                    render();
+                } catch (error) {
+                    messageEl.textContent = `Error submitting request: ${error.message}`;
+                    messageEl.classList.remove('hidden', 'bg-green-100', 'text-green-700');
+                    messageEl.classList.add('bg-red-100', 'text-red-700');
+                    console.error("Withdrawal error:", error);
+                } finally {
+                    showLoading(false);
+                }
+            });
+        }
+
+        function handleApproveWithdrawal(requestId, targetUserId, amount) {
+            if (state.user?.email !== 'admin@eduhetech.com') return;
+
+            showModal(`
+                <div class="text-center space-y-3">
+                    <i class="fas fa-check-double text-5xl text-green-600"></i>
+                    <h3 class="text-xl font-bold">Approve Payout</h3>
+                    <p>Confirm actual payment of **$${(amount / 100000).toFixed(2)}** to user **${targetUserId.substring(0, 8)}...**.</p>
+                </div>
+            `, () => {
+                showLoading(true);
+                try {
+                    // 1. Update Withdrawal Request Status
+                    const requestIndex = state.withdrawalRequests.findIndex(req => req.id === requestId);
+                    if (requestIndex !== -1) {
+                        state.withdrawalRequests[requestIndex].status = 'Completed';
+                        state.withdrawalRequests[requestIndex].payoutDate = Date.now();
+                        saveCollection(LS_WITHDRAWALS, state.withdrawalRequests);
+                    }
+
+                    // 2. Add Payout history to target user
+                    const targetUser = state.allUsers[targetUserId];
+                    if (targetUser) {
+                        if (!targetUser.history) targetUser.history = [];
+                        targetUser.history.push({ action: `Payout Completed: ${amount} Pts`, points: 0, timestamp: Date.now() });
+                        saveUser(targetUser);
+                    }
+
+                    render();
+                } catch (error) {
+                    console.error("Approval error:", error);
+                } finally {
+                    showLoading(false);
+                }
+            });
+        }
+
+        // --- Initialization ---
+
+        // Check if admin user exists, if not, create it for testing the admin panel
+        (function ensureAdminUser() {
+            const allUsers = loadAllUsers();
+            if (!Object.values(allUsers).some(u => u.email === 'admin@eduhetech.com')) {
+                const adminUser = {
+                    userId: 'admin_test_id',
+                    name: 'Admin User',
+                    email: 'admin@eduhetech.com',
+                    password: 'password',
+                    eduPoints: 9999999,
+                    referralCount: 100,
+                    referralCode: 'admin_ref',
+                    lastLogin: 0,
+                    history: [],
+                    createdAt: Date.now()
+                };
+                allUsers[adminUser.userId] = adminUser;
+                saveAllUsers(allUsers);
+            }
+        })();
+
+        // Start the application lifecycle
+        window.onload = initializeData;
+
+    </script>
+
+    <!-- Global Loading Spinner -->
+    <div id="global-loader" class="fixed inset-0 bg-white bg-opacity-80 flex items-center justify-center hidden z-50">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Global Modal Structure -->
+    <div id="global-modal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4">
+        <div class="card w-full max-w-sm p-6 space-y-4">
+            <div id="modal-content"></div>
+            <div class="flex justify-end space-x-2">
+                <button onclick="hideModal()" class="p-2 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Close</button>
+                <button id="modal-confirm" class="p-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600 hidden">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Root -->
+    <div id="app">
+        <!-- Content rendered by JavaScript -->
+        <div class="min-h-screen flex items-center justify-center p-4">
+            <i class="fas fa-spinner fa-spin text-4xl text-blue-500"></i>
+            <p class="mt-4 text-gray-500">Initializing EduHeTech...</p>
+        </div>
+    </div>
+</body>
+</html>
+
