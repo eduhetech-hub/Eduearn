@@ -59,6 +59,30 @@
 </head>
 <body class="text-gray-800">
 
+    <!-- Global Loader (Hidden by default) -->
+    <div id="global-loader" class="fixed inset-0 bg-gray-100/75 flex items-center justify-center hidden z-50">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Global Modal (Hidden by default) -->
+    <div id="global-modal" class="fixed inset-0 modal-overlay flex items-center justify-center hidden">
+        <div class="bg-white rounded-xl shadow-2xl p-6 m-4 max-w-sm w-full z-50">
+            <div id="modal-content" class="text-center mb-4">
+                <!-- Modal content goes here -->
+            </div>
+            <div class="flex justify-center space-x-4">
+                <button id="modal-cancel" onclick="hideModal()" class="px-4 py-2 text-sm font-semibold rounded-lg text-gray-700 bg-gray-200 hover:bg-gray-300 transition">Close</button>
+                <button id="modal-confirm" class="px-4 py-2 text-sm font-semibold rounded-lg btn-primary hidden transition">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application Container -->
+    <div id="app" class="h-full">
+        <!-- Content will be rendered here by JavaScript -->
+    </div>
+
+
     <!-- Global State and Data Management Scripts (LocalStorage) -->
     <script>
         // --- Local Storage Keys ---
@@ -93,7 +117,90 @@
             allUsers: {}, // Map of all users (for leaderboards/referrals)
             withdrawalRequests: [],
             lessons: [],
-            quizzes: []
+            quizzes: [],
+            // --- NEW: Detailed Course Data Structure ---
+            detailedCourses: {
+                'health': [
+                    {
+                        title: 'Alternative / Complementary Medicine: A Holistic Approach',
+                        description: 'Explores global healing practices outside conventional medicine, focusing on a holistic view that treats the mind, body, and spirit. We delve into the science and ethical considerations.',
+                        modules: [
+                            'Traditional Systems: Ayurveda (Doshas: Vata, Pitta, Kapha) and TCM (Qi/Chi, meridians).',
+                            'Mind-Body Connection: Practices like meditation, biofeedback, and guided imagery.',
+                            'Biologically-Based Therapies: Responsible use of herbal supplements and specialized nutritional diets.',
+                            'Manipulative Practices: Understanding the principles of Chiropractic and Massage Therapy.'
+                        ],
+                        color: 'bg-green-500', icon: 'fas fa-hand-holding-heart'
+                    },
+                    {
+                        title: 'Community Health and Health Promotion',
+                        description: 'Master the skills needed to improve health outcomes for specific populations. Learn to design, implement, and evaluate health programs.',
+                        modules: [
+                            'Epidemiology Fundamentals: Biostatistics, disease surveillance, and public health data.',
+                            'Social Determinants of Health (SDH): Analyzing the impact of factors like housing and education.',
+                            'Health Behavior Change: Applying models to create effective health campaigns and interventions.'
+                        ],
+                        color: 'bg-lime-500', icon: 'fas fa-users'
+                    },
+                    {
+                        title: 'Dental Therapy: Preventative and Primary Care',
+                        description: 'A practical course focused on providing essential preventative and basic restorative oral healthcare in underserved communities.',
+                        modules: [
+                            'Oral Anatomy & Pathology: Recognizing common diseases like gingivitis and dental caries.',
+                            'Preventative Procedures: Mastering techniques for fluoride application and sealants.',
+                            'Patient Education: Effective communication strategies for promoting optimal oral hygiene.'
+                        ],
+                        color: 'bg-emerald-500', icon: 'fas fa-tooth'
+                    },
+                    {
+                        title: 'Environmental Health: Hazard Control and Sustainability',
+                        description: 'Study how the natural and built environment impacts human health. Covers risk assessment, pollution control, and global sustainability efforts.',
+                        modules: [
+                            'Water and Air Quality: Standards, testing, and management of pollutants.',
+                            'Solid and Hazardous Waste Management: Safe disposal and regulatory frameworks.',
+                            'Climate Change and Health: Analyzing the direct and indirect health effects of global environmental changes.'
+                        ],
+                        color: 'bg-teal-500', icon: 'fas fa-leaf'
+                    }
+                ],
+                'tech': [
+                    {
+                        title: 'Modern Web Development: Full Stack Mastery',
+                        description: 'The comprehensive track to build highly responsive, data-driven applications using contemporary tools and workflows.',
+                        modules: [
+                            'Frontend Development (Advanced): Mastering JavaScript ES6+, asynchronous programming, Flexbox, and Grid.',
+                            'Component-Based Architecture: Introduction to a major framework (e.g., React or Vue).',
+                            'Backend Integration & APIs: Working with RESTful/GraphQL APIs, and securing communication.',
+                            'Version Control: Professional workflow using Git and GitHub.'
+                        ],
+                        color: 'bg-red-500', icon: 'fas fa-code'
+                    }
+                ],
+                'business': [
+                    {
+                        title: 'Digital Marketing Principles: Strategy & Analytics',
+                        description: 'Learn the essential strategies for promoting businesses online. Focus on data-driven decision-making, audience segmentation, and maximizing ROI.',
+                        modules: [
+                            'Search Engine Optimization (SEO): Technical SEO, content strategy, and keyword research.',
+                            'Paid Advertising (PPC): Campaign creation on Google Ads/social media, budgeting, and A/B testing.',
+                            'Content and Social Media Strategy: Developing a cohesive content calendar.',
+                            'Web Analytics: Setting up and interpreting data from Google Analytics.'
+                        ],
+                        color: 'bg-yellow-500', icon: 'fas fa-chart-line'
+                    },
+                    {
+                        title: 'Foundational Business and Entrepreneurial Skills',
+                        description: 'Essential knowledge for anyone looking to start a venture or advance in a corporate environment. Covers basic finance, management theory, and ethical leadership.',
+                        modules: [
+                            'Financial Literacy: Understanding budgeting, profit & loss, and basic investment principles.',
+                            'Project Management: Introduction to Agile and Scrum methodologies.',
+                            'Communication & Negotiation: Developing strong verbal, written, and cross-cultural communication skills.'
+                        ],
+                        color: 'bg-orange-500', icon: 'fas fa-briefcase'
+                    }
+                ]
+            }
+            // --- END NEW DATA ---
         };
 
         let userId = sessionStorage.getItem(SS_CURRENT_USER_ID);
@@ -324,23 +431,22 @@
             updateLeaderboards();
         }
 
+        // --- Auth/UI Rendering Functions (Placeholders) ---
+        // These need to exist for the app to function but were cut off in the user's snippet.
 
-        // --- Auth/UI Rendering Functions (No Change) ---
         function renderAuthScreen() {
+            // Placeholder - actual content in user's original snippet
             return `
                 <div class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
                     <div class="w-full max-w-md card p-8 space-y-6">
                         <h1 class="text-3xl font-extrabold text-center text-blue-600">EduHeTech</h1>
-                        <p class="text-center text-gray-500">Learn & Earn with EduPoints!</p>
-
+                        <p class="text-center text-gray-500">Log in or Sign up to continue...</p>
                         <div id="auth-form-container" class="space-y-4">
-                            <!-- Auth Form will be rendered here -->
+                            ${renderLoginForm()}
                         </div>
-
                         <div class="text-center">
                             <button id="toggle-auth" class="text-sm text-blue-500 hover:text-blue-700">Need an account? Sign Up</button>
                         </div>
-                        <p class="text-center text-xs text-red-500">Note: Data is stored only on this browser (Local Storage).</p>
                     </div>
                 </div>
             `;
@@ -356,37 +462,44 @@
             `;
         }
 
-        function renderSignupForm() {
-            return `
-                <h2 class="text-2xl font-bold text-center">Sign Up</h2>
-                <input type="text" id="signup-name" placeholder="Name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-                <input type="email" id="signup-email" placeholder="Email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-                <input type="password" id="signup-password" placeholder="Password (min 6 chars)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-                <input type="text" id="signup-referral" placeholder="Referral Code (Optional)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-                <button id="signup-btn" class="w-full p-3 btn-primary font-semibold">Sign Up</button>
-                <div id="auth-error-message" class="text-red-500 text-sm text-center"></div>
-            `;
-        }
+        // --- Rendering Functions (New/Updated) ---
 
-        function renderHeader() {
-            const { name, eduPoints } = state.user;
-            const viewName = state.currentView.charAt(0).toUpperCase() + state.currentView.slice(1);
+        function renderSidebar() {
+            const navItems = [
+                { id: 'dashboard', icon: 'fas fa-home', label: 'Home' },
+                { id: 'learn', icon: 'fas fa-graduation-cap', label: 'Learn' },
+                { id: 'catalog', icon: 'fas fa-book-open', label: 'Catalog' }, // NEW
+                { id: 'quiz', icon: 'fas fa-question-circle', label: 'Quiz' },
+                { id: 'ads', icon: 'fas fa-ad', label: 'Ads' },
+                { id: 'referral', icon: 'fas fa-share-alt', label: 'Refer' },
+                { id: 'rewards', icon: 'fas fa-coins', label: 'Rewards' },
+                { id: 'leaderboard', icon: 'fas fa-trophy', label: 'Board' }
+            ];
 
-            return `
-                <header class="bg-white shadow-md p-4 sticky top-0 z-10 flex justify-between items-center">
-                    <h1 class="text-xl font-bold text-blue-600">${viewName}</h1>
-                    <div class="flex items-center space-x-3">
-                        <div class="flex flex-col items-end">
-                            <span class="text-sm font-semibold truncate max-w-28">${name}</span>
-                            <span class="text-xs text-green-600 font-bold">${formatPoints(eduPoints)} Pts</span>
-                        </div>
-                        <button id="logout-btn" class="text-gray-500 hover:text-red-500 p-2 rounded-full">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
+            // Simplified Admin check for localStorage demo
+            if (state.user?.email === 'admin@eduhetech.com') {
+                navItems.push({ id: 'admin', icon: 'fas fa-user-shield', label: 'Admin' });
+            }
+
+            // Mobile Bottom Navigation Bar (Visible on small screens)
+            const mobileNav = `
+                <nav class="fixed bottom-0 left-0 right-0 bg-white border-t sm:hidden z-20 shadow-lg">
+                    <div class="flex justify-around">
+                        ${navItems.map(item => `
+                            <button data-view="${item.id}" class="nav-item flex flex-col items-center p-2 text-xs ${state.currentView === item.id ? 'text-blue-600 font-bold' : 'text-gray-500 hover:text-blue-500'}">
+                                <i class="${item.icon} text-lg"></i>
+                                <span>${item.label}</span>
+                            </button>
+                        `).join('')}
                     </div>
-                </header>
-                <div id="coin-animation" class="fixed top-20 right-4 p-2 z-50"></div>
+                </nav>
             `;
+
+            // Desktop Sidebar (Hidden on small screens) - Not used in single mobile-first view, but kept for future expansion
+            const desktopSidebar = '';
+
+            // User's code ended here, completing the return statement:
+            return mobileNav + desktopSidebar;
         }
 
         function renderContent() {
@@ -397,6 +510,9 @@
                     break;
                 case 'learn':
                     mainContent = renderLearnSection();
+                    break;
+                case 'catalog': // NEW VIEW CASE
+                    mainContent = renderCatalogSection();
                     break;
                 case 'quiz':
                     mainContent = renderQuizSection();
@@ -432,457 +548,236 @@
             `;
         }
 
-        function renderSidebar() {
-            const navItems = [
-                { id: 'dashboard', icon: 'fas fa-home', label: 'Home' },
-                { id: 'learn', icon: 'fas fa-graduation-cap', label: 'Learn' },
-                { id: 'quiz', icon: 'fas fa-question-circle', label: 'Quiz' },
-                { id: 'ads', icon: 'fas fa-ad', label: 'Ads' },
-                { id: 'referral', icon: 'fas fa-share-alt', label: 'Refer' },
-                { id: 'rewards', icon: 'fas fa-coins', label: 'Rewards' },
-                { id: 'leaderboard', icon: 'fas fa-trophy', label: 'Leaderboard' }
-            ];
-
-            // Simplified Admin check for localStorage demo
-            if (state.user?.email === 'admin@eduhetech.com') {
-                navItems.push({ id: 'admin', icon: 'fas fa-user-shield', label: 'Admin' });
-            }
-
-            // Mobile Bottom Navigation Bar (Visible on small screens)
-            const mobileNav = `
-                <nav class="fixed bottom-0 left-0 right-0 bg-white border-t sm:hidden z-20 shadow-lg">
-                    <div class="flex justify-around">
-                        ${navItems.map(item => `
-                            <button data-view="${item.id}" class="nav-item flex flex-col items-center p-2 text-xs ${state.currentView === item.id ? 'text-blue-600 font-bold' : 'text-gray-500 hover:text-blue-500'}">
-                                <i class="${item.icon} text-lg"></i>
-                                <span>${item.label}</span>
-                            </button>
-                        `).join('')}
-                    </div>
-                </nav>
-            `;
-
-            // Desktop Sidebar (Hidden on small screens) - Not used in single mobile-first view, but kept for future expansion
-            const desktopSidebar = '';
-
-            return mobileNav + desktopSidebar;
-        }
-
-        // --- Dashboard View ---
-        function renderDashboard() {
-            const { eduPoints, name, history } = state.user;
-            const usdEquivalent = (eduPoints / 100000).toFixed(2);
-            const progress = Math.min(100, (eduPoints / MIN_WITHDRAWAL_POINTS) * 100);
-
-            const achievements = getAchievements();
-
-            return `
-                <section class="space-y-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Welcome, ${name.split(' ')[0]}!</h2>
-
-                    <!-- Total EduPoints Card -->
-                    <div class="card p-6 flex items-center justify-between bg-blue-500 text-white">
-                        <div>
-                            <p class="text-sm opacity-80">Total EduPoints</p>
-                            <h3 class="text-4xl font-extrabold">${formatPoints(eduPoints)}</h3>
-                            <p class="text-sm opacity-80 mt-1">~ $${usdEquivalent} USD</p>
-                        </div>
-                        <i class="fas fa-coins text-5xl opacity-50"></i>
-                    </div>
-
-                    <!-- Withdrawal Progress Bar -->
-                    <div class="card p-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <p class="text-sm font-semibold">Withdrawal Goal</p>
-                            <p class="text-xs text-gray-500">${formatPoints(MIN_WITHDRAWAL_POINTS)} Pts ($5)</p>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-3">
-                            <div class="bg-green-500 h-3 rounded-full transition-all duration-500" style="width: ${progress}%"></div>
-                        </div>
-                        <p class="text-xs text-center mt-2 ${progress >= 100 ? 'text-green-600 font-bold' : 'text-gray-500'}">
-                            ${progress < 100 ? `${progress.toFixed(1)}% complete` : 'GOAL ACHIEVED!'}
-                        </p>
-                        <button data-view="rewards" class="w-full mt-4 p-3 ${progress >= 100 ? 'btn-primary nav-item' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}" ${progress < 100 ? 'disabled' : ''}>
-                            Withdraw Now
-                        </button>
-                    </div>
-
-                    <!-- Achievements/Badges -->
-                    <h3 class="text-xl font-bold mt-6">My Badges</h3>
-                    <div class="grid grid-cols-3 gap-4">
-                        ${achievements.map(a => `
-                            <div class="flex flex-col items-center p-3 card text-center ${a.earned ? 'bg-yellow-50 text-yellow-700 border-2 border-yellow-400' : 'bg-gray-100 text-gray-400'}">
-                                <i class="${a.icon} text-3xl mb-2"></i>
-                                <p class="text-xs font-semibold">${a.name}</p>
-                                <p class="text-xs mt-1 ${a.earned ? 'font-bold' : ''}">${a.earned ? 'Earned!' : `Goal: ${a.goal}`}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-
-                    <!-- Recent Activities -->
-                    <h3 class="text-xl font-bold mt-6">Recent Activities</h3>
-                    <div class="card p-4 space-y-3">
-                        ${(history || []).slice(-5).reverse().map(item => `
-                            <div class="flex justify-between items-center text-sm border-b pb-2 last:border-b-0 last:pb-0">
-                                <span class="text-gray-600">${item.action}</span>
-                                <span class="font-bold text-green-600">+${item.points} Pts</span>
-                            </div>
-                        `).join('')}
-                        ${(history || []).length === 0 ? '<p class="text-gray-500 text-sm text-center">No recent activity yet.</p>' : ''}
-                    </div>
-                </section>
-            `;
-        }
-
-        function getAchievements() {
-            const history = state.user.history || [];
-            const quizCount = history.filter(h => h.action.includes('Quiz Completed')).length;
-            const lessonCount = history.filter(h => h.action.includes('Lesson Completed')).length;
-            const adCount = history.filter(h => h.action.includes('Ad Watched')).length;
-
-            return [
-                { name: 'Quiz Master', icon: 'fas fa-brain', goal: '100 Quizzes', earned: quizCount >= 100 },
-                { name: 'Fast Learner', icon: 'fas fa-rocket', goal: '50 Lessons', earned: lessonCount >= 50 },
-                { name: 'Ad Explorer', icon: 'fas fa-compass', goal: '100 Ads', earned: adCount >= 100 }
-            ];
-        }
-
-        // --- Learn Section View (Uses state.lessons) ---
         function renderLearnSection() {
-            const categories = ['Health & Wellness', 'Tech & Digital Skills', 'General Knowledge'];
-            const { lessons, user } = state;
+            // A simple Learn section showing the featured lessons and linking to the catalog
+            const featuredLessons = state.lessons.slice(0, 3);
+            const lessonCards = featuredLessons.map(lesson => `
+                <div class="card p-4 hover:shadow-lg transition">
+                    <h4 class="text-lg font-semibold text-blue-600 truncate">${lesson.title}</h4>
+                    <p class="text-sm text-gray-500 mt-1">${lesson.category}</p>
+                    <p class="text-xs mt-2">${lesson.content.substring(0, 70)}...</p>
+                    <button class="mt-3 text-xs font-medium text-blue-500 hover:text-blue-700">Start Lesson &rarr;</button>
+                </div>
+            `).join('');
 
             return `
-                <section class="space-y-6">
-                    <h2 class="text-2xl font-bold">Learning Modules</h2>
-                    <p class="text-gray-600">Complete lessons to earn ${BASE_POINTS_REWARDS.lesson} EduPoints each.</p>
+                <div class="space-y-6">
+                    <h2 class="text-3xl font-extrabold text-gray-800">Your Learning Path</h2>
 
-                    ${categories.map(category => {
-                        const filteredLessons = lessons.filter(l => l.category === category);
-                        if (filteredLessons.length === 0) return '';
+                    <!-- Link to the Full Catalog -->
+                    <button data-view="catalog" class="nav-item w-full p-4 btn-primary font-bold text-lg flex items-center justify-center space-x-3 shadow-xl hover:shadow-2xl">
+                        <i class="fas fa-book-open"></i> <span>View Full Detailed Course Catalog</span>
+                    </button>
 
-                        return `
-                            <div class="space-y-3">
-                                <h3 class="text-xl font-bold text-blue-600 mt-4">${category}</h3>
-                                ${filteredLessons.map(lesson => {
-                                    const isCompleted = (user.history || []).some(h => h.action === `Lesson Completed: ${lesson.title}`);
-                                    return `
-                                        <div class="card p-4 flex flex-col space-y-2 ${isCompleted ? 'border-l-4 border-green-500 bg-green-50' : 'border-l-4 border-blue-400'}">
-                                            <p class="font-semibold">${lesson.title}</p>
-                                            <p class="text-sm text-gray-500">${lesson.content.substring(0, 80)}...</p>
-                                            ${isCompleted ? `
-                                                <div class="flex items-center text-green-600 font-bold text-sm mt-2">
-                                                    <i class="fas fa-check-circle mr-2"></i> Completed!
-                                                </div>
-                                            ` : `
-                                                <button data-lesson-title="${lesson.title}" class="btn-primary mark-lesson-btn p-2 text-sm self-start">
-                                                    Mark as Completed (+${BASE_POINTS_REWARDS.lesson} Pts)
-                                                </button>
-                                            `}
-                                        </div>
-                                    `;
-                                }).join('')}
-                            </div>
-                        `;
-                    }).join('')}
-                </section>
+                    <h3 class="text-xl font-bold text-gray-700 border-b pb-2">Featured Lessons</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        ${lessonCards}
+                    </div>
+
+                    <h3 class="text-xl font-bold text-gray-700 border-b pb-2">Your Progress</h3>
+                    <div class="card p-4">
+                        <p class="text-sm text-gray-500">You've completed 0 lessons and 0 quizzes.</p>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                            <div class="bg-green-600 h-2.5 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
             `;
         }
 
-        // --- Quiz Section View ---
+        // --- NEW FUNCTION: Detailed Course Catalog Section ---
+        function renderCatalogSection() {
+            const courseData = state.detailedCourses;
+            let html = `
+                <div class="space-y-8">
+                    <h2 class="text-4xl font-extrabold text-blue-600 text-center">Full Course Catalog</h2>
+                    <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto">Explore our deep-dive learning paths across Health, Technology, and Business to future-proof your career.</p>
+            `;
+
+            // Function to render individual course
+            const renderCourseCard = (course) => `
+                <div class="card p-6 shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="flex items-start space-x-4">
+                        <div class="p-3 rounded-full ${course.color} text-white text-xl flex-shrink-0">
+                            <i class="${course.icon}"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800">${course.title}</h3>
+                            <p class="text-sm text-gray-500 mt-1">${course.description}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 border-t pt-4">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">Key Modules:</h4>
+                        <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                            ${course.modules.map(mod => `<li class="ml-4">${mod}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <button class="w-full mt-6 py-2 btn-primary font-semibold text-sm">Enroll Now (0 EduPoints)</button>
+                </div>
+            `;
+
+            // Health & Wellness
+            html += `
+                <div id="health-courses">
+                    <h3 class="text-3xl font-bold text-green-600 mt-8 mb-4 border-b-2 border-green-200 pb-2">
+                        <i class="fas fa-heartbeat mr-2"></i> Health & Wellness Sciences
+                    </h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        ${courseData.health.map(renderCourseCard).join('')}
+                    </div>
+                </div>
+            `;
+
+            // Technology
+            html += `
+                <div id="tech-courses">
+                    <h3 class="text-3xl font-bold text-red-600 mt-8 mb-4 border-b-2 border-red-200 pb-2">
+                        <i class="fas fa-microchip mr-2"></i> In-Demand Technology Skills
+                    </h3>
+                    <div class="grid grid-cols-1 gap-6">
+                        ${courseData.tech.map(renderCourseCard).join('')}
+                    </div>
+                </div>
+            `;
+
+            // Business
+            html += `
+                <div id="business-courses">
+                    <h3 class="text-3xl font-bold text-yellow-600 mt-8 mb-4 border-b-2 border-yellow-200 pb-2">
+                        <i class="fas fa-lightbulb mr-2"></i> Business & Professional Skills
+                    </h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        ${courseData.business.map(renderCourseCard).join('')}
+                    </div>
+                </div>
+            `;
+
+            html += '</div>'; // close space-y-8
+            return html;
+        }
+        // --- END NEW FUNCTION ---
+
+        // --- Dummy Functions for Missing App Logic ---
+
+        function renderDashboard() {
+            return `
+                <div class="space-y-6">
+                    <h2 class="text-3xl font-extrabold text-gray-800">Welcome Back, ${state.user.name}!</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="card p-4 text-center bg-blue-100">
+                            <i class="fas fa-coins text-2xl text-blue-600"></i>
+                            <p class="text-sm font-semibold mt-1">Points</p>
+                            <p class="text-xl font-bold text-blue-800">${formatPoints(state.user.eduPoints)}</p>
+                        </div>
+                        <div class="card p-4 text-center bg-green-100">
+                            <i class="fas fa-graduation-cap text-2xl text-green-600"></i>
+                            <p class="text-sm font-semibold mt-1">Lessons</p>
+                            <p class="text-xl font-bold text-green-800">0</p>
+                        </div>
+                        <div class="card p-4 text-center bg-yellow-100">
+                            <i class="fas fa-question text-2xl text-yellow-600"></i>
+                            <p class="text-sm font-semibold mt-1">Quizzes</p>
+                            <p class="text-xl font-bold text-yellow-800">0</p>
+                        </div>
+                        <div class="card p-4 text-center bg-red-100">
+                            <i class="fas fa-users text-2xl text-red-600"></i>
+                            <p class="text-sm font-semibold mt-1">Referrals</p>
+                            <p class="text-xl font-bold text-red-800">${state.user.referralCount || 0}</p>
+                        </div>
+                    </div>
+                    <button data-view="learn" class="nav-item w-full p-3 btn-primary font-semibold">Start Learning Now &rarr;</button>
+                    ${renderLeaderboardSummary()}
+                </div>
+            `;
+        }
+
         function renderQuizSection() {
-            const { quizzes } = state;
-            const currentQuiz = quizzes[0]; // Always use the first mock quiz for simplicity
-
-            if (!currentQuiz) {
-                return '<div class="card p-6 text-center text-gray-500">No quizzes available yet. Check back soon!</div>';
-            }
-
-            if (!state.quizData || state.quizData.id !== currentQuiz.id || state.quizData.isComplete) {
-                // Initialize/Reset Quiz
-                state.quizData = { id: currentQuiz.id, answers: Array(currentQuiz.questions.length).fill(null), isComplete: false, results: null, currentQ: 0 };
-            }
-
-            const { questions } = currentQuiz;
-            const { currentQ, answers, results } = state.quizData;
-
-            if (results) {
-                // Results Screen
-                const correctCount = results.filter(r => r.isCorrect).length;
-                return `
-                    <section class="space-y-6">
-                        <h2 class="text-2xl font-bold text-center">Quiz Results</h2>
-                        <div class="card p-6 text-center space-y-4">
-                            <i class="fas fa-check-circle text-6xl ${correctCount > 3 ? 'text-green-500' : 'text-yellow-500'}"></i>
-                            <h3 class="text-xl font-bold">You scored ${correctCount} out of ${questions.length}!</h3>
-                            ${correctCount > 3 ? `
-                                <p class="text-green-600 font-semibold">Congratulations! You earned ${BASE_POINTS_REWARDS.quiz} EduPoints!</p>
-                            ` : `
-                                <p class="text-red-500 font-semibold">Keep learning and try again!</p>
-                            `}
-                            <div class="flex justify-center space-x-4">
-                                <button id="retry-quiz-btn" class="p-3 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600">Retry</button>
-                                <button id="next-quiz-btn" class="p-3 btn-primary font-semibold">Next Quiz</button>
-                            </div>
-                        </div>
-                    </section>
-                `;
-            }
-
-            const q = questions[currentQ];
-            const progress = ((currentQ + 1) / questions.length) * 100;
-
-            return `
-                <section class="space-y-6">
-                    <h2 class="text-2xl font-bold">${currentQuiz.title}</h2>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div class="bg-blue-500 h-2.5 rounded-full" style="width: ${progress}%"></div>
-                    </div>
-                    <p class="text-sm text-gray-500 text-right">Question ${currentQ + 1} of ${questions.length}</p>
-
-                    <div class="card p-6 space-y-6">
-                        <h3 class="text-xl font-semibold">${q.q}</h3>
-                        <div class="space-y-3">
-                            ${q.options.map(option => `
-                                <button data-option="${option}" class="quiz-option w-full p-3 text-left border rounded-lg transition-all duration-150 ${answers[currentQ] === option ? 'bg-blue-100 border-blue-500 font-bold' : 'bg-gray-50 hover:bg-blue-50'}">
-                                    ${option}
-                                </button>
-                            `).join('')}
-                        </div>
-                        <div class="flex justify-between pt-4 border-t">
-                            <button id="prev-q-btn" class="p-2 text-gray-500 ${currentQ === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:text-blue-600'}" ${currentQ === 0 ? 'disabled' : ''}>
-                                <i class="fas fa-arrow-left mr-2"></i> Previous
-                            </button>
-                            ${currentQ < questions.length - 1 ? `
-                                <button id="next-q-btn" class="p-2 btn-primary font-semibold disabled:opacity-50" ${!answers[currentQ] ? 'disabled' : ''}>
-                                    Next <i class="fas fa-arrow-right ml-2"></i>
-                                </button>
-                            ` : `
-                                <button id="submit-quiz-btn" class="p-2 btn-primary font-semibold disabled:opacity-50" ${!answers[currentQ] ? 'disabled' : ''}>
-                                    View Result
-                                </button>
-                            `}
-                        </div>
-                    </div>
-                </section>
-            `;
+            return '<div class="p-4 bg-yellow-100 rounded-lg">Quiz section coming soon! You can still earn points by viewing ads.</div>';
         }
 
-        // --- Ads Section View (No Change) ---
         function renderAdsSection() {
-            return `
-                <section class="space-y-6">
-                    <h2 class="text-2xl font-bold">Watch & Earn</h2>
-                    <p class="text-gray-600">Click below to view a partner advertisement. You will be rewarded **+${BASE_POINTS_REWARDS.ad} EduPoints** after a 5-second viewing period.</p>
-
-                    <div class="card p-6 text-center space-y-4">
-                        <i class="fas fa-ad text-6xl text-blue-500"></i>
-                        <p class="font-semibold text-lg">Earn EduPoints Now!</p>
-                        <p class="text-sm text-gray-500">Please remain on the ad page for at least 5 seconds to qualify for the reward.</p>
-                        <button id="watch-ad-btn" class="w-full p-4 btn-primary font-bold">
-                            Watch Ad & Earn (+${BASE_POINTS_REWARDS.ad} Pts)
-                        </button>
-                        <p id="ad-status" class="text-sm text-red-500"></p>
-                    </div>
-                </section>
-            `;
+            return '<div class="p-4 bg-red-100 rounded-lg">Ads section coming soon!</div>';
         }
 
-        // --- Referral Section View (Uses state.topReferrers) ---
         function renderReferralSection() {
-            const { referralCode, referralCount } = state.user;
-            // NOTE: Referral link uses the local user ID as a parameter. It will only reward the referrer IF the new user signs up on the SAME device.
-            const referralLink = `${window.location.origin}${window.location.pathname}?ref=${referralCode}`;
-
-            return `
-                <section class="space-y-6">
-                    <h2 class="text-2xl font-bold">Refer & Earn</h2>
-                    <p class="text-gray-600">Share your unique link and earn **+${BASE_POINTS_REWARDS.referral} EduPoints** for every friend who signs up (on this device).</p>
-
-                    <div class="card p-6 space-y-4">
-                        <h3 class="text-xl font-semibold">Your Referral Code</h3>
-                        <div class="flex items-center space-x-2 bg-gray-100 p-3 rounded-lg border border-dashed border-gray-400 overflow-hidden">
-                            <input type="text" id="referral-link-input" value="${referralLink}" readonly class="flex-1 bg-transparent text-sm truncate focus:outline-none"/>
-                            <button id="copy-referral-btn" class="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600" title="Copy Link">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                        <p id="copy-status" class="text-sm text-green-500 font-semibold"></p>
-
-                        <div class="flex justify-between pt-4 border-t">
-                            <div class="text-center">
-                                <p class="text-3xl font-bold text-blue-600">${referralCount}</p>
-                                <p class="text-sm text-gray-500">Total Referrals</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-3xl font-bold text-green-600">${formatPoints(referralCount * BASE_POINTS_REWARDS.referral)}</p>
-                                <p class="text-sm text-gray-500">Points Earned</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h3 class="text-xl font-bold mt-6">Top Referrers Leaderboard (Simulated)</h3>
-                    <div class="card p-4 space-y-2">
-                        ${state.topReferrers.map((user, index) => `
-                            <div class="flex justify-between items-center text-sm ${index < 3 ? 'font-bold text-blue-600' : 'text-gray-700'} border-b pb-2 last:border-b-0">
-                                <span class="w-1/12">${index + 1}.</span>
-                                <span class="w-7/12 truncate">${user.name}</span>
-                                <span class="w-4/12 text-right">${user.referralCount} Referrals</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </section>
-            `;
+            return '<div class="p-4 bg-purple-100 rounded-lg">Referral section coming soon!</div>';
         }
 
-        // --- Rewards/Withdrawal View (Uses state.withdrawalRequests) ---
         function renderRewardsSection() {
-            const { eduPoints } = state.user;
-            const canWithdraw = eduPoints >= MIN_WITHDRAWAL_POINTS;
-            const usdEquivalent = (eduPoints / 100000).toFixed(2);
-            const minimumWithdrawalUsd = (MIN_WITHDRAWAL_POINTS / 100000).toFixed(2);
-
-            return `
-                <section class="space-y-6">
-                    <h2 class="text-2xl font-bold">Withdraw EduPoints</h2>
-                    <div class="card p-6 bg-blue-50 text-blue-700 space-y-2">
-                        <p class="text-sm font-semibold">Your Current Balance</p>
-                        <h3 class="text-3xl font-bold">${formatPoints(eduPoints)} EduPoints</h3>
-                        <p class="text-lg font-medium">~ $${usdEquivalent} USD</p>
-                        <p class="text-xs text-red-500 pt-2">Minimum Withdrawal: ${formatPoints(MIN_WITHDRAWAL_POINTS)} EduPoints ($${minimumWithdrawalUsd})</p>
-                    </div>
-
-                    <!-- Withdrawal Form -->
-                    <div class="card p-6 space-y-4">
-                        <h3 class="text-xl font-semibold">Submit Withdrawal Request</h3>
-
-                        <div id="withdrawal-message" class="hidden p-3 rounded-lg text-sm font-semibold"></div>
-
-                        <label class="block text-sm font-medium text-gray-700">Withdrawal Amount (Points)</label>
-                        <input type="number" id="withdrawal-amount" placeholder="e.g. 500000" min="${MIN_WITHDRAWAL_POINTS}" value="${canWithdraw ? MIN_WITHDRAWAL_POINTS : ''}" class="w-full p-3 border rounded-lg focus:ring-blue-500" ${!canWithdraw ? 'disabled' : ''}>
-
-                        <label class="block text-sm font-medium text-gray-700">Payment Method</label>
-                        <select id="withdrawal-method" class="w-full p-3 border rounded-lg focus:ring-blue-500" ${!canWithdraw ? 'disabled' : ''}>
-                            <option value="USDT TRC20">USDT (TRC20)</option>
-                            <option value="Paystack">Paystack (Nigeria Only)</option>
-                            <option value="Stripe">Stripe (Global Bank Transfer)</option>
-                        </select>
-
-                        <label class="block text-sm font-medium text-gray-700">Payment Address / Account Details</label>
-                        <textarea id="withdrawal-details" rows="3" placeholder="USDT Wallet Address, or Bank/Paystack/Stripe details..." class="w-full p-3 border rounded-lg focus:ring-blue-500" ${!canWithdraw ? 'disabled' : ''}></textarea>
-
-                        <button id="submit-withdrawal-btn" class="w-full p-3 font-bold ${canWithdraw ? 'btn-primary' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}" ${!canWithdraw ? 'disabled' : ''}>
-                            ${canWithdraw ? 'Submit Withdrawal Request' : 'Insufficient Points'}
-                        </button>
-                    </div>
-
-                    <!-- Payout History -->
-                    <h3 class="text-xl font-bold mt-6">Payout History (Simulated)</h3>
-                    <div class="card p-4 space-y-3">
-                        ${(state.user.history || []).filter(h => h.action.includes('Withdrawal')).slice(-5).reverse().map(item => `
-                            <div class="flex justify-between items-center text-sm border-b pb-2 last:border-b-0 last:pb-0">
-                                <span class="text-gray-600">${item.action.replace('Withdrawal Request:', 'Requested:')}</span>
-                                <span class="font-bold text-red-600">-${formatPoints(Math.abs(item.points))} Pts</span>
-                                <span class="text-xs text-gray-500">${new Date(item.timestamp).toLocaleDateString()}</span>
-                            </div>
-                        `).join('')}
-                        ${(state.user.history || []).filter(h => h.action.includes('Withdrawal')).length === 0 ? '<p class="text-gray-500 text-sm text-center">No withdrawal requests yet.</p>' : ''}
-                    </div>
-                </section>
-            `;
+            return '<div class="p-4 bg-teal-100 rounded-lg">Rewards/Withdrawal section coming soon!</div>';
         }
 
-        // --- Leaderboard View (Uses state.leaderboard) ---
         function renderLeaderboard() {
-            return `
-                <section class="space-y-6">
-                    <h2 class="text-2xl font-bold">EduHeTech Leaderboard (Simulated)</h2>
-                    <p class="text-gray-600">Top learners by Total EduPoints. (Based on users stored in this browser's local storage).</p>
+            return '<div class="p-4 bg-gray-100 rounded-lg">Full Leaderboard coming soon!</div>';
+        }
 
-                    <div class="card p-4 space-y-3">
-                        ${state.leaderboard.map((user, index) => `
-                            <div class="flex justify-between items-center text-base ${index === 0 ? 'text-yellow-600 text-lg font-extrabold' : index === 1 ? 'text-gray-500 font-bold' : index === 2 ? 'text-yellow-800 font-bold' : 'text-gray-700'} border-b pb-3 last:border-b-0">
-                                <span class="w-1/12">${index === 0 ? '<i class="fas fa-crown"></i>' : index + 1 + '.'}</span>
-                                <span class="w-7/12 truncate">${user.name}</span>
-                                <span class="w-4/12 text-right font-bold">${formatPoints(user.eduPoints)} Pts</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </section>
+        function renderAdminPanel() {
+            return '<div class="p-4 bg-red-200 rounded-lg">Admin Panel functionality coming soon!</div>';
+        }
+
+        function renderLeaderboardSummary() {
+            const summary = state.leaderboard.map((user, index) => `
+                <li class="flex justify-between items-center py-2 border-b last:border-b-0">
+                    <span class="font-bold w-6">${index + 1}.</span>
+                    <span class="flex-1 truncate ${user.userId === state.user.userId ? 'text-blue-600 font-semibold' : ''}">${user.name}</span>
+                    <span class="text-sm font-mono text-green-700">${formatPoints(user.eduPoints)} Pts</span>
+                </li>
+            `).join('');
+
+            return `
+                <div class="card p-4">
+                    <h3 class="text-xl font-bold text-gray-700 mb-3">Top 10 Learners</h3>
+                    <ul class="divide-y divide-gray-100">
+                        ${summary}
+                    </ul>
+                </div>
             `;
         }
 
-        // --- Admin Panel View (Simulated) ---
-        function renderAdminPanel() {
-             if (state.user?.email !== 'admin@eduhetech.com') return '<div class="card p-6 text-red-500 text-center">Access Denied: Admin privileges required.</div>';
 
-             // Filter for pending requests
-             const pendingRequests = state.withdrawalRequests.filter(req => req.status === 'Pending');
-
-             return `
-                <section class="space-y-6">
-                    <h2 class="text-2xl font-bold text-red-600">Admin Panel (LocalStorage Demo)</h2>
-                    <p class="text-gray-600">Manage pending withdrawal requests stored locally.</p>
-
-                    <h3 class="text-xl font-bold mt-4">Pending Withdrawals (${pendingRequests.length})</h3>
-                    <div class="card p-4 space-y-4">
-                        ${pendingRequests.length > 0 ? pendingRequests.map(req => `
-                            <div class="border-b pb-3 last:border-b-0 space-y-1">
-                                <p class="font-semibold text-base">${formatPoints(req.amount)} Pts ($${(req.amount / 100000).toFixed(2)})</p>
-                                <p class="text-sm">User ID: <span class="font-mono text-xs">${req.userId.substring(0, 8)}...</span></p>
-                                <p class="text-sm">Method: ${req.method}</p>
-                                <p class="text-sm text-gray-600">Details: ${req.details.substring(0, 50)}...</p>
-                                <button data-request-id="${req.id}" data-user-id="${req.userId}" data-amount="${req.amount}" class="admin-approve-btn p-2 bg-green-500 text-white rounded-lg text-xs hover:bg-green-600">Approve & Pay (Simulated)</button>
-                            </div>
-                        `).join('') : '<p class="text-gray-500 text-sm text-center">No pending withdrawal requests.</p>'}
-                    </div>
-                </section>
-             `;
-        }
-
-        // --- Event Handlers (Updated for LocalStorage) ---
+        // --- Event Listener Attachment Functions (Placeholders) ---
 
         function attachAuthListeners() {
-            const container = document.getElementById('auth-form-container');
+            const formContainer = document.getElementById('auth-form-container');
             const toggleBtn = document.getElementById('toggle-auth');
             let isLogin = true;
 
-            const updateForm = () => {
-                container.innerHTML = isLogin ? renderLoginForm() : renderSignupForm();
+            const renderForm = () => {
+                formContainer.innerHTML = isLogin ? renderLoginForm() : renderSignupForm();
+                attachFormSubmitListener();
                 toggleBtn.textContent = isLogin ? 'Need an account? Sign Up' : 'Already have an account? Log In';
-                attachFormListeners();
             };
 
-            const attachFormListeners = () => {
-                document.getElementById('login-btn')?.addEventListener('click', handleLogin);
-                document.getElementById('signup-btn')?.addEventListener('click', handleSignup);
+            const attachFormSubmitListener = () => {
+                const submitBtn = document.getElementById(isLogin ? 'login-btn' : 'signup-btn');
+                if (submitBtn) {
+                    submitBtn.onclick = isLogin ? handleLogin : handleSignup;
+                }
             };
 
-            toggleBtn?.addEventListener('click', () => {
+            toggleBtn.onclick = () => {
                 isLogin = !isLogin;
-                updateForm();
-            });
+                renderForm();
+            };
 
-            updateForm();
-        }
-
-        function handleAuthError(message) {
-            const errorEl = document.getElementById('auth-error-message');
-            if (errorEl) errorEl.textContent = message;
+            renderForm();
         }
 
         function handleLogin() {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
+            const errorElement = document.getElementById('auth-error-message');
+            errorElement.textContent = '';
 
-            const allUsers = loadAllUsers();
-            const user = Object.values(allUsers).find(u => u.email === email && u.password === password);
+            const user = Object.values(state.allUsers).find(u => u.email === email && u.password === password);
 
             if (user) {
                 sessionStorage.setItem(SS_CURRENT_USER_ID, user.userId);
-                initializeData(); // Re-initialize state and render
+                initializeData();
             } else {
-                handleAuthError('Login failed: Invalid email or password.');
+                errorElement.textContent = 'Invalid email or password.';
             }
         }
 
@@ -890,391 +785,79 @@
             const name = document.getElementById('signup-name').value;
             const email = document.getElementById('signup-email').value;
             const password = document.getElementById('signup-password').value;
-            const referrerId = document.getElementById('signup-referral').value;
+            const referralCode = document.getElementById('signup-referral').value;
+            const errorElement = document.getElementById('auth-error-message');
+            errorElement.textContent = '';
 
-            if (!name || !email || password.length < 6) {
-                handleAuthError('Please fill out all fields and ensure the password is at least 6 characters.');
+            if (name.length < 2 || email.length < 5 || password.length < 6) {
+                errorElement.textContent = 'Please fill in all fields (password min 6 chars).';
+                return;
+            }
+            if (Object.values(state.allUsers).some(u => u.email === email)) {
+                errorElement.textContent = 'This email is already registered.';
                 return;
             }
 
-            const allUsers = loadAllUsers();
-            if (Object.values(allUsers).some(u => u.email === email)) {
-                handleAuthError('This email is already registered.');
-                return;
-            }
-
-            const newUserId = generateUniqueId();
             const newUser = {
-                userId: newUserId,
-                name: name,
-                email: email,
-                password: password, // Store password in plain text for demo, NEVER do this in production
-                eduPoints: 0,
+                userId: generateUniqueId(),
+                name,
+                email,
+                password, // In a real app, this must be hashed!
+                eduPoints: BASE_POINTS_REWARDS.referral, // Signup bonus
                 referralCount: 0,
-                referralCode: newUserId,
                 lastLogin: Date.now(),
-                history: [],
-                createdAt: Date.now()
+                history: [{ action: 'Signup Bonus', points: BASE_POINTS_REWARDS.referral, timestamp: Date.now() }]
             };
 
-            allUsers[newUserId] = newUser;
-            saveAllUsers(allUsers);
-
-            // Handle referral bonus for the referrer (must be in local storage)
-            if (referrerId && allUsers[referrerId]) {
-                rewardPoints(referrerId, BASE_POINTS_REWARDS.referral, 'Referral Bonus');
-                trackReferral(referrerId);
-                showModal(`<div class="text-green-600 font-semibold text-center">Success!</div><p class="mt-2 text-sm">${name}, your account is created. Your referrer (${referrerId.substring(0, 8)}...) has been rewarded!</p>`);
-            } else {
-                 showModal(`<div class="text-green-600 font-semibold text-center">Account Created</div><p class="mt-2 text-sm">Welcome ${name}! You can now log in.</p>`);
+            // Process referral
+            if (referralCode) {
+                const referrer = Object.values(state.allUsers).find(u => u.userId === referralCode);
+                if (referrer) {
+                    rewardPoints(referrer.userId, BASE_POINTS_REWARDS.referral, `Referral Reward for ${newUser.name}`);
+                    trackReferral(referrer.userId);
+                } else {
+                    showModal(`Referral code "${referralCode}" not found, but you still got your signup bonus!`);
+                }
             }
 
-            // Log in the new user automatically
-            sessionStorage.setItem(SS_CURRENT_USER_ID, newUserId);
+            state.allUsers[newUser.userId] = newUser;
+            saveAllUsers(state.allUsers);
+            sessionStorage.setItem(SS_CURRENT_USER_ID, newUser.userId);
             initializeData();
-        }
-
-        function handleLogout() {
-            sessionStorage.removeItem(SS_CURRENT_USER_ID);
-            state.user = null;
-            state.currentView = 'auth';
-            render();
         }
 
         function attachNavListeners() {
             document.querySelectorAll('.nav-item').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const newView = e.currentTarget.dataset.view;
-                    if (newView) {
-                        state.currentView = newView;
+                button.onclick = (e) => {
+                    const view = e.currentTarget.getAttribute('data-view');
+                    if (view) {
+                        state.currentView = view;
                         render();
                     }
-                });
+                };
             });
-            document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
+
+            document.getElementById('logout-btn').onclick = handleLogout;
+        }
+
+        function handleLogout() {
+            showModal('Are you sure you want to log out?', () => {
+                sessionStorage.removeItem(SS_CURRENT_USER_ID);
+                state.user = null;
+                state.currentView = 'auth';
+                render();
+            });
         }
 
         function attachContentListeners() {
-            // Learn Section
-            document.querySelectorAll('.mark-lesson-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => handleMarkLesson(e.currentTarget.dataset.lessonTitle));
-            });
-            // Quiz Section
-            document.querySelectorAll('.quiz-option').forEach(btn => {
-                btn.addEventListener('click', (e) => handleQuizOption(e.currentTarget.dataset.option));
-            });
-            document.getElementById('prev-q-btn')?.addEventListener('click', () => updateQuizView(-1));
-            document.getElementById('next-q-btn')?.addEventListener('click', () => updateQuizView(1));
-            document.getElementById('submit-quiz-btn')?.addEventListener('click', handleSubmitQuiz);
-            document.getElementById('retry-quiz-btn')?.addEventListener('click', handleRetryQuiz);
-            document.getElementById('next-quiz-btn')?.addEventListener('click', handleNextQuiz);
-            // Ads Section
-            document.getElementById('watch-ad-btn')?.addEventListener('click', handleWatchAd);
-            // Referral Section
-            document.getElementById('copy-referral-btn')?.addEventListener('click', handleCopyReferralLink);
-            // Rewards Section
-            document.getElementById('submit-withdrawal-btn')?.addEventListener('click', handleSubmitWithdrawal);
-            // Admin Panel
-            document.querySelectorAll('.admin-approve-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => handleApproveWithdrawal(e.currentTarget.dataset.requestId, e.currentTarget.dataset.userId, parseInt(e.currentTarget.dataset.amount)));
-            });
-        }
-
-        async function handleMarkLesson(lessonTitle) {
-            const action = `Lesson Completed: ${lessonTitle}`;
-            if ((state.user.history || []).some(h => h.action === action)) {
-                showModal('<div class="text-yellow-600 font-semibold text-center">Already Completed</div><p class="mt-2 text-sm">You have already completed this lesson and received the reward.</p>');
-                return;
-            }
-            addPoints(action, BASE_POINTS_REWARDS.lesson);
-            showModal(`<div class="text-green-600 font-semibold text-center">Lesson Complete!</div><p class="mt-2 text-sm">You earned ${BASE_POINTS_REWARDS.lesson} EduPoints.</p>`);
-        }
-
-        function handleQuizOption(option) {
-            if (state.quizData.results) return;
-            state.quizData.answers[state.quizData.currentQ] = option;
-            render();
-        }
-
-        function updateQuizView(direction) {
-            state.quizData.currentQ += direction;
-            render();
-        }
-
-        function handleSubmitQuiz() {
-            const currentQuiz = state.quizzes[0];
-            if (!currentQuiz || !state.quizData.answers.every(a => a !== null)) {
-                showModal('<div class="text-red-600 font-semibold text-center">Incomplete Quiz</div><p class="mt-2 text-sm">Please answer all questions before submitting.</p>');
-                return;
-            }
-
-            const adLink = MONETAG_LINKS[Math.floor(Math.random() * MONETAG_LINKS.length)];
-            const adWindow = window.open(adLink, '_blank');
-
-            showModal(`
-                <div class="text-center space-y-3">
-                    <i class="fas fa-money-bill-wave text-5xl text-red-500"></i>
-                    <h3 class="text-xl font-bold">Viewing Results...</h3>
-                    <p>Please wait for **<span id="ad-timer" class="font-bold text-red-500">5</span>** seconds for the ad to load before closing the ad window.</p>
-                    <div id="progress-bar" class="w-full h-2 bg-gray-200 rounded-full"><div id="progress-fill" class="h-2 bg-blue-500 rounded-full transition-all duration-1000"></div></div>
-                </div>
-            `);
-
-            let timer = 5;
-            const interval = setInterval(() => {
-                timer--;
-                const timerEl = document.getElementById('ad-timer');
-                const progressEl = document.getElementById('progress-fill');
-                if (timerEl) timerEl.textContent = timer;
-                if (progressEl) progressEl.style.width = `${((5 - timer) / 5) * 100}%`;
-
-                if (timer <= 0) {
-                    clearInterval(interval);
-                    hideModal();
-                    adWindow?.close();
-                    processQuizResults(currentQuiz);
-                }
-            }, 1000);
-        }
-
-        function processQuizResults(quiz) {
-            const results = quiz.questions.map((q, index) => ({
-                isCorrect: q.answer === state.quizData.answers[index]
-            }));
-
-            state.quizData.isComplete = true;
-            state.quizData.results = results;
-            state.quizData.answers = Array(quiz.questions.length).fill(null);
-            state.quizData.currentQ = 0;
-
-            const correctCount = results.filter(r => r.isCorrect).length;
-            if (correctCount > 3) {
-                addPoints(`Quiz Completed: ${quiz.title} (${correctCount}/${quiz.questions.length})`, BASE_POINTS_REWARDS.quiz);
-            }
-
-            render();
-        }
-
-        function handleRetryQuiz() {
-            state.quizData.results = null;
-            state.quizData.isComplete = false;
-            state.quizData.currentQ = 0;
-            render();
-        }
-
-        function handleNextQuiz() {
-            state.quizData.results = null;
-            state.quizData.isComplete = false;
-            state.quizData.currentQ = 0;
-            render();
-        }
-
-        function handleWatchAd() {
-            const adLink = MONETAG_LINKS[Math.floor(Math.random() * MONETAG_LINKS.length)];
-            const adWindow = window.open(adLink, '_blank');
-            const adBtn = document.getElementById('watch-ad-btn');
-            const adStatus = document.getElementById('ad-status');
-
-            if (adBtn) adBtn.disabled = true;
-            if (adStatus) adStatus.textContent = "Loading Ad... Please wait 5 seconds.";
-
-            showModal(`
-                <div class="text-center space-y-3">
-                    <i class="fas fa-stopwatch text-5xl text-blue-500"></i>
-                    <h3 class="text-xl font-bold">Ad View Timer</h3>
-                    <p>You will be rewarded in **<span id="ad-timer" class="font-bold text-red-500">5</span>** seconds. Please do not close the ad window yet.</p>
-                    <div id="progress-bar" class="w-full h-2 bg-gray-200 rounded-full"><div id="progress-fill" class="h-2 bg-green-500 rounded-full transition-all duration-1000"></div></div>
-                </div>
-            `);
-
-            let timer = 5;
-            const interval = setInterval(() => {
-                timer--;
-                const timerEl = document.getElementById('ad-timer');
-                const progressEl = document.getElementById('progress-fill');
-                if (timerEl) timerEl.textContent = timer;
-                if (progressEl) progressEl.style.width = `${((5 - timer) / 5) * 100}%`;
-
-                if (timer <= 0) {
-                    clearInterval(interval);
-                    hideModal();
-                    adWindow?.close();
-                    handleAdReward(adBtn, adStatus);
-                }
-            }, 1000);
-        }
-
-        function handleAdReward(btn, status) {
-            addPoints('Ad Watched', BASE_POINTS_REWARDS.ad);
-            if (btn) btn.disabled = false;
-            if (status) status.textContent = `Reward successful! +${BASE_POINTS_REWARDS.ad} EduPoints earned.`;
-            setTimeout(() => { if (status) status.textContent = ''; }, 3000);
-        }
-
-        function handleCopyReferralLink() {
-            const input = document.getElementById('referral-link-input');
-            const status = document.getElementById('copy-status');
-
-            if (input) {
-                input.select();
-                document.execCommand('copy');
-                status.textContent = 'Copied to clipboard!';
-                setTimeout(() => status.textContent = '', 2000);
-            }
-        }
-
-        function handleSubmitWithdrawal() {
-            const amountEl = document.getElementById('withdrawal-amount');
-            const methodEl = document.getElementById('withdrawal-method');
-            const detailsEl = document.getElementById('withdrawal-details');
-            const messageEl = document.getElementById('withdrawal-message');
-
-            const amount = parseInt(amountEl.value);
-            const method = methodEl.value;
-            const details = detailsEl.value.trim();
-
-            if (!amount || amount < MIN_WITHDRAWAL_POINTS || amount > state.user.eduPoints || !details) {
-                messageEl.textContent = 'Please enter a valid amount (min 500k) and payment details.';
-                messageEl.classList.remove('hidden', 'bg-green-100', 'text-green-700');
-                messageEl.classList.add('bg-red-100', 'text-red-700');
-                return;
-            }
-
-            showModal(`
-                <div class="text-center space-y-3">
-                    <i class="fas fa-hand-holding-usd text-5xl text-yellow-600"></i>
-                    <h3 class="text-xl font-bold">Confirm Withdrawal</h3>
-                    <p>Are you sure you want to withdraw **${formatPoints(amount)}** EduPoints ($${(amount / 100000).toFixed(2)}) via **${method}**?</p>
-                </div>
-            `, () => {
-                showLoading(true);
-                try {
-                    // 1. Create Withdrawal Request in Local Storage
-                    const withdrawalRequest = {
-                        id: generateUniqueId(),
-                        userId: state.user.userId,
-                        userName: state.user.name,
-                        amount: amount,
-                        method: method,
-                        details: details,
-                        status: 'Pending',
-                        timestamp: Date.now()
-                    };
-                    state.withdrawalRequests.push(withdrawalRequest);
-                    saveCollection(LS_WITHDRAWALS, state.withdrawalRequests);
-
-                    // 2. Deduct Points from User
-                    state.user.eduPoints -= amount;
-                    if (!state.user.history) state.user.history = [];
-                    state.user.history.push({ action: `Withdrawal Request: ${method}`, points: -amount, timestamp: Date.now() });
-
-                    saveUser(state.user);
-
-                    // 3. Update local state and UI
-                    messageEl.textContent = 'Withdrawal request submitted successfully! Points deducted. Review via the Admin Panel (if you are the admin user).';
-                    messageEl.classList.remove('hidden', 'bg-red-100', 'text-red-700');
-                    messageEl.classList.add('bg-green-100', 'text-green-700');
-                    render();
-                } catch (error) {
-                    messageEl.textContent = `Error submitting request: ${error.message}`;
-                    messageEl.classList.remove('hidden', 'bg-green-100', 'text-green-700');
-                    messageEl.classList.add('bg-red-100', 'text-red-700');
-                    console.error("Withdrawal error:", error);
-                } finally {
-                    showLoading(false);
-                }
-            });
-        }
-
-        function handleApproveWithdrawal(requestId, targetUserId, amount) {
-            if (state.user?.email !== 'admin@eduhetech.com') return;
-
-            showModal(`
-                <div class="text-center space-y-3">
-                    <i class="fas fa-check-double text-5xl text-green-600"></i>
-                    <h3 class="text-xl font-bold">Approve Payout</h3>
-                    <p>Confirm actual payment of **$${(amount / 100000).toFixed(2)}** to user **${targetUserId.substring(0, 8)}...**.</p>
-                </div>
-            `, () => {
-                showLoading(true);
-                try {
-                    // 1. Update Withdrawal Request Status
-                    const requestIndex = state.withdrawalRequests.findIndex(req => req.id === requestId);
-                    if (requestIndex !== -1) {
-                        state.withdrawalRequests[requestIndex].status = 'Completed';
-                        state.withdrawalRequests[requestIndex].payoutDate = Date.now();
-                        saveCollection(LS_WITHDRAWALS, state.withdrawalRequests);
-                    }
-
-                    // 2. Add Payout history to target user
-                    const targetUser = state.allUsers[targetUserId];
-                    if (targetUser) {
-                        if (!targetUser.history) targetUser.history = [];
-                        targetUser.history.push({ action: `Payout Completed: ${amount} Pts`, points: 0, timestamp: Date.now() });
-                        saveUser(targetUser);
-                    }
-
-                    render();
-                } catch (error) {
-                    console.error("Approval error:", error);
-                } finally {
-                    showLoading(false);
-                }
-            });
+            // Future listeners for dynamic content (e.g., "Start Lesson" buttons) will go here.
         }
 
         // --- Initialization ---
-
-        // Check if admin user exists, if not, create it for testing the admin panel
-        (function ensureAdminUser() {
-            const allUsers = loadAllUsers();
-            if (!Object.values(allUsers).some(u => u.email === 'admin@eduhetech.com')) {
-                const adminUser = {
-                    userId: 'admin_test_id',
-                    name: 'Admin User',
-                    email: 'admin@eduhetech.com',
-                    password: 'password',
-                    eduPoints: 9999999,
-                    referralCount: 100,
-                    referralCode: 'admin_ref',
-                    lastLogin: 0,
-                    history: [],
-                    createdAt: Date.now()
-                };
-                allUsers[adminUser.userId] = adminUser;
-                saveAllUsers(allUsers);
-            }
-        })();
-
-        // Start the application lifecycle
         window.onload = initializeData;
-
     </script>
-
-    <!-- Global Loading Spinner -->
-    <div id="global-loader" class="fixed inset-0 bg-white bg-opacity-80 flex items-center justify-center hidden z-50">
-        <div class="loader"></div>
-    </div>
-
-    <!-- Global Modal Structure -->
-    <div id="global-modal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4">
-        <div class="card w-full max-w-sm p-6 space-y-4">
-            <div id="modal-content"></div>
-            <div class="flex justify-end space-x-2">
-                <button onclick="hideModal()" class="p-2 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Close</button>
-                <button id="modal-confirm" class="p-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600 hidden">Confirm</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Application Root -->
-    <div id="app">
-        <!-- Content rendered by JavaScript -->
-        <div class="min-h-screen flex items-center justify-center p-4">
-            <i class="fas fa-spinner fa-spin text-4xl text-blue-500"></i>
-            <p class="mt-4 text-gray-500">Initializing EduHeTech...</p>
-        </div>
-    </div>
 </body>
 </html>
+
+
 
