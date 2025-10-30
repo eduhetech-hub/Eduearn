@@ -5,65 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduHeTech - Learn & Earn</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         :root {
             --primary-color: #3b82f6; /* Blue 500 */
-            --primary-dark: #1d4ed8; /* Blue 700 */
-            --secondary-color: #10b981; /* Green 500 */
+            --secondary-color: #1d4ed8; /* Blue 700 */
+            --success-color: #10b981; /* Green 500 */
             --warning-color: #f59e0b; /* Amber 500 */
             --danger-color: #ef4444; /* Red 500 */
-            --success-color: #10b981; /* Green 500 */
         }
-        
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* Lighter gray background */
+            background-color: #f3f4f6; /* Light gray background */
             min-height: 100vh;
-            color: #1e293b;
         }
-        
         .scrollable-content {
             max-height: calc(100vh - 80px); /* Adjust based on header height */
             overflow-y: auto;
         }
-        
         .btn-primary {
             background-color: var(--primary-color);
-            border-radius: 0.75rem;
+            border-radius: 0.5rem;
             color: white;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            transition: transform 0.1s ease;
         }
-        
         .btn-primary:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            background-color: var(--secondary-color);
+            transform: translateY(-1px);
         }
-        
         .card {
             background-color: white;
             border-radius: 1rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            border: 1px solid #e2e8f0;
-            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
         }
-        
-        .card:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        
         /* Custom modal overlay styling */
         .modal-overlay {
             background-color: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(3px);
             z-index: 50;
         }
-        
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid var(--primary-color);
@@ -72,7 +54,6 @@
             height: 20px;
             animation: spin 1s linear infinite;
         }
-        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -82,16 +63,13 @@
         .progress-ring {
             transform: rotate(-90deg);
         }
-        
         .streak-flame {
             animation: pulse 1.5s infinite alternate;
         }
-        
         @keyframes pulse {
             from { transform: scale(1); }
             to { transform: scale(1.1); }
         }
-        
         .notification-badge {
             position: absolute;
             top: -5px;
@@ -106,33 +84,26 @@
             align-items: center;
             justify-content: center;
         }
-        
         .achievement-badge {
             transition: transform 0.3s ease;
         }
-        
         .achievement-badge:hover {
             transform: scale(1.1);
         }
-        
         .fade-in {
             animation: fadeIn 0.5s ease-in;
         }
-        
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
-        
         .slide-in {
             animation: slideIn 0.3s ease-out;
         }
-        
         @keyframes slideIn {
             from { transform: translateY(10px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
-        
         .course-content {
             max-height: 60vh;
             overflow-y: auto;
@@ -141,99 +112,13 @@
             border-radius: 0.5rem;
             margin-bottom: 1rem;
         }
-        
         .course-section {
             margin-bottom: 1.5rem;
             padding-bottom: 1.5rem;
             border-bottom: 1px solid #e5e7eb;
         }
-        
         .course-section:last-child {
             border-bottom: none;
-        }
-        
-        /* Enhanced gradient backgrounds */
-        .gradient-primary {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-        }
-        
-        .gradient-success {
-            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
-        }
-        
-        .gradient-warning {
-            background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
-        }
-        
-        /* Improved sidebar */
-        .sidebar-item {
-            transition: all 0.2s ease;
-            border-radius: 0.75rem;
-        }
-        
-        .sidebar-item:hover {
-            background-color: #f1f5f9;
-            transform: translateX(5px);
-        }
-        
-        .sidebar-item.active {
-            background-color: #eff6ff;
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-        
-        /* Enhanced mobile navigation */
-        .mobile-nav-item {
-            transition: all 0.2s ease;
-        }
-        
-        .mobile-nav-item.active {
-            color: var(--primary-color);
-        }
-        
-        /* Improved course cards */
-        .course-card {
-            transition: all 0.3s ease;
-        }
-        
-        .course-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        /* Enhanced progress bars */
-        .progress-bar {
-            transition: width 0.5s ease-in-out;
-        }
-        
-        /* Improved loading states */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-        
-        @keyframes loading {
-            0% {
-                background-position: 200% 0;
-            }
-            100% {
-                background-position: -200% 0;
-            }
-        }
-        
-        /* Enhanced quiz interface */
-        .quiz-option {
-            transition: all 0.2s ease;
-        }
-        
-        .quiz-option:hover {
-            background-color: #f8fafc;
-            transform: translateY(-2px);
-        }
-        
-        .quiz-option.selected {
-            background-color: #eff6ff;
-            border-color: var(--primary-color);
         }
     </style>
 </head>
@@ -242,11 +127,11 @@
     <!-- Global State and Data Management Scripts (LocalStorage) -->
     <script>
         // --- Local Storage Keys ---
-        const LS_USERS = 'eduhetech_users_v5'; // Updated version for enhanced features
-        const LS_WITHDRAWALS = 'eduhetech_withdrawals_v5';
-        const LS_LESSONS = 'eduhetech_lessons_v5';
-        const LS_QUIZZES = 'eduhetech_quizzes_v5';
-        const LS_ACHIEVEMENTS = 'eduhetech_achievements_v5';
+        const LS_USERS = 'eduhetech_users_v4'; // Updated version for new features
+        const LS_WITHDRAWALS = 'eduhetech_withdrawals_v4';
+        const LS_LESSONS = 'eduhetech_lessons_v4';
+        const LS_QUIZZES = 'eduhetech_quizzes_v4';
+        const LS_ACHIEVEMENTS = 'eduhetech_achievements_v4';
         const SS_CURRENT_USER_ID = 'eduhetech_current_user_id';
 
         // --- Constants ---
@@ -257,11 +142,11 @@
             'https://otieu.com/4/7667811'
         ];
         const BASE_POINTS_REWARDS = {
-            lesson: 1000,
-            quiz: 2000,
+            lesson: 500, // Updated from 1000 to 500
+            quiz: 50, // Updated from 2000 to 50
             ad: 500,
             dailyLogin: 100,
-            referral: 5000,
+            referral: 1000, // Updated from 5000 to 1000
             streak: 500,
             achievement: 5000
         };
@@ -404,7 +289,7 @@
                     `,
                     duration: 10,
                     difficulty: 'Beginner',
-                    points: 1000,
+                    points: 500,
                     order: 1
                 },
                 {
@@ -461,7 +346,7 @@
                     `,
                     duration: 12,
                     difficulty: 'Intermediate',
-                    points: 1000,
+                    points: 500,
                     order: 2
                 },
                 {
@@ -518,7 +403,7 @@
                     `,
                     duration: 15,
                     difficulty: 'Intermediate',
-                    points: 1000,
+                    points: 500,
                     order: 3
                 },
                 {
@@ -575,7 +460,7 @@
                     `,
                     duration: 12,
                     difficulty: 'Intermediate',
-                    points: 1000,
+                    points: 500,
                     order: 4
                 },
                 {
@@ -630,9 +515,11 @@
                     `,
                     duration: 14,
                     difficulty: 'Intermediate',
-                    points: 1000,
+                    points: 500,
                     order: 5
                 },
+                // Additional Health courses would continue here...
+                
                 // Technology Category
                 {
                     id: 'tech-1',
@@ -681,7 +568,7 @@
                     `,
                     duration: 15,
                     difficulty: 'Beginner',
-                    points: 1000,
+                    points: 500,
                     order: 1
                 },
                 {
@@ -730,9 +617,11 @@
                     `,
                     duration: 18,
                     difficulty: 'Intermediate',
-                    points: 1000,
+                    points: 500,
                     order: 2
                 },
+                // Additional Technology courses would continue here...
+                
                 // Business & Entrepreneurship Category
                 {
                     id: 'business-1',
@@ -791,9 +680,12 @@
                     `,
                     duration: 12,
                     difficulty: 'Beginner',
-                    points: 1000,
+                    points: 500,
                     order: 1
                 },
+                // Additional Business courses would continue here...
+                
+                // More categories and courses would be added similarly...
             ];
         }
 
@@ -916,6 +808,7 @@
                         }
                     ]
                 },
+                // Additional quizzes would continue here...
             ];
         }
 
@@ -931,7 +824,7 @@
                 appContainer.innerHTML = renderAuthScreen();
                 attachAuthListeners();
             } else if (state.currentView === 'loading') {
-                appContainer.innerHTML = renderLoadingScreen();
+                appContainer.innerHTML = '<div class="flex flex-col items-center justify-center h-full p-8"><i class="fas fa-spinner fa-spin text-4xl text-blue-500"></i><p class="mt-4 text-gray-500">Loading Dashboard...</p></div>';
             } else if (state.currentView === 'course-detail') {
                 appContainer.innerHTML = renderHeader() + renderCourseDetail();
                 attachCourseDetailListeners();
@@ -941,18 +834,6 @@
                 attachContentListeners();
                 updateNotifications();
             }
-        }
-
-        function renderLoadingScreen() {
-            return `
-                <div class="min-h-screen flex flex-col items-center justify-center p-8 bg-gradient-to-br from-blue-50 to-indigo-100">
-                    <div class="w-16 h-16 rounded-full bg-white shadow-lg flex items-center justify-center mb-4">
-                        <div class="loader"></div>
-                    </div>
-                    <h2 class="text-xl font-bold text-gray-700 mb-2">Loading EduHeTech</h2>
-                    <p class="text-gray-500 text-center max-w-md">Preparing your personalized learning experience...</p>
-                </div>
-            `;
         }
 
         function showLoading(show) {
@@ -1261,20 +1142,22 @@
 
             render();
 
-            // Enhanced animation feedback
+            // Enhanced animation feedback - FIXED: This will now auto-hide properly
             const coinAnimation = document.getElementById('coin-animation');
-            coinAnimation.innerHTML = `
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg slide-in">
-                    <div class="flex items-center">
-                        <i class="fas fa-coins text-xl mr-2"></i>
-                        <span class="font-bold">+${points} EduPoints!</span>
+            if (coinAnimation) {
+                coinAnimation.innerHTML = `
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg slide-in">
+                        <div class="flex items-center">
+                            <i class="fas fa-coins text-xl mr-2"></i>
+                            <span class="font-bold">+${points} EduPoints!</span>
+                        </div>
+                        <p class="text-sm mt-1">${action}</p>
                     </div>
-                    <p class="text-sm mt-1">${action}</p>
-                </div>
-            `;
-            setTimeout(() => {
-                coinAnimation.innerHTML = '';
-            }, 3000);
+                `;
+                setTimeout(() => {
+                    if (coinAnimation) coinAnimation.innerHTML = '';
+                }, 3000);
+            }
 
             showLoading(false);
         }
@@ -1320,7 +1203,6 @@
                         <div class="text-center">
                             <button id="toggle-auth" class="text-sm text-blue-500 hover:text-blue-700 font-medium transition-colors">Need an account? Sign Up</button>
                         </div>
-                        <p class="text-center text-xs text-gray-500">Note: Data is stored locally in your browser</p>
                     </div>
                 </div>
             `;
@@ -1510,9 +1392,6 @@
                 case 'achievements':
                     mainContent = renderAchievementsSection();
                     break;
-                case 'admin':
-                    mainContent = renderAdminPanel();
-                    break;
                 default:
                     mainContent = renderDashboard();
             }
@@ -1541,17 +1420,12 @@
                 { id: 'achievements', icon: 'fas fa-medal', label: 'Achievements' }
             ];
 
-            // Simplified Admin check for localStorage demo
-            if (state.user?.email === 'admin@eduhetech.com') {
-                navItems.push({ id: 'admin', icon: 'fas fa-user-shield', label: 'Admin' });
-            }
-
             // Mobile Bottom Navigation Bar (Visible on small screens)
             const mobileNav = `
                 <nav class="fixed bottom-0 left-0 right-0 bg-white border-t sm:hidden z-20 shadow-lg">
                     <div class="flex justify-around">
                         ${navItems.slice(0, 5).map(item => `
-                            <button data-view="${item.id}" class="mobile-nav-item flex flex-col items-center p-2 text-xs ${state.currentView === item.id ? 'active text-blue-600 font-bold' : 'text-gray-500 hover:text-blue-500'} transition-colors">
+                            <button data-view="${item.id}" class="nav-item flex flex-col items-center p-2 text-xs ${state.currentView === item.id ? 'text-blue-600 font-bold' : 'text-gray-500 hover:text-blue-500'} transition-colors">
                                 <i class="${item.icon} text-lg mb-1"></i>
                                 <span>${item.label}</span>
                             </button>
@@ -1569,7 +1443,7 @@
                 <aside class="hidden sm:flex sm:flex-col w-64 bg-white shadow-md h-screen fixed left-0 top-0 z-10 pt-16">
                     <div class="flex-1 overflow-y-auto p-4 space-y-2">
                         ${navItems.map(item => `
-                            <button data-view="${item.id}" class="sidebar-item w-full flex items-center space-x-3 p-3 rounded-lg ${state.currentView === item.id ? 'active bg-blue-50 text-blue-600 font-semibold' : 'text-gray-600 hover:bg-gray-100'} transition-colors">
+                            <button data-view="${item.id}" class="nav-item w-full flex items-center space-x-3 p-3 rounded-lg ${state.currentView === item.id ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-gray-600 hover:bg-gray-100'} transition-colors">
                                 <i class="${item.icon} w-5 text-center"></i>
                                 <span>${item.label}</span>
                             </button>
@@ -1663,7 +1537,7 @@
                     </div>
 
                     <!-- Main Points Card -->
-                    <div class="card p-6 gradient-primary text-white">
+                    <div class="card p-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                             <div>
                                 <p class="text-sm opacity-90">Your EduPoints Balance</p>
@@ -1868,7 +1742,7 @@
                                 <span class="font-semibold">${completedLessons}</span> of <span class="font-semibold">${totalLessons}</span> lessons completed
                             </div>
                             <div class="w-32 bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-500 h-2 rounded-full progress-bar" style="width: ${progress}%"></div>
+                                <div class="bg-green-500 h-2 rounded-full transition-all duration-500" style="width: ${progress}%"></div>
                             </div>
                         </div>
                     </div>
@@ -1897,7 +1771,7 @@
                                     ${filteredLessons.map(lesson => {
                                         const isCompleted = (user.history || []).some(h => h.action === `Lesson Completed: ${lesson.title}`);
                                         return `
-                                            <div class="card course-card p-5 flex flex-col h-full ${isCompleted ? 'border-l-4 border-green-500 bg-green-50' : 'border-l-4 border-blue-400'}">
+                                            <div class="card p-5 flex flex-col h-full ${isCompleted ? 'border-l-4 border-green-500 bg-green-50' : 'border-l-4 border-blue-400'} transition-all hover:shadow-md">
                                                 <div class="flex-1">
                                                     <div class="flex justify-between items-start mb-2">
                                                         <p class="font-semibold text-lg">${lesson.title}</p>
@@ -2056,7 +1930,7 @@
                             );
                             
                             return `
-                                <div class="card course-card p-6 flex flex-col h-full ${isCompleted ? 'border-l-4 border-green-500 bg-green-50' : 'border-l-4 border-purple-400'}">
+                                <div class="card p-6 flex flex-col h-full ${isCompleted ? 'border-l-4 border-green-500 bg-green-50' : 'border-l-4 border-purple-400'} transition-all hover:shadow-md">
                                     <div class="flex-1">
                                         <div class="flex justify-between items-start mb-3">
                                             <h3 class="text-xl font-bold">${quiz.title}</h3>
@@ -2174,7 +2048,7 @@
                         <div class="flex items-center space-x-4 mt-2 sm:mt-0">
                             <div class="text-sm text-gray-500">Question ${currentQ + 1} of ${questions.length}</div>
                             <div class="w-32 bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-500 h-2 rounded-full progress-bar" style="width: ${progress}%"></div>
+                                <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: ${progress}%"></div>
                             </div>
                         </div>
                     </div>
@@ -2183,7 +2057,7 @@
                         <h3 class="text-xl font-semibold">${q.q}</h3>
                         <div class="space-y-3">
                             ${q.options.map((option, index) => `
-                                <button data-option="${option}" class="quiz-option w-full p-4 text-left border rounded-lg transition-all duration-150 ${answers[currentQ] === option ? 'selected bg-blue-100 border-blue-500 font-bold' : 'bg-gray-50 hover:bg-blue-50 border-gray-200'}">
+                                <button data-option="${option}" class="quiz-option w-full p-4 text-left border rounded-lg transition-all duration-150 ${answers[currentQ] === option ? 'bg-blue-100 border-blue-500 font-bold' : 'bg-gray-50 hover:bg-blue-50 border-gray-200'}">
                                     <div class="flex items-center">
                                         <div class="w-8 h-8 rounded-full border flex items-center justify-center mr-3 ${answers[currentQ] === option ? 'bg-blue-500 text-white border-blue-500' : 'bg-white border-gray-300'}">
                                             ${String.fromCharCode(65 + index)}
@@ -2373,7 +2247,7 @@
                     <h2 class="text-2xl font-bold">Withdraw EduPoints</h2>
                     
                     <!-- Balance Overview -->
-                    <div class="card p-6 gradient-primary text-white">
+                    <div class="card p-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                             <div>
                                 <p class="text-sm opacity-90">Your Current Balance</p>
@@ -2422,7 +2296,7 @@
 
                         <button id="submit-withdrawal-btn" class="w-full p-4 font-bold rounded-lg transition ${canWithdraw ? 'btn-primary shadow-md hover:shadow-lg' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}" ${!canWithdraw ? 'disabled' : ''}>
                             ${canWithdraw ? `
-                                <i class="fas fa-paper-plane mr-2"></i> Submit Withdrawal Request
+                                <i class="fas fa-paper-plane mr-2"></i> Submit Withdrawal Request to eduhetech@gmail.com
                             ` : 'Insufficient Points'}
                         </button>
                     </div>
@@ -2519,7 +2393,7 @@
                                 <span class="font-semibold">${earnedCount}</span> of <span class="font-semibold">${totalCount}</span> unlocked
                             </div>
                             <div class="w-32 bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-500 h-2 rounded-full progress-bar" style="width: ${progress}%"></div>
+                                <div class="bg-green-500 h-2 rounded-full transition-all duration-500" style="width: ${progress}%"></div>
                             </div>
                         </div>
                     </div>
@@ -2535,7 +2409,7 @@
                             };
                             
                             return `
-                                <div class="card p-5 flex flex-col h-full ${achievement.earned ? 'border-l-4 border-green-500 bg-green-50' : ''}">
+                                <div class="card p-5 flex flex-col h-full ${achievement.earned ? 'border-l-4 border-green-500 bg-green-50' : ''} transition-all hover:shadow-md">
                                     <div class="flex-1">
                                         <div class="flex justify-between items-start mb-3">
                                             <div class="w-12 h-12 rounded-full ${achievement.earned ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'} flex items-center justify-center">
@@ -2555,7 +2429,7 @@
                                             <span>${achievement.progress.toFixed(0)}%</span>
                                         </div>
                                         <div class="w-full bg-gray-200 rounded-full h-2">
-                                            <div class="h-2 rounded-full progress-bar ${achievement.earned ? 'bg-green-500' : 'bg-blue-500'}" style="width: ${achievement.progress}%"></div>
+                                            <div class="h-2 rounded-full transition-all duration-500 ${achievement.earned ? 'bg-green-500' : 'bg-blue-500'}" style="width: ${achievement.progress}%"></div>
                                         </div>
                                         <div class="flex justify-between items-center mt-3">
                                             ${achievement.earned ? `
@@ -2573,118 +2447,6 @@
                                 </div>
                             `;
                         }).join('')}
-                    </div>
-                </section>
-            `;
-        }
-
-        // --- Enhanced Admin Panel View ---
-        function renderAdminPanel() {
-            if (state.user?.email !== 'admin@eduhetech.com') {
-                return `
-                    <div class="card p-8 text-center">
-                        <i class="fas fa-lock text-5xl text-red-300 mb-4"></i>
-                        <h3 class="text-xl font-bold text-red-600 mb-2">Access Denied</h3>
-                        <p class="text-gray-500">Admin privileges required to access this panel.</p>
-                    </div>
-                `;
-            }
-
-            // Filter for pending requests
-            const pendingRequests = state.withdrawalRequests.filter(req => req.status === 'Pending');
-            const completedRequests = state.withdrawalRequests.filter(req => req.status === 'Completed');
-            const totalUsers = Object.keys(state.allUsers).length;
-            const totalPoints = Object.values(state.allUsers).reduce((sum, user) => sum + user.eduPoints, 0);
-
-            return `
-                <section class="space-y-6 fade-in">
-                    <h2 class="text-2xl font-bold text-red-600">Admin Panel</h2>
-                    <p class="text-gray-600">Manage withdrawal requests and platform statistics.</p>
-
-                    <!-- Stats Overview -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="card p-4 text-center bg-blue-50 border border-blue-200">
-                            <div class="text-2xl font-bold text-blue-600">${totalUsers}</div>
-                            <div class="text-xs text-gray-600 mt-1">Total Users</div>
-                        </div>
-                        <div class="card p-4 text-center bg-green-50 border border-green-200">
-                            <div class="text-2xl font-bold text-green-600">${formatPoints(totalPoints)}</div>
-                            <div class="text-xs text-gray-600 mt-1">Total Points</div>
-                        </div>
-                        <div class="card p-4 text-center bg-yellow-50 border border-yellow-200">
-                            <div class="text-2xl font-bold text-yellow-600">${pendingRequests.length}</div>
-                            <div class="text-xs text-gray-600 mt-1">Pending Withdrawals</div>
-                        </div>
-                        <div class="card p-4 text-center bg-purple-50 border border-purple-200">
-                            <div class="text-2xl font-bold text-purple-600">${completedRequests.length}</div>
-                            <div class="text-xs text-gray-600 mt-1">Completed Payouts</div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Pending Withdrawals -->
-                        <div class="card p-6">
-                            <h3 class="text-xl font-semibold mb-4 flex items-center">
-                                <i class="fas fa-clock text-yellow-500 mr-2"></i>
-                                Pending Withdrawals (${pendingRequests.length})
-                            </h3>
-                            <div class="space-y-4">
-                                ${pendingRequests.length > 0 ? pendingRequests.map(req => `
-                                    <div class="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
-                                        <div class="flex justify-between items-start mb-2">
-                                            <div>
-                                                <p class="font-semibold text-lg">${formatPoints(req.amount)} Pts</p>
-                                                <p class="text-sm text-gray-600">$${(req.amount / 100000).toFixed(2)} USD</p>
-                                            </div>
-                                            <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Pending</span>
-                                        </div>
-                                        <p class="text-sm"><span class="font-medium">User:</span> ${req.userName} (${req.userId.substring(0, 8)}...)</p>
-                                        <p class="text-sm"><span class="font-medium">Method:</span> ${req.method}</p>
-                                        <p class="text-sm text-gray-600 truncate"><span class="font-medium">Details:</span> ${req.details}</p>
-                                        <div class="flex justify-end space-x-2 mt-3">
-                                            <button data-request-id="${req.id}" data-user-id="${req.userId}" data-amount="${req.amount}" class="admin-approve-btn p-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 transition">
-                                                Approve & Pay
-                                            </button>
-                                        </div>
-                                    </div>
-                                `).join('') : `
-                                    <div class="text-center py-6 text-gray-500">
-                                        <i class="fas fa-check-circle text-3xl mb-3"></i>
-                                        <p>No pending withdrawal requests</p>
-                                    </div>
-                                `}
-                            </div>
-                        </div>
-
-                        <!-- Completed Withdrawals -->
-                        <div class="card p-6">
-                            <h3 class="text-xl font-semibold mb-4 flex items-center">
-                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                Completed Payouts (${completedRequests.length})
-                            </h3>
-                            <div class="space-y-3 max-h-96 overflow-y-auto">
-                                ${completedRequests.slice(0, 10).map(req => `
-                                    <div class="border border-green-200 rounded-lg p-3 bg-green-50">
-                                        <div class="flex justify-between items-center">
-                                            <div>
-                                                <p class="font-semibold">${formatPoints(req.amount)} Pts</p>
-                                                <p class="text-xs text-gray-600">${req.userName}</p>
-                                            </div>
-                                            <div class="text-right">
-                                                <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Paid</span>
-                                                <p class="text-xs text-gray-500 mt-1">${new Date(req.payoutDate).toLocaleDateString()}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                                ${completedRequests.length === 0 ? `
-                                    <div class="text-center py-6 text-gray-500">
-                                        <i class="fas fa-history text-2xl mb-2"></i>
-                                        <p>No completed payouts yet</p>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        </div>
                     </div>
                 </section>
             `;
@@ -2808,7 +2570,10 @@
                         <h3 class="text-xl font-bold text-green-600">Success!</h3>
                         <p class="text-gray-600">${name}, your account is created. Your referrer has been rewarded!</p>
                     </div>
-                `);
+                `, () => {
+                    // Auto-hide modal after showing success
+                    setTimeout(hideModal, 2000);
+                });
             } else {
                 showModal(`
                     <div class="text-center space-y-3">
@@ -2816,7 +2581,10 @@
                         <h3 class="text-xl font-bold text-green-600">Account Created</h3>
                         <p class="text-gray-600">Welcome ${name}! You can now log in.</p>
                     </div>
-                `);
+                `, () => {
+                    // Auto-hide modal after showing success
+                    setTimeout(hideModal, 2000);
+                });
             }
 
             // Log in the new user automatically
@@ -2874,14 +2642,8 @@
                         <h3 class="text-lg font-bold text-center mb-4">More Options</h3>
                         ${[
                             { id: 'achievements', icon: 'fas fa-medal', label: 'Achievements' },
-                            { id: 'leaderboard', icon: 'fas fa-trophy', label: 'Leaderboard' },
-                            { id: 'admin', icon: 'fas fa-user-shield', label: 'Admin' }
-                        ].filter(item => {
-                            if (item.id === 'admin') {
-                                return state.user?.email === 'admin@eduhetech.com';
-                            }
-                            return true;
-                        }).map(item => `
+                            { id: 'leaderboard', icon: 'fas fa-trophy', label: 'Leaderboard' }
+                        ].map(item => `
                             <button data-view="${item.id}" class="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-50 text-gray-700 transition-colors">
                                 <i class="${item.icon} w-5 text-center text-blue-500"></i>
                                 <span>${item.label}</span>
@@ -2958,15 +2720,6 @@
             // Rewards Section
             document.getElementById('submit-withdrawal-btn')?.addEventListener('click', handleSubmitWithdrawal);
             
-            // Admin Panel
-            document.querySelectorAll('.admin-approve-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => handleApproveWithdrawal(
-                    e.currentTarget.dataset.requestId, 
-                    e.currentTarget.dataset.userId, 
-                    parseInt(e.currentTarget.dataset.amount)
-                ));
-            });
-            
             // Quick action buttons
             document.querySelectorAll('[data-view]').forEach(btn => {
                 if (btn.classList.contains('nav-item')) return; // Skip nav items already handled
@@ -3011,7 +2764,10 @@
                         <h3 class="text-xl font-bold text-yellow-600">Already Completed</h3>
                         <p class="text-gray-600">You have already completed this course and received the reward.</p>
                     </div>
-                `);
+                `, () => {
+                    // Auto-hide modal
+                    setTimeout(hideModal, 2000);
+                });
                 return;
             }
             
@@ -3025,7 +2781,7 @@
                     <h3 class="text-xl font-bold">Redirecting to Ad</h3>
                     <p class="text-gray-600">Please wait while we redirect you to the advertisement.</p>
                     <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div id="progress-fill" class="h-2 bg-green-500 rounded-full progress-bar" style="width: 0%"></div>
+                        <div id="progress-fill" class="h-2 bg-green-500 rounded-full transition-all duration-10000" style="width: 0%"></div>
                     </div>
                     <p class="text-sm text-gray-500">Please stay on the ad page for 10 seconds to earn your reward.</p>
                     <p id="countdown" class="text-lg font-bold text-red-500">10 seconds remaining</p>
@@ -3055,7 +2811,10 @@
                             <h3 class="text-xl font-bold text-green-600">Course Complete!</h3>
                             <p class="text-gray-600">You earned ${points} EduPoints for completing "${title}".</p>
                         </div>
-                    `);
+                    `, () => {
+                        // Auto-hide modal after showing success
+                        setTimeout(hideModal, 2000);
+                    });
                     
                     // Return to courses list
                     state.currentView = 'learn';
@@ -3097,7 +2856,10 @@
                         <h3 class="text-xl font-bold text-red-600">Incomplete Quiz</h3>
                         <p class="text-gray-600">Please answer all questions before submitting.</p>
                     </div>
-                `);
+                `, () => {
+                    // Auto-hide modal
+                    setTimeout(hideModal, 2000);
+                });
                 return;
             }
 
@@ -3178,7 +2940,7 @@
                     <h3 class="text-xl font-bold">Ad View Timer</h3>
                     <p class="text-gray-600">You will be rewarded in <span id="ad-timer" class="font-bold text-red-500">10</span> seconds.</p>
                     <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div id="progress-fill" class="h-2 bg-green-500 rounded-full progress-bar" style="width: 0%"></div>
+                        <div id="progress-fill" class="h-2 bg-green-500 rounded-full transition-all duration-10000" style="width: 0%"></div>
                     </div>
                     <p class="text-sm text-gray-500">Please do not close the ad window yet.</p>
                 </div>
@@ -3255,13 +3017,13 @@
                     <h3 class="text-xl font-bold">Confirm Withdrawal</h3>
                     <p class="text-gray-600">Are you sure you want to withdraw <span class="font-bold">${formatPoints(amount)}</span> EduPoints ($${(amount / 100000).toFixed(2)}) via <span class="font-bold">${method}</span>?</p>
                     <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-left">
-                        <p class="text-sm text-yellow-800"><i class="fas fa-info-circle mr-1"></i> Withdrawal requests are processed within 24-48 hours.</p>
+                        <p class="text-sm text-yellow-800"><i class="fas fa-info-circle mr-1"></i> Your withdrawal request will be sent to eduhetech@gmail.com for manual processing.</p>
                     </div>
                 </div>
             `, () => {
                 showLoading(true);
                 try {
-                    // 1. Create Withdrawal Request in Local Storage
+                    // Create Withdrawal Request in Local Storage
                     const withdrawalRequest = {
                         id: generateUniqueId(),
                         userId: state.user.userId,
@@ -3275,15 +3037,32 @@
                     state.withdrawalRequests.push(withdrawalRequest);
                     saveCollection(LS_WITHDRAWALS, state.withdrawalRequests);
 
-                    // 2. Deduct Points from User
+                    // Deduct Points from User
                     state.user.eduPoints -= amount;
                     if (!state.user.history) state.user.history = [];
                     state.user.history.push({ action: `Withdrawal Request: ${method}`, points: -amount, timestamp: Date.now() });
 
                     saveUser(state.user);
 
-                    // 3. Update local state and UI
-                    messageEl.textContent = 'Withdrawal request submitted successfully! Points deducted. Review via the Admin Panel (if you are the admin user).';
+                    // Create email content
+                    const emailSubject = `Withdrawal Request - ${state.user.name}`;
+                    const emailBody = `
+User: ${state.user.name} (${state.user.email})
+Amount: ${formatPoints(amount)} EduPoints ($${(amount / 100000).toFixed(2)})
+Payment Method: ${method}
+Payment Details: ${details}
+Request ID: ${withdrawalRequest.id}
+Timestamp: ${new Date().toLocaleString()}
+                    `.trim();
+
+                    // Create mailto link
+                    const mailtoLink = `mailto:eduhetech@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+                    
+                    // Open email client
+                    window.open(mailtoLink, '_blank');
+
+                    // Update local state and UI
+                    messageEl.textContent = 'Withdrawal request submitted! An email has been opened for you to send the request to eduhetech@gmail.com.';
                     messageEl.className = 'p-4 rounded-lg text-sm font-semibold bg-green-100 text-green-700';
                     messageEl.classList.remove('hidden');
                     
@@ -3299,85 +3078,7 @@
             });
         }
 
-        function handleApproveWithdrawal(requestId, targetUserId, amount) {
-            if (state.user?.email !== 'admin@eduhetech.com') return;
-
-            showModal(`
-                <div class="text-center space-y-4">
-                    <i class="fas fa-check-double text-5xl text-green-500"></i>
-                    <h3 class="text-xl font-bold">Approve Payout</h3>
-                    <p class="text-gray-600">Confirm actual payment of <span class="font-bold">$${(amount / 100000).toFixed(2)}</span> to user <span class="font-mono">${targetUserId.substring(0, 8)}...</span>?</p>
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-left">
-                        <p class="text-sm text-green-800"><i class="fas fa-check-circle mr-1"></i> This action will mark the withdrawal as completed.</p>
-                    </div>
-                </div>
-            `, () => {
-                showLoading(true);
-                try {
-                    // 1. Update Withdrawal Request Status
-                    const requestIndex = state.withdrawalRequests.findIndex(req => req.id === requestId);
-                    if (requestIndex !== -1) {
-                        state.withdrawalRequests[requestIndex].status = 'Completed';
-                        state.withdrawalRequests[requestIndex].payoutDate = Date.now();
-                        saveCollection(LS_WITHDRAWALS, state.withdrawalRequests);
-                    }
-
-                    // 2. Add Payout history to target user
-                    const targetUser = state.allUsers[targetUserId];
-                    if (targetUser) {
-                        if (!targetUser.history) targetUser.history = [];
-                        targetUser.history.push({ action: `Payout Completed: ${amount} Pts`, points: 0, timestamp: Date.now() });
-                        saveUser(targetUser);
-                    }
-
-                    render();
-                    
-                    showModal(`
-                        <div class="text-center space-y-3">
-                            <i class="fas fa-check-circle text-5xl text-green-500"></i>
-                            <h3 class="text-xl font-bold text-green-600">Payout Approved</h3>
-                            <p class="text-gray-600">Withdrawal request has been marked as completed.</p>
-                        </div>
-                    `);
-                } catch (error) {
-                    console.error("Approval error:", error);
-                    showModal(`
-                        <div class="text-center space-y-3">
-                            <i class="fas fa-exclamation-circle text-5xl text-red-500"></i>
-                            <h3 class="text-xl font-bold text-red-600">Error</h3>
-                            <p class="text-gray-600">There was an error processing the payout.</p>
-                        </div>
-                    `);
-                } finally {
-                    showLoading(false);
-                }
-            });
-        }
-
         // --- Initialization ---
-
-        // Check if admin user exists, if not, create it for testing the admin panel
-        (function ensureAdminUser() {
-            const allUsers = loadAllUsers();
-            if (!Object.values(allUsers).some(u => u.email === 'admin@eduhetech.com')) {
-                const adminUser = {
-                    userId: 'admin_test_id',
-                    name: 'Admin User',
-                    email: 'admin@eduhetech.com',
-                    password: 'password',
-                    eduPoints: 9999999,
-                    referralCount: 100,
-                    referralCode: 'admin_ref',
-                    lastLogin: 0,
-                    loginDates: [new Date().toDateString()],
-                    history: [],
-                    achievements: [],
-                    createdAt: Date.now()
-                };
-                allUsers[adminUser.userId] = adminUser;
-                saveAllUsers(allUsers);
-            }
-        })();
 
         // Start the application lifecycle
         window.onload = initializeData;
