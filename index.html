@@ -1200,6 +1200,56 @@
                     difficulty: 'Intermediate',
                     points: 500,
                     order: 2
+                },
+                {
+                    id: 'tech-1',
+                    title: 'Introduction to Web Development',
+                    category: 'Technology',
+                    subcategory: 'Web Development',
+                    content: `
+                        <div class="course-content">
+                            <div class="course-section">
+                                <h3 class="text-xl font-bold mb-3">What is Web Development?</h3>
+                                <p class="mb-3">Web development refers to the building, creating, and maintaining of websites. It includes aspects such as web design, web publishing, web programming, and database management.</p>
+                            </div>
+                            <div class="course-section">
+                                <h3 class="text-xl font-bold mb-3">Frontend vs Backend Development</h3>
+                                <h4 class="font-bold mb-2">Frontend Development</h4>
+                                <p class="mb-3">The part of a website that users interact with directly, built with HTML, CSS, and JavaScript.</p>
+                                <h4 class="font-bold mb-2">Backend Development</h4>
+                                <p class="mb-3">The server-side of a website that handles data storage and processing.</p>
+                            </div>
+                        </div>
+                    `,
+                    duration: 15,
+                    difficulty: 'Beginner',
+                    points: 500,
+                    order: 3
+                },
+                {
+                    id: 'business-1',
+                    title: 'Entrepreneurship Fundamentals',
+                    category: 'Business & Entrepreneurship',
+                    subcategory: 'Entrepreneurship',
+                    content: `
+                        <div class="course-content">
+                            <div class="course-section">
+                                <h3 class="text-xl font-bold mb-3">What is Entrepreneurship?</h3>
+                                <p class="mb-3">Entrepreneurship is the process of designing, launching, and running a new business, which typically begins as a small business offering a product, process, or service for sale or hire.</p>
+                            </div>
+                            <div class="course-section">
+                                <h3 class="text-xl font-bold mb-3">Key Entrepreneurial Skills</h3>
+                                <h4 class="font-bold mb-2">1. Business Management</h4>
+                                <p class="mb-3">Understanding how to manage resources, people, and operations.</p>
+                                <h4 class="font-bold mb-2">2. Risk Management</h4>
+                                <p class="mb-3">Identifying and mitigating potential business risks.</p>
+                            </div>
+                        </div>
+                    `,
+                    duration: 20,
+                    difficulty: 'Intermediate',
+                    points: 500,
+                    order: 4
                 }
             ];
         }
@@ -1221,6 +1271,44 @@
                                 'There is no significant difference between the two'
                             ], 
                             answer: 'Complementary medicine is used together with standard care, while alternative medicine is used instead of standard care' 
+                        },
+                        { 
+                            q: 'Which of the following is an example of complementary medicine?', 
+                            options: [
+                                'Using acupuncture alongside cancer treatment',
+                                'Replacing chemotherapy with herbal remedies',
+                                'Using only traditional medicine for treatment',
+                                'Avoiding all medical treatments'
+                            ], 
+                            answer: 'Using acupuncture alongside cancer treatment' 
+                        }
+                    ]
+                },
+                {
+                    id: 'tech-1-quiz',
+                    title: 'Web Development Basics Quiz',
+                    category: 'Technology',
+                    courseId: 'tech-1',
+                    questions: [
+                        { 
+                            q: 'Which language is primarily used for styling web pages?', 
+                            options: [
+                                'HTML',
+                                'CSS',
+                                'JavaScript',
+                                'Python'
+                            ], 
+                            answer: 'CSS' 
+                        },
+                        { 
+                            q: 'What does HTML stand for?', 
+                            options: [
+                                'Hyper Text Markup Language',
+                                'High Tech Modern Language',
+                                'Hyper Transfer Markup Language',
+                                'Home Tool Markup Language'
+                            ], 
+                            answer: 'Hyper Text Markup Language' 
                         }
                     ]
                 }
@@ -1361,7 +1449,7 @@
         }
 
         // =====================================================
-        // RENDER FUNCTIONS
+        // RENDER FUNCTIONS - ORIGINAL TEMPLATE STRUCTURE
         // =====================================================
 
         function renderAuthScreen() {
@@ -1529,44 +1617,51 @@
             };
             
             return `
-                <div class="flex min-h-screen bg-gray-50">
+                <div class="flex">
                     <!-- Sidebar Navigation -->
-                    <nav class="w-64 bg-white shadow-sm min-h-screen p-4">
+                    <nav class="w-64 bg-white min-h-screen shadow-sm p-4">
                         <div class="space-y-2">
-                            ${renderNavItem('dashboard', 'fas fa-home', 'Dashboard')}
-                            ${renderNavItem('learn', 'fas fa-book', 'Learn & Earn')}
-                            ${renderNavItem('quiz', 'fas fa-brain', 'Quizzes')}
-                            ${renderNavItem('ads', 'fas fa-ad', 'Watch Ads')}
-                            ${renderNavItem('referral', 'fas fa-users', 'Refer & Earn')}
-                            ${renderNavItem('rewards', 'fas fa-gift', 'Withdraw')}
-                            ${renderNavItem('leaderboard', 'fas fa-trophy', 'Leaderboard')}
-                            ${renderNavItem('achievements', 'fas fa-medal', 'Achievements')}
+                            <button onclick="switchView('dashboard')" class="w-full flex items-center space-x-3 p-3 rounded-lg transition ${state.currentView === 'dashboard' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}">
+                                <i class="fas fa-home w-5"></i>
+                                <span>Dashboard</span>
+                            </button>
+                            <a href="/learn.html" class="w-full flex items-center space-x-3 p-3 rounded-lg transition text-gray-600 hover:bg-gray-100">
+                                <i class="fas fa-book w-5"></i>
+                                <span>Learn & Earn</span>
+                            </a>
+                            <button onclick="switchView('quiz')" class="w-full flex items-center space-x-3 p-3 rounded-lg transition ${state.currentView === 'quiz' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}">
+                                <i class="fas fa-brain w-5"></i>
+                                <span>Quizzes</span>
+                            </button>
+                            <button onclick="switchView('ads')" class="w-full flex items-center space-x-3 p-3 rounded-lg transition ${state.currentView === 'ads' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}">
+                                <i class="fas fa-ad w-5"></i>
+                                <span>Watch Ads</span>
+                            </button>
+                            <button onclick="switchView('referral')" class="w-full flex items-center space-x-3 p-3 rounded-lg transition ${state.currentView === 'referral' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}">
+                                <i class="fas fa-users w-5"></i>
+                                <span>Refer & Earn</span>
+                            </button>
+                            <button onclick="switchView('rewards')" class="w-full flex items-center space-x-3 p-3 rounded-lg transition ${state.currentView === 'rewards' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}">
+                                <i class="fas fa-gift w-5"></i>
+                                <span>Withdraw</span>
+                            </button>
+                            <button onclick="switchView('leaderboard')" class="w-full flex items-center space-x-3 p-3 rounded-lg transition ${state.currentView === 'leaderboard' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}">
+                                <i class="fas fa-trophy w-5"></i>
+                                <span>Leaderboard</span>
+                            </button>
+                            <button onclick="switchView('achievements')" class="w-full flex items-center space-x-3 p-3 rounded-lg transition ${state.currentView === 'achievements' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}">
+                                <i class="fas fa-medal w-5"></i>
+                                <span>Achievements</span>
+                            </button>
                         </div>
                     </nav>
                     
                     <!-- Main Content -->
-                    <main class="flex-1 p-6">
+                    <main class="flex-1 p-6 scrollable-content">
                         <div id="coin-animation" class="fixed top-4 right-4 z-30"></div>
                         ${views[state.currentView] || '<div>View not found</div>'}
                     </main>
                 </div>
-            `;
-        }
-
-        function renderNavItem(view, icon, label) {
-            const isActive = state.currentView === view;
-            return `
-                <button 
-                    onclick="switchView('${view}')"
-                    class="w-full flex items-center space-x-3 p-3 rounded-lg transition ${
-                        isActive 
-                            ? 'bg-blue-500 text-white' 
-                            : 'text-gray-600 hover:bg-gray-100'
-                    }"
-                >
-                    <i class="${icon} w-5"></i>
-                    <span>${label}</span>
-                </button>
             `;
         }
 
@@ -1596,7 +1691,7 @@
                     
                     <!-- Stats Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <div class="card p-6">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-gray-500">Total Points</p>
@@ -1606,7 +1701,7 @@
                             </div>
                         </div>
                         
-                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <div class="card p-6">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-gray-500">Courses Completed</p>
@@ -1616,7 +1711,7 @@
                             </div>
                         </div>
                         
-                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <div class="card p-6">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-gray-500">Referrals</p>
@@ -1628,13 +1723,13 @@
                     </div>
                     
                     <!-- Quick Actions -->
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="card p-6">
                         <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <button onclick="switchView('learn')" class="bg-blue-50 hover:bg-blue-100 p-4 rounded-lg text-center transition">
+                            <a href="/learn.html" class="bg-blue-50 hover:bg-blue-100 p-4 rounded-lg text-center transition">
                                 <i class="fas fa-book text-blue-500 text-xl mb-2"></i>
                                 <p class="font-medium">Learn & Earn</p>
-                            </button>
+                            </a>
                             
                             <button onclick="switchView('quiz')" class="bg-green-50 hover:bg-green-100 p-4 rounded-lg text-center transition">
                                 <i class="fas fa-brain text-green-500 text-xl mb-2"></i>
@@ -1654,7 +1749,7 @@
                     </div>
 
                     <!-- Recent Activity -->
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="card p-6">
                         <h3 class="text-lg font-semibold mb-4">Recent Activity</h3>
                         <div class="space-y-3">
                             ${state.user.history && state.user.history.length > 0 
@@ -1709,7 +1804,7 @@
                     </div>
 
                     <!-- Available Courses -->
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="card p-6">
                         <h3 class="text-lg font-semibold mb-4">Available Courses</h3>
                         <div class="space-y-4">
                             ${availableCourses.length > 0 
@@ -1719,7 +1814,7 @@
                                             <h4 class="font-semibold">${course.title}</h4>
                                             <p class="text-sm text-gray-600">${course.category} • ${course.duration} mins • ${course.points} points</p>
                                         </div>
-                                        <button onclick="startCourse('${course.id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition">
+                                        <button onclick="startCourse('${course.id}')" class="btn-primary px-4 py-2 rounded-lg transition">
                                             Start Course
                                         </button>
                                     </div>
@@ -1730,7 +1825,7 @@
                     </div>
 
                     <!-- Completed Courses -->
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="card p-6">
                         <h3 class="text-lg font-semibold mb-4">Completed Courses</h3>
                         <div class="space-y-3">
                             ${state.user.completedCourses && Object.keys(state.user.completedCourses).length > 0
@@ -1769,7 +1864,7 @@
                     </div>
 
                     <!-- Available Quizzes -->
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="card p-6">
                         <h3 class="text-lg font-semibold mb-4">Available Quizzes</h3>
                         <div class="space-y-4">
                             ${availableQuizzes.length > 0 
@@ -1790,7 +1885,7 @@
                     </div>
 
                     <!-- Completed Quizzes -->
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="card p-6">
                         <h3 class="text-lg font-semibold mb-4">Completed Quizzes</h3>
                         <div class="space-y-3">
                             ${state.user.completedQuizzes && Object.keys(state.user.completedQuizzes).length > 0
@@ -1846,7 +1941,7 @@
                     </div>
 
                     <!-- Ad Stats -->
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="card p-6">
                         <h3 class="text-lg font-semibold mb-4">Ad Earnings</h3>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="text-center p-4 bg-purple-50 rounded-lg">
@@ -1888,12 +1983,12 @@
 
                     <!-- Referral Stats -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white rounded-xl p-6 shadow-sm text-center">
+                        <div class="card p-6 text-center">
                             <i class="fas fa-user-plus text-3xl text-blue-500 mb-3"></i>
                             <p class="text-2xl font-bold">${state.user.referralCount || 0}</p>
                             <p class="text-gray-600">Successful Referrals</p>
                         </div>
-                        <div class="bg-white rounded-xl p-6 shadow-sm text-center">
+                        <div class="card p-6 text-center">
                             <i class="fas fa-coins text-3xl text-yellow-500 mb-3"></i>
                             <p class="text-2xl font-bold">${formatPoints((state.user.referralCount || 0) * BASE_POINTS_REWARDS.referral)}</p>
                             <p class="text-gray-600">Points Earned</p>
@@ -1901,7 +1996,7 @@
                     </div>
 
                     <!-- How it Works -->
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="card p-6">
                         <h3 class="text-lg font-semibold mb-4">How It Works</h3>
                         <div class="space-y-3">
                             <div class="flex items-start space-x-3">
@@ -1953,7 +2048,7 @@
                     </div>
 
                     <!-- Withdrawal Options -->
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="card p-6">
                         <h3 class="text-lg font-semibold mb-4">Withdrawal Options</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="border border-gray-200 rounded-lg p-4 text-center hover:border-blue-300 transition">
@@ -1990,7 +2085,7 @@
                     </div>
 
                     <!-- Withdrawal History -->
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="card p-6">
                         <h3 class="text-lg font-semibold mb-4">Withdrawal History</h3>
                         <div class="space-y-3">
                             ${state.withdrawalRequests.length > 0
@@ -2032,7 +2127,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                         ${state.leaderboard.slice(0, 3).map((user, index) => `
                             <div class="text-center ${index === 0 ? 'order-2' : index === 1 ? 'order-1' : 'order-3'}">
-                                <div class="bg-white rounded-xl p-6 shadow-sm relative">
+                                <div class="card p-6 relative">
                                     ${index === 0 ? '<div class="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-bold">🥇 1st</div>' : ''}
                                     ${index === 1 ? '<div class="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-gray-400 text-white px-3 py-1 rounded-full text-sm font-bold">🥈 2nd</div>' : ''}
                                     ${index === 2 ? '<div class="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold">🥉 3rd</div>' : ''}
@@ -2048,7 +2143,7 @@
                     </div>
 
                     <!-- Rest of Leaderboard -->
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="card p-6">
                         <h3 class="text-lg font-semibold mb-4">Top Learners</h3>
                         <div class="space-y-3">
                             ${state.leaderboard.map((user, index) => `
@@ -2110,17 +2205,17 @@
 
                     <!-- Achievement Stats -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-white rounded-xl p-6 shadow-sm text-center">
+                        <div class="card p-6 text-center">
                             <i class="fas fa-trophy text-3xl text-yellow-500 mb-3"></i>
                             <p class="text-2xl font-bold">${userAchievements.length}</p>
                             <p class="text-gray-600">Achievements Unlocked</p>
                         </div>
-                        <div class="bg-white rounded-xl p-6 shadow-sm text-center">
+                        <div class="card p-6 text-center">
                             <i class="fas fa-medal text-3xl text-blue-500 mb-3"></i>
                             <p class="text-2xl font-bold">${state.achievements.length}</p>
                             <p class="text-gray-600">Total Achievements</p>
                         </div>
-                        <div class="bg-white rounded-xl p-6 shadow-sm text-center">
+                        <div class="card p-6 text-center">
                             <i class="fas fa-star text-3xl text-purple-500 mb-3"></i>
                             <p class="text-2xl font-bold">${calculateAchievementPoints()}</p>
                             <p class="text-gray-600">Points from Achievements</p>
@@ -2128,7 +2223,7 @@
                     </div>
 
                     <!-- Achievements Grid -->
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="card p-6">
                         <h3 class="text-lg font-semibold mb-4">All Achievements</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             ${state.achievements.map(achievement => {
@@ -2191,7 +2286,7 @@
                     </div>
 
                     <!-- Course Header -->
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="card p-6">
                         <h1 class="text-3xl font-bold text-gray-800 mb-2">${course.title}</h1>
                         <div class="flex items-center space-x-4 text-gray-600">
                             <div class="flex items-center space-x-1">
@@ -2210,7 +2305,7 @@
                     </div>
 
                     <!-- Course Content -->
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="card p-6">
                         ${course.content}
                     </div>
 
@@ -2246,7 +2341,7 @@
         }
 
         function attachNavListeners() {
-            // Navigation is handled by the switchView function in renderNavItem
+            // Navigation is handled by the switchView function
         }
 
         function attachContentListeners() {
