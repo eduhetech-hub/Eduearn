@@ -10,21 +10,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <style>
-        /* Your existing CSS styles remain the same */
         :root {
-            --primary-color: #3b82f6;
-            --secondary-color: #1d4ed8;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
+            --primary-color: #3b82f6; /* Blue 500 */
+            --secondary-color: #1d4ed8; /* Blue 700 */
+            --success-color: #10b981; /* Green 500 */
+            --warning-color: #f59e0b; /* Amber 500 */
+            --danger-color: #ef4444; /* Red 500 */
         }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #f3f4f6; /* Light gray background */
             min-height: 100vh;
         }
         .scrollable-content {
-            max-height: calc(100vh - 80px);
+            max-height: calc(100vh - 80px); /* Adjust based on header height */
             overflow-y: auto;
         }
         .btn-primary {
@@ -42,6 +41,7 @@
             border-radius: 1rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
         }
+        /* Custom modal overlay styling */
         .modal-overlay {
             background-color: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(3px);
@@ -60,9 +60,13 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Additional styles remain the same */
-        .progress-ring { transform: rotate(-90deg); }
-        .streak-flame { animation: pulse 1.5s infinite alternate; }
+        /* New styles for enhanced UI */
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        .streak-flame {
+            animation: pulse 1.5s infinite alternate;
+        }
         @keyframes pulse {
             from { transform: scale(1); }
             to { transform: scale(1.1); }
@@ -123,6 +127,7 @@
             animation: pulse 2s infinite;
         }
         
+        /* Ad rotation styles */
         .ad-container {
             position: relative;
             overflow: hidden;
@@ -182,6 +187,7 @@
             color: var(--primary-color);
         }
         
+        /* Learn section specific ad styles */
         .learn-ad-container {
             height: 180px;
             margin-bottom: 1.5rem;
@@ -234,11 +240,12 @@
 
     <!-- Firebase SDK -->
     <script type="module">
-        // Your existing Firebase initialization code remains the same
+        // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs, addDoc, orderBy, limit } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
+        // Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDDKcWF9bOA9aSZOkeODE_N8Ag_wS87J_0",
             authDomain: "studio-4004347076-d761a.firebaseapp.com",
@@ -248,10 +255,12 @@
             appId: "1:316122123573:web:b36fe06376e37948ea907c"
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // Make Firebase available globally
         window.firebaseAuth = auth;
         window.firebaseDb = db;
         window.firebaseApp = app;
@@ -267,7 +276,10 @@
             collection,
             query,
             where,
-            getDocs
+            getDocs,
+            addDoc,
+            orderBy,
+            limit
         };
 
         console.log("Firebase initialized successfully!");
@@ -278,19 +290,95 @@
         // APPLICATION CONSTANTS AND STATE
         // =====================================================
         
-        // Your existing constants and state remain the same
-        const LS_USERS = 'eduhetech_users_v10';
-        const LS_WITHDRAWALS = 'eduhetech_withdrawals_v10';
-        const LS_LESSONS = 'eduhetech_lessons_v10';
-        const LS_QUIZZES = 'eduhetech_quizzes_v10';
-        const LS_ACHIEVEMENTS = 'eduhetech_achievements_v10';
+        // Firebase Collections
+        const FIRESTORE_COLLECTIONS = {
+            USERS: 'users',
+            WITHDRAWALS: 'withdrawals',
+            LESSONS: 'lessons',
+            QUIZZES: 'quizzes',
+            ACHIEVEMENTS: 'achievements',
+            LEADERBOARD: 'leaderboard',
+            NOTIFICATIONS: 'notifications'
+        };
 
+        // Ad rotation data
         const AD_ROTATION_DATA = [
-            // Your existing ad data
+            {
+                id: 'ad1',
+                title: 'Boost Your Learning',
+                description: 'Discover premium courses to advance your skills',
+                icon: 'fas fa-rocket',
+                category: 'education',
+                color: 'from-blue-500 to-indigo-600'
+            },
+            {
+                id: 'ad2',
+                title: 'Earn More Points',
+                description: 'Complete daily challenges for bonus rewards',
+                icon: 'fas fa-coins',
+                category: 'rewards',
+                color: 'from-green-500 to-teal-600'
+            },
+            {
+                id: 'ad3',
+                title: 'Refer Friends',
+                description: 'Share your link and earn 1000 points per referral',
+                icon: 'fas fa-user-plus',
+                category: 'referral',
+                color: 'from-purple-500 to-pink-600'
+            },
+            {
+                id: 'ad4',
+                title: 'Limited Time Offer',
+                description: 'Double points on all courses this weekend',
+                icon: 'fas fa-bolt',
+                category: 'promotion',
+                color: 'from-yellow-500 to-orange-600'
+            },
+            {
+                id: 'ad5',
+                title: 'New Courses Available',
+                description: 'Check out our latest course additions',
+                icon: 'fas fa-book-open',
+                category: 'education',
+                color: 'from-red-500 to-pink-600'
+            }
         ];
         
+        // Educational-focused ads for Learn section
         const LEARN_AD_DATA = [
-            // Your existing learn ad data
+            {
+                id: 'learn-ad1',
+                title: 'Master New Skills',
+                description: 'Expand your knowledge with our advanced courses',
+                icon: 'fas fa-graduation-cap',
+                category: 'education',
+                color: 'from-blue-500 to-purple-600'
+            },
+            {
+                id: 'learn-ad2',
+                title: 'Learning Streak Bonus',
+                description: 'Maintain your streak for extra points',
+                icon: 'fas fa-fire',
+                category: 'rewards',
+                color: 'from-orange-500 to-red-500'
+            },
+            {
+                id: 'learn-ad3',
+                title: 'Expert Instructors',
+                description: 'Learn from industry professionals',
+                icon: 'fas fa-chalkboard-teacher',
+                category: 'education',
+                color: 'from-green-500 to-blue-500'
+            },
+            {
+                id: 'learn-ad4',
+                title: 'Course Completion Rewards',
+                description: 'Earn bonus points when you finish courses',
+                icon: 'fas fa-trophy',
+                category: 'rewards',
+                color: 'from-yellow-500 to-orange-500'
+            }
         ];
         
         const BASE_POINTS_REWARDS = {
@@ -305,6 +393,7 @@
         const MIN_WITHDRAWAL_POINTS = 100000;
         const DAILY_POINTS_LIMIT = 10000;
 
+        // Global State Management
         window.state = {
             user: null,
             currentView: 'loading',
@@ -321,129 +410,559 @@
             currentLearnAdIndex: 0,
             adRotationInterval: null,
             learnAdRotationInterval: null,
-            firebaseUser: null
+            firebaseUser: null,
+            leaderboard: []
         };
 
         // =====================================================
         // FIREBASE AUTHENTICATION FUNCTIONS
         // =====================================================
 
-        // Your existing Firebase functions remain the same
         async function handleFirebaseSignup(name, email, password, referrerCode = null) {
-            // Your existing implementation
+            try {
+                showLoading(true);
+                
+                const { createUserWithEmailAndPassword, doc, setDoc } = window.firebaseModules;
+                const auth = window.firebaseAuth;
+                const db = window.firebaseDb;
+                
+                // Create user in Firebase Authentication
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const firebaseUser = userCredential.user;
+                
+                // Create user profile in Firestore
+                const userData = {
+                    uid: firebaseUser.uid,
+                    name: name,
+                    email: email,
+                    eduPoints: 1000, // Starting bonus
+                    referralCount: 0,
+                    referralCode: generateReferralCode(),
+                    lastLogin: Date.now(),
+                    loginDates: [new Date().toDateString()],
+                    history: [{ 
+                        action: 'Welcome Bonus', 
+                        points: 1000, 
+                        timestamp: Date.now() 
+                    }],
+                    achievements: [],
+                    completedCourses: {},
+                    completedQuizzes: {},
+                    completedCoursesToday: {},
+                    lastCourseReset: new Date().toDateString(),
+                    streak: 1,
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
+                };
+
+                // Save to Firestore
+                await setDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, firebaseUser.uid), userData);
+                
+                // Handle referral if applicable
+                if (referrerCode) {
+                    await handleReferral(referrerCode, firebaseUser.uid);
+                }
+
+                // Update local state
+                state.firebaseUser = firebaseUser;
+                state.user = userData;
+                
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-check-circle text-5xl text-green-500"></i>
+                        <h3 class="text-xl font-bold text-green-600">Account Created!</h3>
+                        <p class="text-gray-600">Welcome to EduHeTech, ${name}!</p>
+                        <p class="text-sm text-green-600">You received 1000 welcome bonus points!</p>
+                    </div>
+                `, () => {
+                    setTimeout(hideModal, 2000);
+                    state.currentView = 'dashboard';
+                    render();
+                });
+
+            } catch (error) {
+                console.error("Signup error:", error);
+                handleAuthError(getFirebaseErrorMessage(error));
+            } finally {
+                showLoading(false);
+            }
         }
 
         async function handleFirebaseLogin(email, password) {
-            // Your existing implementation
+            try {
+                showLoading(true);
+                
+                const { signInWithEmailAndPassword, doc, getDoc, updateDoc } = window.firebaseModules;
+                const auth = window.firebaseAuth;
+                const db = window.firebaseDb;
+                
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const firebaseUser = userCredential.user;
+                
+                // Get user data from Firestore
+                const userDoc = await getDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, firebaseUser.uid));
+                
+                if (!userDoc.exists()) {
+                    throw new Error('User data not found. Please contact support.');
+                }
+                
+                const userData = userDoc.data();
+                
+                // Update login info
+                const today = new Date().toDateString();
+                const lastLoginDate = new Date(userData.lastLogin).toDateString();
+                
+                if (today !== lastLoginDate) {
+                    if (!userData.loginDates) userData.loginDates = [];
+                    if (!userData.loginDates.includes(today)) {
+                        userData.loginDates.push(today);
+                    }
+                    
+                    // Add daily login bonus
+                    const streak = calculateStreak(userData.loginDates);
+                    userData.streak = streak;
+                    
+                    if (!hasReachedDailyLimit(userData)) {
+                        userData.eduPoints += BASE_POINTS_REWARDS.dailyLogin;
+                        userData.history.push({
+                            action: 'Daily Login Bonus',
+                            points: BASE_POINTS_REWARDS.dailyLogin,
+                            timestamp: Date.now()
+                        });
+                    }
+                    
+                    userData.lastLogin = Date.now();
+                    
+                    // Update in Firestore
+                    await updateDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, firebaseUser.uid), {
+                        loginDates: userData.loginDates,
+                        streak: userData.streak,
+                        eduPoints: userData.eduPoints,
+                        history: userData.history,
+                        lastLogin: userData.lastLogin,
+                        updatedAt: Date.now()
+                    });
+                }
+
+                // Update local state
+                state.firebaseUser = firebaseUser;
+                state.user = userData;
+                
+                state.currentView = 'dashboard';
+                render();
+
+            } catch (error) {
+                console.error("Login error:", error);
+                handleAuthError(getFirebaseErrorMessage(error));
+            } finally {
+                showLoading(false);
+            }
         }
 
         async function handleFirebaseLogout() {
-            // Your existing implementation
+            try {
+                showLoading(true);
+                const { signOut } = window.firebaseModules;
+                const auth = window.firebaseAuth;
+                
+                await signOut(auth);
+                state.firebaseUser = null;
+                state.user = null;
+                state.currentView = 'auth';
+                render();
+            } catch (error) {
+                console.error("Logout error:", error);
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
+                        <h3 class="text-xl font-bold text-red-600">Logout Error</h3>
+                        <p class="text-gray-600">${error.message}</p>
+                    </div>
+                `);
+            } finally {
+                showLoading(false);
+            }
         }
 
         async function handleReferral(referrerCode, newUserId) {
-            // Your existing implementation
+            try {
+                const { collection, query, where, getDocs, doc, updateDoc } = window.firebaseModules;
+                const db = window.firebaseDb;
+                
+                // Find referrer by referral code
+                const referrersSnapshot = await getDocs(
+                    query(collection(db, FIRESTORE_COLLECTIONS.USERS), where('referralCode', '==', referrerCode))
+                );
+                
+                if (!referrersSnapshot.empty) {
+                    const referrerDoc = referrersSnapshot.docs[0];
+                    const referrerData = referrerDoc.data();
+                    
+                    // Update referrer's data
+                    const newReferralCount = (referrerData.referralCount || 0) + 1;
+                    const newPoints = referrerData.eduPoints + BASE_POINTS_REWARDS.referral;
+                    
+                    await updateDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, referrerDoc.id), {
+                        referralCount: newReferralCount,
+                        eduPoints: newPoints,
+                        history: [
+                            ...(referrerData.history || []),
+                            {
+                                action: `Referral Bonus - ${state.user.name}`,
+                                points: BASE_POINTS_REWARDS.referral,
+                                timestamp: Date.now()
+                            }
+                        ],
+                        updatedAt: Date.now()
+                    });
+                    
+                    // Also update new user's data to track who referred them
+                    await updateDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, newUserId), {
+                        referredBy: referrerDoc.id,
+                        updatedAt: Date.now()
+                    });
+                    
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error("Referral error:", error);
+                return false;
+            }
         }
 
         function getFirebaseErrorMessage(error) {
-            // Your existing implementation
+            const errorMap = {
+                'auth/email-already-in-use': 'This email is already registered.',
+                'auth/invalid-email': 'Please enter a valid email address.',
+                'auth/operation-not-allowed': 'Email/password accounts are not enabled.',
+                'auth/weak-password': 'Password should be at least 6 characters.',
+                'auth/user-disabled': 'This account has been disabled.',
+                'auth/user-not-found': 'No account found with this email.',
+                'auth/wrong-password': 'Incorrect password.',
+                'auth/too-many-requests': 'Too many attempts. Please try again later.'
+            };
+            
+            return errorMap[error.code] || error.message || 'An error occurred. Please try again.';
         }
 
         function generateReferralCode() {
-            // Your existing implementation
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
         }
 
+        // Auth State Listener
         function initializeAuthStateListener() {
-            // Your existing implementation
+            const { onAuthStateChanged, doc, getDoc } = window.firebaseModules;
+            const auth = window.firebaseAuth;
+            const db = window.firebaseDb;
+            
+            onAuthStateChanged(auth, async (firebaseUser) => {
+                if (firebaseUser) {
+                    // User is signed in
+                    try {
+                        const userDoc = await getDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, firebaseUser.uid));
+                        
+                        if (userDoc.exists()) {
+                            state.firebaseUser = firebaseUser;
+                            state.user = userDoc.data();
+                            
+                            // Initialize app data
+                            await initializeAppData();
+                            
+                            if (state.currentView === 'auth' || state.currentView === 'loading') {
+                                state.currentView = 'dashboard';
+                            }
+                        } else {
+                            // User document doesn't exist - sign them out
+                            const { signOut } = window.firebaseModules;
+                            await signOut(auth);
+                            state.firebaseUser = null;
+                            state.user = null;
+                            state.currentView = 'auth';
+                            showModal(`
+                                <div class="text-center space-y-3">
+                                    <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
+                                    <h3 class="text-xl font-bold text-red-600">Account Error</h3>
+                                    <p class="text-gray-600">Your account data was not found. Please contact support.</p>
+                                </div>
+                            `);
+                        }
+                    } catch (error) {
+                        console.error("Error loading user data:", error);
+                        state.currentView = 'auth';
+                    }
+                } else {
+                    // User is signed out
+                    state.firebaseUser = null;
+                    state.user = null;
+                    state.currentView = 'auth';
+                }
+                render();
+            });
         }
 
         // =====================================================
-        // DATA PERSISTENCE FUNCTIONS
+        // FIREBASE DATA FUNCTIONS
         // =====================================================
 
-        // Your existing data functions remain the same
         async function saveUser(userData) {
-            // Your existing implementation
+            if (!state.firebaseUser) return;
+            
+            try {
+                const { doc, updateDoc } = window.firebaseModules;
+                const db = window.firebaseDb;
+                
+                // Update in Firestore
+                await updateDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, state.firebaseUser.uid), {
+                    ...userData,
+                    updatedAt: Date.now()
+                });
+                
+                // Also update local state
+                state.user = { ...state.user, ...userData };
+            } catch (error) {
+                console.error("Error saving user:", error);
+            }
         }
 
         async function addPoints(action, points, checkDailyLimit = true) {
-            // Your existing implementation
+            if (!state.user || !state.firebaseUser) return;
+            
+            if (checkDailyLimit && hasReachedDailyLimit(state.user)) {
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-exclamation-triangle text-5xl text-yellow-500"></i>
+                        <h3 class="text-xl font-bold text-yellow-600">Daily Limit Reached</h3>
+                        <p class="text-gray-600">You have reached your daily earning limit of ${formatPoints(DAILY_POINTS_LIMIT)} points. Come back tomorrow to earn more!</p>
+                    </div>
+                `);
+                return;
+            }
+            
+            showLoading(true);
+
+            try {
+                const { doc, updateDoc } = window.firebaseModules;
+                const db = window.firebaseDb;
+                
+                const newPoints = state.user.eduPoints + points;
+                const historyEntry = { action, points, timestamp: Date.now() };
+                const updatedHistory = [...(state.user.history || []), historyEntry];
+
+                // Update in Firestore
+                await updateDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, state.firebaseUser.uid), {
+                    eduPoints: newPoints,
+                    history: updatedHistory,
+                    updatedAt: Date.now()
+                });
+
+                // Update local state
+                state.user.eduPoints = newPoints;
+                state.user.history = updatedHistory;
+
+                await updateLeaderboards();
+                checkAchievements();
+
+                render();
+
+                // Show points animation
+                const coinAnimation = document.getElementById('coin-animation');
+                if (coinAnimation) {
+                    coinAnimation.innerHTML = `
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg slide-in">
+                            <div class="flex items-center">
+                                <i class="fas fa-coins text-xl mr-2"></i>
+                                <span class="font-bold">+${points} EduPoints!</span>
+                            </div>
+                            <p class="text-sm mt-1">${action}</p>
+                        </div>
+                    `;
+                    setTimeout(() => {
+                        if (coinAnimation) coinAnimation.innerHTML = '';
+                    }, 3000);
+                }
+
+            } catch (error) {
+                console.error("Error adding points:", error);
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
+                        <h3 class="text-xl font-bold text-red-600">Error</h3>
+                        <p class="text-gray-600">Failed to add points. Please try again.</p>
+                    </div>
+                `);
+            } finally {
+                showLoading(false);
+            }
         }
 
-        function loadAllUsers() {
-            // Your existing implementation
+        async function loadCollection(collectionName) {
+            try {
+                const { collection, getDocs } = window.firebaseModules;
+                const db = window.firebaseDb;
+                
+                const querySnapshot = await getDocs(collection(db, collectionName));
+                const data = [];
+                querySnapshot.forEach((doc) => {
+                    data.push({ id: doc.id, ...doc.data() });
+                });
+                return data;
+            } catch (error) {
+                console.error(`Error loading collection ${collectionName}:`, error);
+                return [];
+            }
         }
 
-        function saveAllUsers(users) {
-            // Your existing implementation
+        async function saveToCollection(collectionName, data) {
+            try {
+                const { collection, addDoc } = window.firebaseModules;
+                const db = window.firebaseDb;
+                
+                const docRef = await addDoc(collection(db, collectionName), data);
+                return docRef.id;
+            } catch (error) {
+                console.error(`Error saving to collection ${collectionName}:`, error);
+                return null;
+            }
         }
 
-        function loadCollection(key) {
-            // Your existing implementation
-        }
-
-        function saveCollection(key, data) {
-            // Your existing implementation
+        async function updateDocument(collectionName, docId, data) {
+            try {
+                const { doc, updateDoc } = window.firebaseModules;
+                const db = window.firebaseDb;
+                
+                await updateDoc(doc(db, collectionName, docId), data);
+                return true;
+            } catch (error) {
+                console.error(`Error updating document ${docId} in ${collectionName}:`, error);
+                return false;
+            }
         }
 
         // =====================================================
         // AD ROTATION SYSTEM
         // =====================================================
 
-        // Your existing ad rotation functions remain the same
         function startAdRotation() {
-            // Your existing implementation
+            if (state.adRotationInterval) {
+                clearInterval(state.adRotationInterval);
+            }
+            
+            state.adRotationInterval = setInterval(() => {
+                rotateAd();
+            }, 5000);
         }
 
         function startLearnAdRotation() {
-            // Your existing implementation
+            if (state.learnAdRotationInterval) {
+                clearInterval(state.learnAdRotationInterval);
+            }
+            
+            state.learnAdRotationInterval = setInterval(() => {
+                rotateLearnAd();
+            }, 6000);
         }
 
         function stopAdRotation() {
-            // Your existing implementation
+            if (state.adRotationInterval) {
+                clearInterval(state.adRotationInterval);
+                state.adRotationInterval = null;
+            }
         }
 
         function stopLearnAdRotation() {
-            // Your existing implementation
+            if (state.learnAdRotationInterval) {
+                clearInterval(state.learnAdRotationInterval);
+                state.learnAdRotationInterval = null;
+            }
         }
 
         function rotateAd() {
-            // Your existing implementation
+            state.currentAdIndex = (state.currentAdIndex + 1) % AD_ROTATION_DATA.length;
+            updateAdDisplay();
         }
 
         function rotateLearnAd() {
-            // Your existing implementation
+            state.currentLearnAdIndex = (state.currentLearnAdIndex + 1) % LEARN_AD_DATA.length;
+            updateLearnAdDisplay();
         }
 
         function setAdIndex(index) {
-            // Your existing implementation
+            state.currentAdIndex = index;
+            updateAdDisplay();
         }
 
         function setLearnAdIndex(index) {
-            // Your existing implementation
+            state.currentLearnAdIndex = index;
+            updateLearnAdDisplay();
         }
 
         function updateAdDisplay() {
-            // Your existing implementation
+            const adContainer = document.getElementById('ad-rotation-container');
+            if (!adContainer) return;
+            
+            adContainer.innerHTML = renderAdSlide(state.currentAdIndex);
+            
+            // Update indicators
+            const indicators = document.querySelectorAll('.ad-indicator');
+            indicators.forEach((indicator, index) => {
+                if (index === state.currentAdIndex) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
         }
 
         function updateLearnAdDisplay() {
-            // Your existing implementation
+            const adContainer = document.getElementById('learn-ad-rotation-container');
+            if (!adContainer) return;
+            
+            adContainer.innerHTML = renderLearnAdSlide(state.currentLearnAdIndex);
+            
+            // Update indicators
+            const indicators = document.querySelectorAll('.learn-ad-indicator');
+            indicators.forEach((indicator, index) => {
+                if (index === state.currentLearnAdIndex) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
         }
 
         function renderAdSlide(index) {
-            // Your existing implementation
+            const ad = AD_ROTATION_DATA[index];
+            return `
+                <div class="ad-slide active bg-gradient-to-r ${ad.color} text-white rounded-lg p-6 h-full flex flex-col justify-center items-center text-center">
+                    <i class="${ad.icon} ad-icon"></i>
+                    <h3 class="ad-title text-white">${ad.title}</h3>
+                    <p class="ad-description text-white text-opacity-90">${ad.description}</p>
+                    <button class="mt-4 bg-white text-gray-800 font-semibold py-2 px-6 rounded-lg hover:bg-opacity-90 transition">
+                        Learn More
+                    </button>
+                </div>
+            `;
         }
 
         function renderLearnAdSlide(index) {
-            // Your existing implementation
+            const ad = LEARN_AD_DATA[index];
+            return `
+                <div class="ad-slide active bg-gradient-to-r ${ad.color} text-white rounded-lg h-full flex flex-col justify-center items-center text-center learn-ad-slide">
+                    <i class="${ad.icon} learn-ad-icon"></i>
+                    <h3 class="learn-ad-title text-white font-bold">${ad.title}</h3>
+                    <p class="learn-ad-description text-white text-opacity-90">${ad.description}</p>
+                    <button class="mt-2 bg-white text-gray-800 font-semibold py-1 px-4 rounded-lg hover:bg-opacity-90 transition text-sm">
+                        Explore
+                    </button>
+                </div>
+            `;
         }
 
         // =====================================================
         // UTILITY FUNCTIONS
         // =====================================================
 
-        // Your existing utility functions remain the same
         function render() {
             const appContainer = document.getElementById('app');
             if (!appContainer) return;
@@ -464,6 +983,7 @@
                 attachContentListeners();
                 updateNotifications();
                 
+                // Start appropriate ad rotations based on current view
                 if (state.currentView === 'ads') {
                     startAdRotation();
                     stopLearnAdRotation();
@@ -480,121 +1000,523 @@
         }
 
         function showLoading(show) {
-            // Your existing implementation
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.style.display = show ? 'flex' : 'none';
+            }
         }
 
         function showModal(content, onConfirm = null, onCancel = null) {
-            // Your existing implementation
+            const modal = document.getElementById('global-modal');
+            const modalContent = document.getElementById('modal-content');
+            const modalConfirm = document.getElementById('modal-confirm');
+            const modalCancel = document.getElementById('modal-cancel');
+
+            if (!modal || !modalContent) return;
+
+            modalContent.innerHTML = content;
+            modal.classList.remove('hidden');
+
+            if (onConfirm) {
+                modalConfirm.classList.remove('hidden');
+                modalConfirm.onclick = () => {
+                    onConfirm();
+                    modal.classList.add('hidden');
+                    modalConfirm.onclick = null;
+                };
+            } else {
+                modalConfirm.classList.add('hidden');
+                modalConfirm.onclick = null;
+            }
+
+            if (onCancel) {
+                modalCancel.classList.remove('hidden');
+                modalCancel.onclick = () => {
+                    onCancel();
+                    modal.classList.add('hidden');
+                    modalCancel.onclick = null;
+                };
+            } else {
+                modalCancel.classList.add('hidden');
+                modalCancel.onclick = null;
+            }
         }
 
         function hideModal() {
-            // Your existing implementation
+            document.getElementById('global-modal').classList.add('hidden');
         }
 
         function formatPoints(points) {
-            // Your existing implementation
-        }
-
-        function generateUniqueId() {
-            // Your existing implementation
+            return points.toLocaleString();
         }
 
         function calculateStreak(loginDates) {
-            // Your existing implementation
+            if (!loginDates || loginDates.length === 0) return 0;
+            
+            const sortedDates = [...loginDates].sort((a, b) => new Date(b) - new Date(a));
+            let streak = 1;
+            let currentDate = new Date(sortedDates[0]);
+            
+            for (let i = 1; i < sortedDates.length; i++) {
+                const prevDate = new Date(currentDate);
+                prevDate.setDate(prevDate.getDate() - 1);
+                
+                const checkDate = new Date(sortedDates[i]);
+                if (checkDate.toDateString() === prevDate.toDateString()) {
+                    streak++;
+                    currentDate = checkDate;
+                } else {
+                    break;
+                }
+            }
+            
+            return streak;
         }
 
         function updateBrowserTitle() {
-            // Your existing implementation
+            const viewTitles = {
+                'dashboard': 'Dashboard',
+                'learn': 'Learn',
+                'quiz': 'Quiz',
+                'ads': 'Watch Ads',
+                'referral': 'Refer & Earn',
+                'rewards': 'Withdraw',
+                'leaderboard': 'Leaderboard',
+                'achievements': 'Achievements',
+                'course-detail': state.currentCourse ? state.currentCourse.title : 'Course'
+            };
+            
+            const title = viewTitles[state.currentView] || 'EduHeTech';
+            document.title = `${title} - EduHeTech`;
+        }
+
+        function hasReachedDailyLimit(user) {
+            if (!user.history) return false;
+            
+            const today = new Date().toDateString();
+            const todayEarnings = user.history
+                .filter(entry => {
+                    const entryDate = new Date(entry.timestamp).toDateString();
+                    return entryDate === today && entry.points > 0;
+                })
+                .reduce((sum, entry) => sum + entry.points, 0);
+            
+            return todayEarnings >= DAILY_POINTS_LIMIT;
+        }
+
+        function resetDailyCourses() {
+            if (!state.user) return;
+            
+            const today = new Date().toDateString();
+            if (state.user.lastCourseReset !== today) {
+                state.user.completedCoursesToday = {};
+                state.user.lastCourseReset = today;
+                saveUser({ completedCoursesToday: {}, lastCourseReset: today });
+            }
         }
 
         // =====================================================
         // CORE APPLICATION LOGIC
         // =====================================================
 
-        // Your existing core functions remain the same
-        function initMockData() {
-            // Your existing implementation
+        async function initMockData() {
+            // Initialize lessons if empty
+            const existingLessons = await loadCollection(FIRESTORE_COLLECTIONS.LESSONS);
+            if (existingLessons.length === 0) {
+                const lessons = getAllCourses();
+                for (const lesson of lessons) {
+                    await saveToCollection(FIRESTORE_COLLECTIONS.LESSONS, lesson);
+                }
+            }
+
+            // Initialize quizzes if empty
+            const existingQuizzes = await loadCollection(FIRESTORE_COLLECTIONS.QUIZZES);
+            if (existingQuizzes.length === 0) {
+                const quizzes = getAllQuizzes();
+                for (const quiz of quizzes) {
+                    await saveToCollection(FIRESTORE_COLLECTIONS.QUIZZES, quiz);
+                }
+            }
+
+            // Initialize achievements if empty
+            const existingAchievements = await loadCollection(FIRESTORE_COLLECTIONS.ACHIEVEMENTS);
+            if (existingAchievements.length === 0) {
+                const achievements = getAllAchievements();
+                for (const achievement of achievements) {
+                    await saveToCollection(FIRESTORE_COLLECTIONS.ACHIEVEMENTS, achievement);
+                }
+            }
         }
 
         function getAllCourses() {
-            // Your existing implementation
+            return [
+                {
+                    id: 'health-1',
+                    title: 'Introduction to Complementary and Alternative Medicine',
+                    category: 'Health & Medicine',
+                    subcategory: 'Alternative Medicine',
+                    content: `
+                        <div class="course-content">
+                            <div class="course-section">
+                                <h3 class="text-xl font-bold mb-3">What is Complementary and Alternative Medicine?</h3>
+                                <p class="mb-3">Complementary and Alternative Medicine (CAM) refers to medical products and practices that are not part of standard medical care.</p>
+                                <p class="mb-3">Complementary medicine is used together with standard medical care. An example is using acupuncture to help with side effects of cancer treatment.</p>
+                            </div>
+                            <div class="course-section">
+                                <h3 class="text-xl font-bold mb-3">Types of Complementary and Alternative Medicine</h3>
+                                <h4 class="font-bold mb-2">1. Natural Products</h4>
+                                <p class="mb-3">This includes herbs, vitamins, minerals, and probiotics.</p>
+                                <h4 class="font-bold mb-2">2. Mind and Body Practices</h4>
+                                <p class="mb-3">These include techniques such as acupuncture, massage therapy, meditation, and yoga.</p>
+                            </div>
+                        </div>
+                    `,
+                    duration: 10,
+                    difficulty: 'Beginner',
+                    points: 500,
+                    order: 1
+                },
+                {
+                    id: 'health-2',
+                    title: 'Community Health Principles and Practices',
+                    category: 'Health & Medicine',
+                    subcategory: 'Public Health',
+                    content: `
+                        <div class="course-content">
+                            <div class="course-section">
+                                <h3 class="text-xl font-bold mb-3">Introduction to Community Health</h3>
+                                <p class="mb-3">Community health is a field of public health that focuses on studying, protecting, or improving health within a community.</p>
+                            </div>
+                            <div class="course-section">
+                                <h3 class="text-xl font-bold mb-3">Key Principles of Community Health</h3>
+                                <h4 class="font-bold mb-2">1. Community Participation</h4>
+                                <p class="mb-3">Active involvement of community members in identifying health problems and developing solutions.</p>
+                                <h4 class="font-bold mb-2">2. Equity and Social Justice</h4>
+                                <p class="mb-3">Ensuring fair distribution of health resources and addressing health disparities.</p>
+                            </div>
+                        </div>
+                    `,
+                    duration: 12,
+                    difficulty: 'Intermediate',
+                    points: 500,
+                    order: 2
+                }
+            ];
         }
 
         function getAllQuizzes() {
-            // Your existing implementation
+            return [
+                {
+                    id: 'health-1-quiz',
+                    title: 'Complementary and Alternative Medicine Quiz',
+                    category: 'Health & Medicine',
+                    courseId: 'health-1',
+                    questions: [
+                        { 
+                            q: 'What is the main difference between complementary and alternative medicine?', 
+                            options: [
+                                'Complementary medicine is used together with standard care, while alternative medicine is used instead of standard care',
+                                'Complementary medicine is more scientific than alternative medicine',
+                                'Alternative medicine is always safer than complementary medicine',
+                                'There is no significant difference between the two'
+                            ], 
+                            answer: 'Complementary medicine is used together with standard care, while alternative medicine is used instead of standard care' 
+                        }
+                    ]
+                }
+            ];
         }
 
-        function initializeAppData() {
-            // Your existing implementation
+        function getAllAchievements() {
+            return [
+                { id: 'a1', name: 'First Steps', description: 'Complete your first lesson', icon: 'fas fa-footsteps', points: 5000, type: 'bronze', condition: { type: 'lessonsCompleted', threshold: 1 } },
+                { id: 'a2', name: 'Quiz Whiz', description: 'Complete 5 quizzes', icon: 'fas fa-brain', points: 10000, type: 'silver', condition: { type: 'quizzesCompleted', threshold: 5 } },
+                { id: 'a3', name: 'Learning Streak', description: 'Maintain a 7-day learning streak', icon: 'fas fa-fire', points: 15000, type: 'gold', condition: { type: 'streak', threshold: 7 } },
+                { id: 'a4', name: 'Point Collector', description: 'Earn 50,000 points', icon: 'fas fa-coins', points: 20000, type: 'gold', condition: { type: 'points', threshold: 50000 } },
+                { id: 'a5', name: 'Referral Master', description: 'Refer 5 friends', icon: 'fas fa-users', points: 25000, type: 'platinum', condition: { type: 'referrals', threshold: 5 } },
+                { id: 'a6', name: 'Daily Learner', description: 'Complete 5 courses in one day', icon: 'fas fa-calendar-day', points: 15000, type: 'silver', condition: { type: 'dailyLessons', threshold: 5 } },
+                { id: 'a7', name: 'Tech Guru', description: 'Complete 5 technology courses', icon: 'fas fa-laptop-code', points: 15000, type: 'silver', condition: { type: 'categoryCompleted', threshold: 5, category: 'Technology' } },
+                { id: 'a8', name: 'Business Pro', description: 'Complete 5 business courses', icon: 'fas fa-briefcase', points: 15000, type: 'silver', condition: { type: 'categoryCompleted', threshold: 5, category: 'Business & Entrepreneurship' } }
+            ];
         }
 
-        function initializeData() {
-            initMockData();
+        async function initializeAppData() {
+            // Load data from Firestore
+            state.lessons = await loadCollection(FIRESTORE_COLLECTIONS.LESSONS);
+            state.quizzes = await loadCollection(FIRESTORE_COLLECTIONS.QUIZZES);
+            state.achievements = await loadCollection(FIRESTORE_COLLECTIONS.ACHIEVEMENTS);
+            state.withdrawalRequests = await loadCollection(FIRESTORE_COLLECTIONS.WITHDRAWALS);
+            state.leaderboard = await loadCollection(FIRESTORE_COLLECTIONS.LEADERBOARD);
+
+            resetDailyCourses();
+            await updateLeaderboards();
+            checkAchievements();
+            
+            initializeBrowserHistory();
+        }
+
+        async function initializeData() {
+            await initMockData();
+            
+            // Initialize Firebase auth state listener
             initializeAuthStateListener();
+            
+            // Set initial view to loading - will be updated by auth state listener
             state.currentView = 'loading';
             render();
         }
 
         function initializeBrowserHistory() {
-            // Your existing implementation
+            window.history.replaceState({ view: state.currentView }, '', window.location.pathname);
+        }
+
+        async function updateLeaderboards() {
+            try {
+                const { collection, query, orderBy, limit, getDocs } = window.firebaseModules;
+                const db = window.firebaseDb;
+                
+                // Get top 10 users by points
+                const leaderboardQuery = query(
+                    collection(db, FIRESTORE_COLLECTIONS.USERS),
+                    orderBy('eduPoints', 'desc'),
+                    limit(10)
+                );
+                
+                const querySnapshot = await getDocs(leaderboardQuery);
+                state.leaderboard = [];
+                querySnapshot.forEach((doc) => {
+                    state.leaderboard.push({ id: doc.id, ...doc.data() });
+                });
+            } catch (error) {
+                console.error("Error updating leaderboard:", error);
+            }
+        }
+
+        async function checkAchievements() {
+            if (!state.user) return;
+            
+            const userAchievements = state.user.achievements || [];
+            const unlockedAchievements = [];
+            
+            for (const achievement of state.achievements) {
+                // Skip if already unlocked
+                if (userAchievements.includes(achievement.id)) continue;
+                
+                let conditionMet = false;
+                
+                switch (achievement.condition.type) {
+                    case 'lessonsCompleted':
+                        conditionMet = Object.keys(state.user.completedCourses || {}).length >= achievement.condition.threshold;
+                        break;
+                    case 'quizzesCompleted':
+                        conditionMet = Object.keys(state.user.completedQuizzes || {}).length >= achievement.condition.threshold;
+                        break;
+                    case 'streak':
+                        conditionMet = (state.user.streak || 0) >= achievement.condition.threshold;
+                        break;
+                    case 'points':
+                        conditionMet = state.user.eduPoints >= achievement.condition.threshold;
+                        break;
+                    case 'referrals':
+                        conditionMet = (state.user.referralCount || 0) >= achievement.condition.threshold;
+                        break;
+                }
+                
+                if (conditionMet) {
+                    unlockedAchievements.push(achievement);
+                    userAchievements.push(achievement.id);
+                    
+                    // Add achievement points
+                    await addPoints(`Achievement: ${achievement.name}`, achievement.points, false);
+                }
+            }
+            
+            if (unlockedAchievements.length > 0) {
+                // Update user achievements in Firestore
+                await saveUser({ achievements: userAchievements });
+                
+                // Show achievement notification
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-trophy text-5xl text-yellow-500"></i>
+                        <h3 class="text-xl font-bold text-yellow-600">Achievement Unlocked!</h3>
+                        <div class="space-y-2">
+                            ${unlockedAchievements.map(achievement => `
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                                    <p class="font-semibold">${achievement.name}</p>
+                                    <p class="text-sm text-yellow-700">${achievement.description}</p>
+                                    <p class="text-sm text-green-600">+${formatPoints(achievement.points)} points!</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `, () => {
+                    setTimeout(hideModal, 3000);
+                });
+            }
+        }
+
+        function updateNotifications() {
+            // Implementation for notifications
         }
 
         // =====================================================
-        // MISSING RENDER FUNCTIONS - ADDED BELOW
+        // RENDER FUNCTIONS
         // =====================================================
 
-        function renderHeader() {
+        function renderAuthScreen() {
             return `
-                <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-30">
+                <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+                    <div class="w-full max-w-md card p-8 space-y-6 shadow-xl">
+                        <div class="text-center">
+                            <h1 class="text-4xl font-extrabold text-blue-600 mb-2">EduHeTech</h1>
+                            <p class="text-gray-600">Learn valuable skills and earn rewards!</p>
+                        </div>
+
+                        <div id="auth-form-container" class="space-y-4">
+                            <!-- Auth Form will be rendered here -->
+                        </div>
+
+                        <div class="text-center">
+                            <button id="toggle-auth" class="text-sm text-blue-500 hover:text-blue-700 font-medium transition-colors">Need an account? Sign Up</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLoginForm() {
+            return `
+                <h2 class="text-2xl font-bold text-center text-gray-800">Welcome Back</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="login-email" placeholder="Enter your email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    </div>
+                    <div>
+                        <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="login-password" placeholder="Enter your password" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    </div>
+                    <button id="login-btn" class="w-full p-3 btn-primary font-semibold rounded-lg shadow-md hover:shadow-lg transition">Log In</button>
+                </div>
+                <div id="auth-error-message" class="text-red-500 text-sm text-center mt-2"></div>
+            `;
+        }
+
+        function renderSignupForm() {
+            return `
+                <h2 class="text-2xl font-bold text-center text-gray-800">Join EduHeTech</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="signup-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="signup-name" placeholder="Enter your full name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    </div>
+                    <div>
+                        <label for="signup-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="signup-email" placeholder="Enter your email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    </div>
+                    <div>
+                        <label for="signup-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="signup-password" placeholder="Create a password (min 6 chars)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    </div>
+                    <div>
+                        <label for="signup-referral" class="block text-sm font-medium text-gray-700 mb-1">Referral Code (Optional)</label>
+                        <input type="text" id="signup-referral" placeholder="Enter referral code if you have one" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    </div>
+                    <button id="signup-btn" class="w-full p-3 btn-primary font-semibold rounded-lg shadow-md hover:shadow-lg transition">Create Account</button>
+                </div>
+                <div id="auth-error-message" class="text-red-500 text-sm text-center mt-2"></div>
+            `;
+        }
+
+        function attachAuthListeners() {
+            const container = document.getElementById('auth-form-container');
+            const toggleBtn = document.getElementById('toggle-auth');
+            let isLogin = true;
+
+            const updateForm = () => {
+                container.innerHTML = isLogin ? renderLoginForm() : renderSignupForm();
+                toggleBtn.textContent = isLogin ? 'Need an account? Sign Up' : 'Already have an account? Log In';
+                attachFormListeners();
+            };
+
+            const attachFormListeners = () => {
+                // Login form
+                document.getElementById('login-btn')?.addEventListener('click', () => {
+                    const email = document.getElementById('login-email').value;
+                    const password = document.getElementById('login-password').value;
+                    handleFirebaseLogin(email, password);
+                });
+                
+                // Signup form
+                document.getElementById('signup-btn')?.addEventListener('click', () => {
+                    const name = document.getElementById('signup-name').value;
+                    const email = document.getElementById('signup-email').value;
+                    const password = document.getElementById('signup-password').value;
+                    const referrerId = document.getElementById('signup-referral').value;
+                    handleFirebaseSignup(name, email, password, referrerId);
+                });
+                
+                // Enter key support
+                const attachEnterKey = (inputId, buttonId) => {
+                    document.getElementById(inputId)?.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') document.getElementById(buttonId)?.click();
+                    });
+                };
+                
+                attachEnterKey('login-email', 'login-btn');
+                attachEnterKey('login-password', 'login-btn');
+                attachEnterKey('signup-name', 'signup-btn');
+                attachEnterKey('signup-email', 'signup-btn');
+                attachEnterKey('signup-password', 'signup-btn');
+            };
+
+            toggleBtn?.addEventListener('click', () => {
+                isLogin = !isLogin;
+                updateForm();
+            });
+
+            updateForm();
+        }
+
+        function handleAuthError(message) {
+            const errorEl = document.getElementById('auth-error-message');
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.add('slide-in');
+                setTimeout(() => errorEl.classList.remove('slide-in'), 500);
+            }
+        }
+
+        function renderHeader() {
+            if (!state.user) return '';
+            
+            return `
+                <header class="bg-white shadow-sm border-b">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div class="flex justify-between items-center h-16">
                             <div class="flex items-center">
-                                <h1 class="text-2xl font-bold text-blue-600">EduHeTech</h1>
+                                <h1 class="text-xl font-bold text-blue-600">EduHeTech</h1>
                             </div>
                             
                             <div class="flex items-center space-x-4">
                                 <div class="flex items-center space-x-2 bg-blue-50 px-3 py-1 rounded-full">
                                     <i class="fas fa-coins text-yellow-500"></i>
-                                    <span class="font-semibold text-blue-700">${state.user ? formatPoints(state.user.eduPoints) : 0}</span>
+                                    <span class="font-semibold">${formatPoints(state.user.eduPoints || 0)}</span>
                                 </div>
-                                <button onclick="handleFirebaseLogout()" class="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg transition text-gray-700">
-                                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                <button onclick="handleFirebaseLogout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">
+                                    Logout
                                 </button>
                             </div>
                         </div>
-                        
-                        <nav class="flex space-x-8 overflow-x-auto py-2">
-                            <button class="nav-btn ${state.currentView === 'dashboard' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent'} whitespace-nowrap pb-2 px-1 border-b-2 font-medium text-sm transition" data-view="dashboard">
-                                <i class="fas fa-home mr-2"></i>Dashboard
-                            </button>
-                            <button class="nav-btn ${state.currentView === 'learn' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent'} whitespace-nowrap pb-2 px-1 border-b-2 font-medium text-sm transition" data-view="learn">
-                                <i class="fas fa-book mr-2"></i>Learn
-                            </button>
-                            <button class="nav-btn ${state.currentView === 'quiz' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent'} whitespace-nowrap pb-2 px-1 border-b-2 font-medium text-sm transition" data-view="quiz">
-                                <i class="fas fa-brain mr-2"></i>Quiz
-                            </button>
-                            <button class="nav-btn ${state.currentView === 'ads' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent'} whitespace-nowrap pb-2 px-1 border-b-2 font-medium text-sm transition" data-view="ads">
-                                <i class="fas fa-ad mr-2"></i>Watch Ads
-                            </button>
-                            <button class="nav-btn ${state.currentView === 'referral' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent'} whitespace-nowrap pb-2 px-1 border-b-2 font-medium text-sm transition" data-view="referral">
-                                <i class="fas fa-users mr-2"></i>Refer & Earn
-                            </button>
-                            <button class="nav-btn ${state.currentView === 'rewards' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent'} whitespace-nowrap pb-2 px-1 border-b-2 font-medium text-sm transition" data-view="rewards">
-                                <i class="fas fa-gift mr-2"></i>Withdraw
-                            </button>
-                            <button class="nav-btn ${state.currentView === 'leaderboard' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent'} whitespace-nowrap pb-2 px-1 border-b-2 font-medium text-sm transition" data-view="leaderboard">
-                                <i class="fas fa-trophy mr-2"></i>Leaderboard
-                            </button>
-                            <button class="nav-btn ${state.currentView === 'achievements' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent'} whitespace-nowrap pb-2 px-1 border-b-2 font-medium text-sm transition" data-view="achievements">
-                                <i class="fas fa-medal mr-2"></i>Achievements
-                            </button>
-                        </nav>
                     </div>
                 </header>
             `;
         }
 
         function renderContent() {
+            if (!state.user) return '';
+            
             const views = {
                 dashboard: renderDashboard(),
                 learn: renderLearn(),
@@ -607,68 +1529,151 @@
             };
             
             return `
-                <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <div id="coin-animation" class="fixed top-20 right-4 z-40"></div>
-                    ${views[state.currentView] || views.dashboard}
-                </main>
+                <div class="flex min-h-screen bg-gray-50">
+                    <!-- Sidebar Navigation -->
+                    <nav class="w-64 bg-white shadow-sm min-h-screen p-4">
+                        <div class="space-y-2">
+                            ${renderNavItem('dashboard', 'fas fa-home', 'Dashboard')}
+                            ${renderNavItem('learn', 'fas fa-book', 'Learn & Earn')}
+                            ${renderNavItem('quiz', 'fas fa-brain', 'Quizzes')}
+                            ${renderNavItem('ads', 'fas fa-ad', 'Watch Ads')}
+                            ${renderNavItem('referral', 'fas fa-users', 'Refer & Earn')}
+                            ${renderNavItem('rewards', 'fas fa-gift', 'Withdraw')}
+                            ${renderNavItem('leaderboard', 'fas fa-trophy', 'Leaderboard')}
+                            ${renderNavItem('achievements', 'fas fa-medal', 'Achievements')}
+                        </div>
+                    </nav>
+                    
+                    <!-- Main Content -->
+                    <main class="flex-1 p-6">
+                        <div id="coin-animation" class="fixed top-4 right-4 z-30"></div>
+                        ${views[state.currentView] || '<div>View not found</div>'}
+                    </main>
+                </div>
+            `;
+        }
+
+        function renderNavItem(view, icon, label) {
+            const isActive = state.currentView === view;
+            return `
+                <button 
+                    onclick="switchView('${view}')"
+                    class="w-full flex items-center space-x-3 p-3 rounded-lg transition ${
+                        isActive 
+                            ? 'bg-blue-500 text-white' 
+                            : 'text-gray-600 hover:bg-gray-100'
+                    }"
+                >
+                    <i class="${icon} w-5"></i>
+                    <span>${label}</span>
+                </button>
             `;
         }
 
         function renderDashboard() {
+            const completedCourses = Object.keys(state.user.completedCourses || {}).length;
+            const completedQuizzes = Object.keys(state.user.completedQuizzes || {}).length;
+            
             return `
                 <div class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="card p-6 text-center">
-                            <i class="fas fa-coins text-4xl text-yellow-500 mb-4"></i>
-                            <h3 class="text-lg font-semibold text-gray-700">Total Points</h3>
-                            <p class="text-3xl font-bold text-blue-600">${formatPoints(state.user.eduPoints)}</p>
-                        </div>
-                        
-                        <div class="card p-6 text-center">
-                            <i class="fas fa-fire text-4xl text-orange-500 mb-4"></i>
-                            <h3 class="text-lg font-semibold text-gray-700">Learning Streak</h3>
-                            <p class="text-3xl font-bold text-orange-600">${state.user.streak || 0} days</p>
-                        </div>
-                        
-                        <div class="card p-6 text-center">
-                            <i class="fas fa-users text-4xl text-green-500 mb-4"></i>
-                            <h3 class="text-lg font-semibold text-gray-700">Referrals</h3>
-                            <p class="text-3xl font-bold text-green-600">${state.user.referralCount || 0}</p>
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-white rounded-lg p-3 shadow-sm">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-fire text-orange-500"></i>
+                                    <span>Streak: ${state.user.streak || 0} days</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="card p-6">
-                            <h3 class="text-xl font-bold mb-4">Quick Actions</h3>
-                            <div class="space-y-3">
-                                <button class="w-full text-left p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition" data-view="learn">
-                                    <i class="fas fa-book mr-3 text-blue-500"></i>
-                                    <span class="font-semibold">Continue Learning</span>
-                                </button>
-                                <button class="w-full text-left p-4 bg-green-50 rounded-lg hover:bg-green-100 transition" data-view="quiz">
-                                    <i class="fas fa-brain mr-3 text-green-500"></i>
-                                    <span class="font-semibold">Take a Quiz</span>
-                                </button>
-                                <button class="w-full text-left p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition" data-view="ads">
-                                    <i class="fas fa-ad mr-3 text-purple-500"></i>
-                                    <span class="font-semibold">Watch Ads for Points</span>
-                                </button>
+                    <!-- Welcome Card -->
+                    <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white">
+                        <h2 class="text-2xl font-bold mb-2">Welcome back, ${state.user.name}!</h2>
+                        <p class="opacity-90">Continue your learning journey and earn rewards</p>
+                    </div>
+                    
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500">Total Points</p>
+                                    <p class="text-2xl font-bold">${formatPoints(state.user.eduPoints || 0)}</p>
+                                </div>
+                                <i class="fas fa-coins text-yellow-500 text-2xl"></i>
                             </div>
                         </div>
                         
-                        <div class="card p-6">
-                            <h3 class="text-xl font-bold mb-4">Recent Activity</h3>
-                            <div class="space-y-2 max-h-60 overflow-y-auto">
-                                ${state.user.history && state.user.history.length > 0 
-                                    ? state.user.history.slice(-5).reverse().map(activity => `
-                                        <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
-                                            <span class="text-sm">${activity.action}</span>
-                                            <span class="text-sm font-semibold text-green-600">+${activity.points}</span>
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500">Courses Completed</p>
+                                    <p class="text-2xl font-bold">${completedCourses}</p>
+                                </div>
+                                <i class="fas fa-book text-green-500 text-2xl"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500">Referrals</p>
+                                    <p class="text-2xl font-bold">${state.user.referralCount || 0}</p>
+                                </div>
+                                <i class="fas fa-users text-blue-500 text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <button onclick="switchView('learn')" class="bg-blue-50 hover:bg-blue-100 p-4 rounded-lg text-center transition">
+                                <i class="fas fa-book text-blue-500 text-xl mb-2"></i>
+                                <p class="font-medium">Learn & Earn</p>
+                            </button>
+                            
+                            <button onclick="switchView('quiz')" class="bg-green-50 hover:bg-green-100 p-4 rounded-lg text-center transition">
+                                <i class="fas fa-brain text-green-500 text-xl mb-2"></i>
+                                <p class="font-medium">Take Quiz</p>
+                            </button>
+                            
+                            <button onclick="switchView('ads')" class="bg-purple-50 hover:bg-purple-100 p-4 rounded-lg text-center transition">
+                                <i class="fas fa-ad text-purple-500 text-xl mb-2"></i>
+                                <p class="font-medium">Watch Ads</p>
+                            </button>
+                            
+                            <button onclick="switchView('referral')" class="bg-orange-50 hover:bg-orange-100 p-4 rounded-lg text-center transition">
+                                <i class="fas fa-users text-orange-500 text-xl mb-2"></i>
+                                <p class="font-medium">Refer Friends</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold mb-4">Recent Activity</h3>
+                        <div class="space-y-3">
+                            ${state.user.history && state.user.history.length > 0 
+                                ? state.user.history
+                                    .slice(-5)
+                                    .reverse()
+                                    .map(entry => `
+                                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                            <div class="flex items-center space-x-3">
+                                                <i class="fas fa-${entry.points > 0 ? 'plus text-green-500' : 'minus text-red-500'}"></i>
+                                                <span>${entry.action}</span>
+                                            </div>
+                                            <span class="font-semibold ${entry.points > 0 ? 'text-green-600' : 'text-red-600'}">
+                                                ${entry.points > 0 ? '+' : ''}${entry.points}
+                                            </span>
                                         </div>
                                     `).join('')
-                                    : '<p class="text-gray-500 text-center py-4">No recent activity</p>'
-                                }
-                            </div>
+                                : '<p class="text-gray-500 text-center py-4">No recent activity</p>'
+                            }
                         </div>
                     </div>
                 </div>
@@ -676,44 +1681,133 @@
         }
 
         function renderLearn() {
+            const availableCourses = state.lessons.filter(course => 
+                !state.user.completedCoursesToday?.[course.id]
+            );
+            
             return `
                 <div class="space-y-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Available Courses</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        ${state.lessons.map(course => `
-                            <div class="card p-6 hover:shadow-lg transition cursor-pointer" data-course="${course.id}">
-                                <div class="flex justify-between items-start mb-4">
-                                    <h3 class="font-bold text-lg text-gray-800">${course.title}</h3>
-                                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">${course.difficulty}</span>
-                                </div>
-                                <p class="text-gray-600 text-sm mb-4">${course.category} • ${course.duration} min</p>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-yellow-500 font-semibold">+${course.points} points</span>
-                                    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
-                                        Start Learning
-                                    </button>
-                                </div>
-                            </div>
-                        `).join('')}
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Learn & Earn</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-info-circle text-blue-500"></i>
+                            <span class="text-sm text-gray-600">Complete courses to earn points</span>
+                        </div>
+                    </div>
+
+                    <!-- Ad Rotation in Learn Section -->
+                    <div class="learn-ad-container ad-container">
+                        <div id="learn-ad-rotation-container">
+                            ${renderLearnAdSlide(state.currentLearnAdIndex)}
+                        </div>
+                        <div class="ad-indicators">
+                            ${LEARN_AD_DATA.map((_, index) => `
+                                <div class="ad-indicator learn-ad-indicator ${index === state.currentLearnAdIndex ? 'active' : ''}" 
+                                     onclick="setLearnAdIndex(${index})"></div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Available Courses -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold mb-4">Available Courses</h3>
+                        <div class="space-y-4">
+                            ${availableCourses.length > 0 
+                                ? availableCourses.map(course => `
+                                    <div class="flex justify-between items-center p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition">
+                                        <div>
+                                            <h4 class="font-semibold">${course.title}</h4>
+                                            <p class="text-sm text-gray-600">${course.category} • ${course.duration} mins • ${course.points} points</p>
+                                        </div>
+                                        <button onclick="startCourse('${course.id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition">
+                                            Start Course
+                                        </button>
+                                    </div>
+                                `).join('')
+                                : '<div class="text-center py-8 text-gray-500"><i class="fas fa-check-circle text-green-500 text-2xl mb-2"></i><p>All available courses completed for today!</p></div>'
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Completed Courses -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold mb-4">Completed Courses</h3>
+                        <div class="space-y-3">
+                            ${state.user.completedCourses && Object.keys(state.user.completedCourses).length > 0
+                                ? state.lessons
+                                    .filter(course => state.user.completedCourses[course.id])
+                                    .map(course => `
+                                        <div class="flex justify-between items-center p-3 bg-green-50 border border-green-200 rounded-lg">
+                                            <div class="flex items-center space-x-3">
+                                                <i class="fas fa-check-circle text-green-500"></i>
+                                                <span>${course.title}</span>
+                                            </div>
+                                            <span class="text-green-600 font-semibold">+${course.points}</span>
+                                        </div>
+                                    `).join('')
+                                : '<p class="text-gray-500 text-center py-4">No courses completed yet</p>'
+                            }
+                        </div>
                     </div>
                 </div>
             `;
         }
 
         function renderQuiz() {
+            const availableQuizzes = state.quizzes.filter(quiz => 
+                !state.user.completedQuizzes?.[quiz.id]
+            );
+            
             return `
                 <div class="space-y-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Available Quizzes</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        ${state.quizzes.map(quiz => `
-                            <div class="card p-6">
-                                <h3 class="font-bold text-lg mb-2">${quiz.title}</h3>
-                                <p class="text-gray-600 mb-4">Category: ${quiz.category}</p>
-                                <button class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition" data-quiz="${quiz.id}">
-                                    Start Quiz
-                                </button>
-                            </div>
-                        `).join('')}
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Quizzes</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-info-circle text-blue-500"></i>
+                            <span class="text-sm text-gray-600">Test your knowledge and earn points</span>
+                        </div>
+                    </div>
+
+                    <!-- Available Quizzes -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold mb-4">Available Quizzes</h3>
+                        <div class="space-y-4">
+                            ${availableQuizzes.length > 0 
+                                ? availableQuizzes.map(quiz => `
+                                    <div class="flex justify-between items-center p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition">
+                                        <div>
+                                            <h4 class="font-semibold">${quiz.title}</h4>
+                                            <p class="text-sm text-gray-600">${quiz.category} • ${quiz.questions.length} questions • ${BASE_POINTS_REWARDS.quiz} points</p>
+                                        </div>
+                                        <button onclick="startQuiz('${quiz.id}')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition">
+                                            Start Quiz
+                                        </button>
+                                    </div>
+                                `).join('')
+                                : '<div class="text-center py-8 text-gray-500"><i class="fas fa-check-circle text-green-500 text-2xl mb-2"></i><p>All quizzes completed!</p></div>'
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Completed Quizzes -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold mb-4">Completed Quizzes</h3>
+                        <div class="space-y-3">
+                            ${state.user.completedQuizzes && Object.keys(state.user.completedQuizzes).length > 0
+                                ? state.quizzes
+                                    .filter(quiz => state.user.completedQuizzes[quiz.id])
+                                    .map(quiz => `
+                                        <div class="flex justify-between items-center p-3 bg-green-50 border border-green-200 rounded-lg">
+                                            <div class="flex items-center space-x-3">
+                                                <i class="fas fa-check-circle text-green-500"></i>
+                                                <span>${quiz.title}</span>
+                                            </div>
+                                            <span class="text-green-600 font-semibold">+${BASE_POINTS_REWARDS.quiz}</span>
+                                        </div>
+                                    `).join('')
+                                : '<p class="text-gray-500 text-center py-4">No quizzes completed yet</p>'
+                            }
+                        </div>
                     </div>
                 </div>
             `;
@@ -722,21 +1816,49 @@
         function renderAds() {
             return `
                 <div class="space-y-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Watch Ads to Earn Points</h2>
-                    <div class="ad-container h-64 mb-6">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Watch Ads & Earn</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-info-circle text-blue-500"></i>
+                            <span class="text-sm text-gray-600">Watch ads to earn extra points</span>
+                        </div>
+                    </div>
+
+                    <!-- Ad Rotation -->
+                    <div class="ad-container" style="height: 300px;">
                         <div id="ad-rotation-container">
                             ${renderAdSlide(state.currentAdIndex)}
                         </div>
+                        <div class="ad-indicators">
+                            ${AD_ROTATION_DATA.map((_, index) => `
+                                <div class="ad-indicator ${index === state.currentAdIndex ? 'active' : ''}" 
+                                     onclick="setAdIndex(${index})"></div>
+                            `).join('')}
+                        </div>
                     </div>
-                    <div class="ad-indicators">
-                        ${AD_ROTATION_DATA.map((_, index) => `
-                            <div class="ad-indicator ${index === state.currentAdIndex ? 'active' : ''}" 
-                                 onclick="setAdIndex(${index})"></div>
-                        `).join('')}
+
+                    <!-- Watch Ad Button -->
+                    <div class="text-center">
+                        <button onclick="watchAd()" class="bg-purple-500 hover:bg-purple-600 text-white px-8 py-4 rounded-lg text-lg font-semibold transition transform hover:scale-105">
+                            <i class="fas fa-play-circle mr-2"></i>
+                            Watch Ad & Earn ${BASE_POINTS_REWARDS.ad} Points
+                        </button>
                     </div>
-                    <button class="w-full bg-purple-500 text-white py-3 rounded-lg hover:bg-purple-600 transition font-semibold" onclick="addPoints('Ad View', 500)">
-                        <i class="fas fa-play-circle mr-2"></i>Watch Ad & Earn 500 Points
-                    </button>
+
+                    <!-- Ad Stats -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold mb-4">Ad Earnings</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center p-4 bg-purple-50 rounded-lg">
+                                <p class="text-2xl font-bold text-purple-600">${BASE_POINTS_REWARDS.ad}</p>
+                                <p class="text-sm text-gray-600">Points per ad</p>
+                            </div>
+                            <div class="text-center p-4 bg-green-50 rounded-lg">
+                                <p class="text-2xl font-bold text-green-600">${calculateAdEarnings()}</p>
+                                <p class="text-sm text-gray-600">Total from ads</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `;
         }
@@ -744,18 +1866,66 @@
         function renderReferral() {
             return `
                 <div class="space-y-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Refer & Earn</h2>
-                    <div class="card p-6 text-center">
-                        <i class="fas fa-user-plus text-5xl text-green-500 mb-4"></i>
-                        <h3 class="text-xl font-bold mb-2">Invite Your Friends</h3>
-                        <p class="text-gray-600 mb-4">Share your referral code and earn 1000 points for each friend who signs up!</p>
-                        
-                        <div class="bg-gray-100 p-4 rounded-lg mb-4">
-                            <p class="text-sm text-gray-600 mb-2">Your Referral Code</p>
-                            <p class="text-2xl font-bold text-blue-600">${state.user.referralCode}</p>
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Refer & Earn</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-info-circle text-blue-500"></i>
+                            <span class="text-sm text-gray-600">Refer friends and earn ${BASE_POINTS_REWARDS.referral} points each</span>
                         </div>
-                        
-                        <p class="text-sm text-gray-500">Share this code with your friends when they sign up</p>
+                    </div>
+
+                    <!-- Referral Code Card -->
+                    <div class="bg-gradient-to-r from-green-500 to-teal-600 rounded-xl p-6 text-white">
+                        <div class="text-center">
+                            <i class="fas fa-users text-4xl mb-4"></i>
+                            <h2 class="text-2xl font-bold mb-2">Your Referral Code</h2>
+                            <div class="bg-white bg-opacity-20 rounded-lg p-4 mb-4">
+                                <p class="text-3xl font-mono font-bold">${state.user.referralCode}</p>
+                            </div>
+                            <p class="text-green-100">Share this code with friends to earn ${BASE_POINTS_REWARDS.referral} points for each successful referral!</p>
+                        </div>
+                    </div>
+
+                    <!-- Referral Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-xl p-6 shadow-sm text-center">
+                            <i class="fas fa-user-plus text-3xl text-blue-500 mb-3"></i>
+                            <p class="text-2xl font-bold">${state.user.referralCount || 0}</p>
+                            <p class="text-gray-600">Successful Referrals</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-6 shadow-sm text-center">
+                            <i class="fas fa-coins text-3xl text-yellow-500 mb-3"></i>
+                            <p class="text-2xl font-bold">${formatPoints((state.user.referralCount || 0) * BASE_POINTS_REWARDS.referral)}</p>
+                            <p class="text-gray-600">Points Earned</p>
+                        </div>
+                    </div>
+
+                    <!-- How it Works -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold mb-4">How It Works</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-blue-100 text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mt-1">1</div>
+                                <div>
+                                    <p class="font-medium">Share your referral code</p>
+                                    <p class="text-sm text-gray-600">Give your code to friends who want to join EduHeTech</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-blue-100 text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mt-1">2</div>
+                                <div>
+                                    <p class="font-medium">Friends sign up</p>
+                                    <p class="text-sm text-gray-600">Your friends enter your code during registration</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-blue-100 text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mt-1">3</div>
+                                <div>
+                                    <p class="font-medium">You earn rewards</p>
+                                    <p class="text-sm text-gray-600">Get ${BASE_POINTS_REWARDS.referral} points for each friend who joins</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
@@ -764,22 +1934,84 @@
         function renderRewards() {
             return `
                 <div class="space-y-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Withdraw Your Earnings</h2>
-                    <div class="card p-6">
-                        <div class="text-center mb-6">
-                            <p class="text-gray-600">Current Balance</p>
-                            <p class="text-4xl font-bold text-blue-600">${formatPoints(state.user.eduPoints)} points</p>
-                            <p class="text-sm text-gray-500 mt-2">Minimum withdrawal: ${formatPoints(MIN_WITHDRAWAL_POINTS)} points</p>
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Withdraw Rewards</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-info-circle text-blue-500"></i>
+                            <span class="text-sm text-gray-600">Convert your points to real rewards</span>
                         </div>
-                        
-                        ${state.user.eduPoints >= MIN_WITHDRAWAL_POINTS 
-                            ? `<button class="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition font-semibold" onclick="showWithdrawModal()">
-                                Withdraw Points
-                               </button>`
-                            : `<button class="w-full bg-gray-400 text-white py-3 rounded-lg font-semibold cursor-not-allowed" disabled>
-                                Need ${formatPoints(MIN_WITHDRAWAL_POINTS - state.user.eduPoints)} more points
-                               </button>`
-                        }
+                    </div>
+
+                    <!-- Points Balance -->
+                    <div class="bg-gradient-to-r from-yellow-500 to-orange-600 rounded-xl p-6 text-white">
+                        <div class="text-center">
+                            <i class="fas fa-coins text-4xl mb-4"></i>
+                            <h2 class="text-2xl font-bold mb-2">Your Points Balance</h2>
+                            <p class="text-4xl font-bold">${formatPoints(state.user.eduPoints || 0)}</p>
+                            <p class="text-yellow-100 mt-2">Minimum withdrawal: ${formatPoints(MIN_WITHDRAWAL_POINTS)} points</p>
+                        </div>
+                    </div>
+
+                    <!-- Withdrawal Options -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold mb-4">Withdrawal Options</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="border border-gray-200 rounded-lg p-4 text-center hover:border-blue-300 transition">
+                                <i class="fas fa-mobile-alt text-3xl text-blue-500 mb-3"></i>
+                                <h4 class="font-semibold">Mobile Recharge</h4>
+                                <p class="text-sm text-gray-600 mt-2">100,000 points = $10 recharge</p>
+                                <button onclick="showWithdrawalForm('mobile')" 
+                                        class="mt-3 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition ${state.user.eduPoints < MIN_WITHDRAWAL_POINTS ? 'opacity-50 cursor-not-allowed' : ''}"
+                                        ${state.user.eduPoints < MIN_WITHDRAWAL_POINTS ? 'disabled' : ''}>
+                                    Withdraw
+                                </button>
+                            </div>
+                            <div class="border border-gray-200 rounded-lg p-4 text-center hover:border-blue-300 transition">
+                                <i class="fas fa-gift text-3xl text-green-500 mb-3"></i>
+                                <h4 class="font-semibold">Gift Cards</h4>
+                                <p class="text-sm text-gray-600 mt-2">100,000 points = $10 gift card</p>
+                                <button onclick="showWithdrawalForm('giftcard')" 
+                                        class="mt-3 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition ${state.user.eduPoints < MIN_WITHDRAWAL_POINTS ? 'opacity-50 cursor-not-allowed' : ''}"
+                                        ${state.user.eduPoints < MIN_WITHDRAWAL_POINTS ? 'disabled' : ''}>
+                                    Withdraw
+                                </button>
+                            </div>
+                            <div class="border border-gray-200 rounded-lg p-4 text-center hover:border-blue-300 transition">
+                                <i class="fas fa-wallet text-3xl text-purple-500 mb-3"></i>
+                                <h4 class="font-semibold">Digital Wallet</h4>
+                                <p class="text-sm text-gray-600 mt-2">100,000 points = $10 transfer</p>
+                                <button onclick="showWithdrawalForm('wallet')" 
+                                        class="mt-3 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition ${state.user.eduPoints < MIN_WITHDRAWAL_POINTS ? 'opacity-50 cursor-not-allowed' : ''}"
+                                        ${state.user.eduPoints < MIN_WITHDRAWAL_POINTS ? 'disabled' : ''}>
+                                    Withdraw
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Withdrawal History -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold mb-4">Withdrawal History</h3>
+                        <div class="space-y-3">
+                            ${state.withdrawalRequests.length > 0
+                                ? state.withdrawalRequests
+                                    .filter(req => req.userId === state.firebaseUser.uid)
+                                    .map(request => `
+                                        <div class="flex justify-between items-center p-3 border border-gray-200 rounded-lg">
+                                            <div>
+                                                <p class="font-medium">${request.type} - ${request.amount} points</p>
+                                                <p class="text-sm text-gray-600">${new Date(request.timestamp).toLocaleDateString()}</p>
+                                            </div>
+                                            <span class="px-3 py-1 rounded-full text-xs font-medium ${
+                                                request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                request.status === 'approved' ? 'bg-green-100 text-green-800' :
+                                                'bg-red-100 text-red-800'
+                                            }">${request.status}</span>
+                                        </div>
+                                    `).join('')
+                                : '<p class="text-gray-500 text-center py-4">No withdrawal requests yet</p>'
+                            }
+                        </div>
                     </div>
                 </div>
             `;
@@ -788,23 +2020,75 @@
         function renderLeaderboard() {
             return `
                 <div class="space-y-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Leaderboard</h2>
-                    <div class="card p-6">
-                        <div class="space-y-4">
-                            ${Object.values(state.allUsers)
-                                .sort((a, b) => b.eduPoints - a.eduPoints)
-                                .slice(0, 10)
-                                .map((user, index) => `
-                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                    <div class="flex items-center">
-                                        <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold mr-3">
-                                            ${index + 1}
-                                        </span>
-                                        <span class="font-semibold">${user.name}</span>
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Leaderboard</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-info-circle text-blue-500"></i>
+                            <span class="text-sm text-gray-600">Top learners by points</span>
+                        </div>
+                    </div>
+
+                    <!-- Top 3 Leaders -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        ${state.leaderboard.slice(0, 3).map((user, index) => `
+                            <div class="text-center ${index === 0 ? 'order-2' : index === 1 ? 'order-1' : 'order-3'}">
+                                <div class="bg-white rounded-xl p-6 shadow-sm relative">
+                                    ${index === 0 ? '<div class="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-bold">🥇 1st</div>' : ''}
+                                    ${index === 1 ? '<div class="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-gray-400 text-white px-3 py-1 rounded-full text-sm font-bold">🥈 2nd</div>' : ''}
+                                    ${index === 2 ? '<div class="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold">🥉 3rd</div>' : ''}
+                                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold text-blue-600">
+                                        ${user.name.charAt(0).toUpperCase()}
                                     </div>
-                                    <span class="font-bold text-yellow-600">${formatPoints(user.eduPoints)}</span>
+                                    <h3 class="font-semibold">${user.name}</h3>
+                                    <p class="text-2xl font-bold text-yellow-600 mt-2">${formatPoints(user.eduPoints)}</p>
+                                    <p class="text-sm text-gray-600 mt-1">Points</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Rest of Leaderboard -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold mb-4">Top Learners</h3>
+                        <div class="space-y-3">
+                            ${state.leaderboard.map((user, index) => `
+                                <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="w-6 text-center font-semibold">${index + 1}</span>
+                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-bold text-blue-600">
+                                            ${user.name.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">${user.name}</p>
+                                            <p class="text-sm text-gray-600">${user.streak || 0} day streak</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-semibold text-yellow-600">${formatPoints(user.eduPoints)}</p>
+                                        <p class="text-sm text-gray-600">points</p>
+                                    </div>
                                 </div>
                             `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Your Position -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                        <h3 class="text-lg font-semibold mb-2 text-blue-800">Your Position</h3>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600">
+                                    ${state.user.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <p class="font-medium">${state.user.name}</p>
+                                    <p class="text-sm text-blue-600">${state.user.streak || 0} day streak</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xl font-bold text-blue-600">${formatPoints(state.user.eduPoints)}</p>
+                                <p class="text-sm text-blue-600">points</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -812,20 +2096,75 @@
         }
 
         function renderAchievements() {
+            const userAchievements = state.user.achievements || [];
+            
             return `
                 <div class="space-y-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Achievements</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        ${state.achievements.map(achievement => `
-                            <div class="card p-6 text-center achievement-badge">
-                                <i class="${achievement.icon} text-4xl text-yellow-500 mb-4"></i>
-                                <h3 class="font-bold text-lg mb-2">${achievement.name}</h3>
-                                <p class="text-gray-600 text-sm mb-3">${achievement.description}</p>
-                                <span class="bg-yellow-100 text-yellow-800 text-sm px-3 py-1 rounded-full">
-                                    +${formatPoints(achievement.points)} points
-                                </span>
-                            </div>
-                        `).join('')}
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Achievements</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-info-circle text-blue-500"></i>
+                            <span class="text-sm text-gray-600">Complete challenges to unlock achievements</span>
+                        </div>
+                    </div>
+
+                    <!-- Achievement Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-xl p-6 shadow-sm text-center">
+                            <i class="fas fa-trophy text-3xl text-yellow-500 mb-3"></i>
+                            <p class="text-2xl font-bold">${userAchievements.length}</p>
+                            <p class="text-gray-600">Achievements Unlocked</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-6 shadow-sm text-center">
+                            <i class="fas fa-medal text-3xl text-blue-500 mb-3"></i>
+                            <p class="text-2xl font-bold">${state.achievements.length}</p>
+                            <p class="text-gray-600">Total Achievements</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-6 shadow-sm text-center">
+                            <i class="fas fa-star text-3xl text-purple-500 mb-3"></i>
+                            <p class="text-2xl font-bold">${calculateAchievementPoints()}</p>
+                            <p class="text-gray-600">Points from Achievements</p>
+                        </div>
+                    </div>
+
+                    <!-- Achievements Grid -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold mb-4">All Achievements</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            ${state.achievements.map(achievement => {
+                                const isUnlocked = userAchievements.includes(achievement.id);
+                                return `
+                                    <div class="border rounded-lg p-4 text-center transition transform hover:scale-105 ${
+                                        isUnlocked 
+                                            ? 'border-green-300 bg-green-50' 
+                                            : 'border-gray-200 bg-gray-50 opacity-60'
+                                    }">
+                                        <i class="${achievement.icon} text-3xl ${
+                                            isUnlocked 
+                                                ? achievement.type === 'bronze' ? 'text-yellow-600' :
+                                                  achievement.type === 'silver' ? 'text-gray-400' :
+                                                  achievement.type === 'gold' ? 'text-yellow-400' :
+                                                  'text-purple-500'
+                                                : 'text-gray-400'
+                                        } mb-3"></i>
+                                        <h4 class="font-semibold">${achievement.name}</h4>
+                                        <p class="text-sm text-gray-600 mt-1">${achievement.description}</p>
+                                        <div class="mt-3">
+                                            <span class="inline-block bg-${
+                                                isUnlocked ? 'green' : 'gray'
+                                            }-100 text-${
+                                                isUnlocked ? 'green' : 'gray'
+                                            }-800 text-xs px-2 py-1 rounded-full">
+                                                ${isUnlocked ? 'Unlocked' : 'Locked'}
+                                            </span>
+                                            <p class="text-sm font-semibold text-${
+                                                isUnlocked ? 'green' : 'gray'
+                                            }-600 mt-1">+${formatPoints(achievement.points)} points</p>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
                     </div>
                 </div>
             `;
@@ -834,164 +2173,418 @@
         function renderCourseDetail() {
             if (!state.currentCourse) return '<div>Course not found</div>';
             
+            const course = state.currentCourse;
+            const isCompleted = state.user.completedCourses?.[course.id];
+            const completedToday = state.user.completedCoursesToday?.[course.id];
+            
             return `
-                <div class="max-w-4xl mx-auto py-6">
-                    <div class="card p-6">
-                        <button onclick="state.currentView = 'learn'; render();" class="mb-4 text-blue-500 hover:text-blue-700 transition">
-                            <i class="fas fa-arrow-left mr-2"></i>Back to Courses
+                <div class="max-w-4xl mx-auto space-y-6">
+                    <div class="flex justify-between items-center">
+                        <button onclick="switchView('learn')" class="flex items-center space-x-2 text-blue-500 hover:text-blue-700 transition">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back to Courses</span>
                         </button>
-                        
-                        <h1 class="text-3xl font-bold mb-4">${state.currentCourse.title}</h1>
-                        <div class="flex items-center space-x-4 mb-6">
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">${state.currentCourse.category}</span>
-                            <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">${state.currentCourse.difficulty}</span>
-                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">${state.currentCourse.duration} min</span>
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">${course.difficulty}</span>
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">${course.points} points</span>
                         </div>
-                        
-                        ${state.currentCourse.content}
-                        
-                        <div class="mt-6 text-center">
-                            <button onclick="completeCourse('${state.currentCourse.id}')" class="bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 transition font-semibold">
-                                <i class="fas fa-check-circle mr-2"></i>Complete Course & Earn ${state.currentCourse.points} Points
-                            </button>
+                    </div>
+
+                    <!-- Course Header -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-2">${course.title}</h1>
+                        <div class="flex items-center space-x-4 text-gray-600">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-clock"></i>
+                                <span>${course.duration} mins</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-layer-group"></i>
+                                <span>${course.category}</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-tag"></i>
+                                <span>${course.subcategory}</span>
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- Course Content -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        ${course.content}
+                    </div>
+
+                    <!-- Action Button -->
+                    <div class="text-center">
+                        ${isCompleted || completedToday
+                            ? `
+                                <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                                    <i class="fas fa-check-circle text-4xl text-green-500 mb-3"></i>
+                                    <h3 class="text-xl font-bold text-green-600 mb-2">Course Completed!</h3>
+                                    <p class="text-green-700">You've already earned ${course.points} points from this course${completedToday ? ' today' : ''}.</p>
+                                </div>
+                            `
+                            : `
+                                <button onclick="completeCourse('${course.id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold transition transform hover:scale-105">
+                                    <i class="fas fa-check-circle mr-2"></i>
+                                    Complete Course & Earn ${course.points} Points
+                                </button>
+                            `
+                        }
                     </div>
                 </div>
             `;
         }
 
         // =====================================================
-        // MISSING EVENT LISTENER FUNCTIONS
+        // EVENT HANDLERS AND LISTENERS
         // =====================================================
 
+        function switchView(view) {
+            state.currentView = view;
+            render();
+        }
+
         function attachNavListeners() {
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const view = e.currentTarget.getAttribute('data-view');
-                    state.currentView = view;
-                    render();
-                });
-            });
+            // Navigation is handled by the switchView function in renderNavItem
         }
 
         function attachContentListeners() {
-            // Course click listeners
-            document.querySelectorAll('[data-course]').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const courseId = e.currentTarget.getAttribute('data-course');
-                    const course = state.lessons.find(c => c.id === courseId);
-                    if (course) {
-                        state.currentCourse = course;
-                        state.currentView = 'course-detail';
-                        render();
-                    }
-                });
-            });
-
-            // Quiz click listeners
-            document.querySelectorAll('[data-quiz]').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const quizId = e.currentTarget.getAttribute('data-quiz');
-                    startQuiz(quizId);
-                });
-            });
-
-            // Quick action buttons
-            document.querySelectorAll('[data-view]').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const view = e.currentTarget.getAttribute('data-view');
-                    state.currentView = view;
-                    render();
-                });
-            });
+            // Content-specific listeners are attached in individual render functions
         }
 
         function attachCourseDetailListeners() {
-            // Add any course-specific listeners here
+            // Course detail listeners are attached when needed
         }
 
-        function updateNotifications() {
-            // Implementation for notifications
-        }
-
-        function completeCourse(courseId) {
+        async function startCourse(courseId) {
             const course = state.lessons.find(c => c.id === courseId);
             if (course) {
-                addPoints(`Completed: ${course.title}`, course.points);
+                state.currentCourse = course;
+                state.currentView = 'course-detail';
+                render();
+            }
+        }
+
+        async function completeCourse(courseId) {
+            const course = state.lessons.find(c => c.id === courseId);
+            if (!course) return;
+
+            showLoading(true);
+
+            try {
+                // Mark course as completed
+                const completedCourses = { ...state.user.completedCourses, [courseId]: Date.now() };
+                const completedCoursesToday = { ...state.user.completedCoursesToday, [courseId]: true };
+
+                await saveUser({
+                    completedCourses,
+                    completedCoursesToday
+                });
+
+                // Add points
+                await addPoints(`Completed: ${course.title}`, course.points);
+
+                // Show success message
                 showModal(`
                     <div class="text-center space-y-3">
                         <i class="fas fa-check-circle text-5xl text-green-500"></i>
                         <h3 class="text-xl font-bold text-green-600">Course Completed!</h3>
-                        <p class="text-gray-600">You earned ${course.points} points!</p>
+                        <p class="text-gray-600">You've successfully completed "${course.title}"</p>
+                        <p class="text-sm text-green-600">+${course.points} EduPoints added to your account!</p>
                     </div>
                 `, () => {
                     state.currentView = 'learn';
                     render();
                 });
+
+            } catch (error) {
+                console.error("Error completing course:", error);
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
+                        <h3 class="text-xl font-bold text-red-600">Error</h3>
+                        <p class="text-gray-600">Failed to complete course. Please try again.</p>
+                    </div>
+                `);
+            } finally {
+                showLoading(false);
             }
         }
 
-        function startQuiz(quizId) {
-            // Quiz implementation
+        async function startQuiz(quizId) {
+            const quiz = state.quizzes.find(q => q.id === quizId);
+            if (!quiz) return;
+
+            state.quizData = {
+                currentQuiz: quiz,
+                currentQuestion: 0,
+                score: 0,
+                answers: []
+            };
+
             showModal(`
                 <div class="text-center space-y-3">
                     <i class="fas fa-brain text-5xl text-blue-500"></i>
-                    <h3 class="text-xl font-bold text-blue-600">Quiz Feature</h3>
-                    <p class="text-gray-600">Quiz functionality will be implemented here.</p>
+                    <h3 class="text-xl font-bold text-gray-800">${quiz.title}</h3>
+                    <p class="text-gray-600">${quiz.questions.length} questions • ${BASE_POINTS_REWARDS.quiz} points</p>
+                    <p class="text-sm text-gray-500">Test your knowledge and earn points!</p>
                 </div>
-            `);
+            `, () => {
+                showQuizQuestion();
+            });
         }
 
-        function showWithdrawModal() {
+        function showQuizQuestion() {
+            const quiz = state.quizData.currentQuiz;
+            const currentQ = quiz.questions[state.quizData.currentQuestion];
+            
+            if (!currentQ) {
+                finishQuiz();
+                return;
+            }
+
+            showModal(`
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">Question ${state.quizData.currentQuestion + 1} of ${quiz.questions.length}</h3>
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">${BASE_POINTS_REWARDS.quiz} points</span>
+                    </div>
+                    <p class="text-lg font-medium">${currentQ.q}</p>
+                    <div class="space-y-2">
+                        ${currentQ.options.map((option, index) => `
+                            <button onclick="selectQuizAnswer(${index})" class="w-full text-left p-3 border border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition">
+                                ${option}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `, null, () => {
+                // Cancel quiz
+                state.quizData = null;
+                hideModal();
+            });
+        }
+
+        async function selectQuizAnswer(answerIndex) {
+            const quiz = state.quizData.currentQuiz;
+            const currentQ = quiz.questions[state.quizData.currentQuestion];
+            const isCorrect = currentQ.options[answerIndex] === currentQ.answer;
+
+            state.quizData.answers.push({
+                question: currentQ.q,
+                selected: currentQ.options[answerIndex],
+                correct: currentQ.answer,
+                isCorrect: isCorrect
+            });
+
+            if (isCorrect) {
+                state.quizData.score++;
+            }
+
+            // Show result
             showModal(`
                 <div class="text-center space-y-3">
-                    <i class="fas fa-money-bill-wave text-5xl text-green-500"></i>
-                    <h3 class="text-xl font-bold text-green-600">Withdrawal Request</h3>
-                    <p class="text-gray-600">Withdrawal functionality will be implemented here.</p>
+                    <i class="fas fa-${isCorrect ? 'check-circle text-green-500' : 'times-circle text-red-500'} text-5xl"></i>
+                    <h3 class="text-xl font-bold ${isCorrect ? 'text-green-600' : 'text-red-600'}">${isCorrect ? 'Correct!' : 'Incorrect'}</h3>
+                    ${!isCorrect ? `<p class="text-gray-600">Correct answer: ${currentQ.answer}</p>` : ''}
+                    <button onclick="nextQuizQuestion()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition">
+                        Continue
+                    </button>
                 </div>
             `);
         }
 
-        function updateLeaderboards() {
-            // Implementation for leaderboard updates
+        function nextQuizQuestion() {
+            state.quizData.currentQuestion++;
+            showQuizQuestion();
         }
 
-        function checkAchievements() {
-            // Implementation for achievement checking
+        async function finishQuiz() {
+            const quiz = state.quizData.currentQuiz;
+            const score = state.quizData.score;
+            const totalQuestions = quiz.questions.length;
+            const passed = score >= Math.ceil(totalQuestions / 2);
+
+            if (passed) {
+                // Mark quiz as completed
+                const completedQuizzes = { ...state.user.completedQuizzes, [quiz.id]: Date.now() };
+                await saveUser({ completedQuizzes });
+
+                // Add points
+                await addPoints(`Quiz: ${quiz.title}`, BASE_POINTS_REWARDS.quiz);
+            }
+
+            showModal(`
+                <div class="text-center space-y-3">
+                    <i class="fas fa-${passed ? 'trophy text-yellow-500' : 'times-circle text-red-500'} text-5xl"></i>
+                    <h3 class="text-xl font-bold ${passed ? 'text-green-600' : 'text-red-600'}">${passed ? 'Quiz Passed!' : 'Quiz Failed'}</h3>
+                    <p class="text-gray-600">You scored ${score} out of ${totalQuestions}</p>
+                    ${passed 
+                        ? `<p class="text-green-600">+${BASE_POINTS_REWARDS.quiz} EduPoints earned!</p>` 
+                        : '<p class="text-red-600">You need at least ' + Math.ceil(totalQuestions / 2) + ' correct answers to pass.</p>'
+                    }
+                </div>
+            `, () => {
+                state.quizData = null;
+                state.currentView = 'quiz';
+                render();
+            });
         }
 
-        function hasReachedDailyLimit(user) {
-            // Implementation for daily limit check
-            return false;
+        async function watchAd() {
+            showLoading(true);
+            
+            // Simulate ad watching delay
+            setTimeout(async () => {
+                await addPoints('Watched Ad', BASE_POINTS_REWARDS.ad);
+                showLoading(false);
+                
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-check-circle text-5xl text-green-500"></i>
+                        <h3 class="text-xl font-bold text-green-600">Ad Completed!</h3>
+                        <p class="text-gray-600">Thank you for watching the ad</p>
+                        <p class="text-sm text-green-600">+${BASE_POINTS_REWARDS.ad} EduPoints added to your account!</p>
+                    </div>
+                `, () => {
+                    setTimeout(hideModal, 2000);
+                });
+            }, 3000);
         }
 
-        function resetDailyCourses() {
-            // Implementation for resetting daily courses
+        function showWithdrawalForm(type) {
+            if (state.user.eduPoints < MIN_WITHDRAWAL_POINTS) {
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-exclamation-triangle text-5xl text-yellow-500"></i>
+                        <h3 class="text-xl font-bold text-yellow-600">Insufficient Points</h3>
+                        <p class="text-gray-600">You need at least ${formatPoints(MIN_WITHDRAWAL_POINTS)} points to make a withdrawal.</p>
+                        <p class="text-sm text-gray-500">Complete more courses and activities to earn points!</p>
+                    </div>
+                `);
+                return;
+            }
+
+            const withdrawalTypes = {
+                mobile: { label: 'Mobile Recharge', icon: 'fas fa-mobile-alt' },
+                giftcard: { label: 'Gift Card', icon: 'fas fa-gift' },
+                wallet: { label: 'Digital Wallet', icon: 'fas fa-wallet' }
+            };
+
+            const withdrawalType = withdrawalTypes[type];
+
+            showModal(`
+                <div class="space-y-4">
+                    <div class="text-center">
+                        <i class="${withdrawalType.icon} text-4xl text-blue-500 mb-2"></i>
+                        <h3 class="text-xl font-bold">${withdrawalType.label}</h3>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Amount (points)</label>
+                        <input type="number" id="withdrawal-amount" 
+                               value="${MIN_WITHDRAWAL_POINTS}" 
+                               min="${MIN_WITHDRAWAL_POINTS}" 
+                               max="${state.user.eduPoints}"
+                               class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                        <p class="text-sm text-gray-500 mt-1">Available: ${formatPoints(state.user.eduPoints)} points</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            ${type === 'mobile' ? 'Mobile Number' : type === 'giftcard' ? 'Email Address' : 'Wallet Details'}
+                        </label>
+                        <input type="text" id="withdrawal-details" 
+                               placeholder="${type === 'mobile' ? 'Enter mobile number' : type === 'giftcard' ? 'Enter email address' : 'Enter wallet details'}"
+                               class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    </div>
+                </div>
+            `, async () => {
+                const amount = parseInt(document.getElementById('withdrawal-amount').value);
+                const details = document.getElementById('withdrawal-details').value;
+
+                if (!details) {
+                    showModal(`
+                        <div class="text-center space-y-3">
+                            <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
+                            <h3 class="text-xl font-bold text-red-600">Missing Information</h3>
+                            <p class="text-gray-600">Please provide all required details.</p>
+                        </div>
+                    `);
+                    return;
+                }
+
+                await processWithdrawal(type, amount, details);
+            });
+        }
+
+        async function processWithdrawal(type, amount, details) {
+            showLoading(true);
+
+            try {
+                // Create withdrawal request
+                const withdrawalRequest = {
+                    userId: state.firebaseUser.uid,
+                    userName: state.user.name,
+                    type: type,
+                    amount: amount,
+                    details: details,
+                    status: 'pending',
+                    timestamp: Date.now()
+                };
+
+                // Save to Firestore
+                await saveToCollection(FIRESTORE_COLLECTIONS.WITHDRAWALS, withdrawalRequest);
+
+                // Update local state
+                state.withdrawalRequests.push(withdrawalRequest);
+
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-check-circle text-5xl text-green-500"></i>
+                        <h3 class="text-xl font-bold text-green-600">Withdrawal Request Submitted!</h3>
+                        <p class="text-gray-600">Your request for ${formatPoints(amount)} points has been submitted.</p>
+                        <p class="text-sm text-gray-500">We will process your request within 24-48 hours.</p>
+                    </div>
+                `, () => {
+                    state.currentView = 'rewards';
+                    render();
+                });
+
+            } catch (error) {
+                console.error("Error processing withdrawal:", error);
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
+                        <h3 class="text-xl font-bold text-red-600">Error</h3>
+                        <p class="text-gray-600">Failed to process withdrawal request. Please try again.</p>
+                    </div>
+                `);
+            } finally {
+                showLoading(false);
+            }
         }
 
         // =====================================================
-        // AUTH SCREEN FUNCTIONS (your existing ones)
+        // HELPER FUNCTIONS
         // =====================================================
 
-        function renderAuthScreen() {
-            // Your existing implementation
+        function calculateAdEarnings() {
+            if (!state.user.history) return 0;
+            return state.user.history
+                .filter(entry => entry.action === 'Watched Ad')
+                .reduce((sum, entry) => sum + entry.points, 0);
         }
 
-        function renderLoginForm() {
-            // Your existing implementation
+        function calculateAchievementPoints() {
+            if (!state.user.achievements || !state.achievements) return 0;
+            return state.achievements
+                .filter(achievement => state.user.achievements.includes(achievement.id))
+                .reduce((sum, achievement) => sum + achievement.points, 0);
         }
 
-        function renderSignupForm() {
-            // Your existing implementation
-        }
-
-        function attachAuthListeners() {
-            // Your existing implementation
-        }
-
-        function handleAuthError(message) {
-            // Your existing implementation
-        }
+        // =====================================================
+        // INITIALIZATION
+        // =====================================================
 
         // Initialize the application
         window.onload = initializeData;
