@@ -172,9 +172,70 @@
             display: block;
         }
         
+        /* Desktop Sidebar */
+        .desktop-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 250px;
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            padding: 1rem;
+            z-index: 30;
+            transform: translateX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .desktop-sidebar.hidden {
+            transform: translateX(-100%);
+        }
+        
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            color: #6b7280;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .sidebar-item:hover {
+            background-color: #f3f4f6;
+            color: var(--primary-color);
+        }
+        
+        .sidebar-item.active {
+            background-color: #eff6ff;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .sidebar-item i {
+            width: 20px;
+            margin-right: 0.75rem;
+        }
+        
         /* Splash screen styles */
         .splash-screen {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+        
+        .splash-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
         
         .splash-logo {
@@ -205,6 +266,7 @@
             
             .main-content {
                 padding-bottom: 5rem;
+                margin-left: 0 !important;
             }
             
             .stats-grid {
@@ -230,7 +292,7 @@
 <body class="text-gray-800">
 
     <!-- Splash Screen -->
-    <div id="splash-screen" class="splash-screen fixed inset-0 flex items-center justify-center z-50">
+    <div id="splash-screen" class="splash-screen">
         <div class="text-center text-white">
             <div class="splash-logo mb-8">
                 <i class="fas fa-graduation-cap text-6xl mb-4"></i>
@@ -259,6 +321,56 @@
         </div>
     </div>
 
+    <!-- Desktop Sidebar -->
+    <div id="desktop-sidebar" class="desktop-sidebar hidden">
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-blue-600">EduHeTech</h1>
+            <p class="text-sm text-gray-600">Learn • Earn • Grow</p>
+        </div>
+        
+        <nav class="space-y-1">
+            <a href="#dashboard" class="sidebar-item active" data-view="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="learn.html" class="sidebar-item" target="_blank">
+                <i class="fas fa-book"></i>
+                <span>Learn</span>
+            </a>
+            <a href="quiz.html" class="sidebar-item" target="_blank">
+                <i class="fas fa-brain"></i>
+                <span>Quiz</span>
+            </a>
+            <a href="#ads" class="sidebar-item" data-view="ads">
+                <i class="fas fa-ad"></i>
+                <span>Watch Ads</span>
+            </a>
+            <a href="#referral" class="sidebar-item" data-view="referral">
+                <i class="fas fa-users"></i>
+                <span>Refer & Earn</span>
+            </a>
+            <a href="#rewards" class="sidebar-item" data-view="rewards">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet</span>
+            </a>
+            <a href="#leaderboard" class="sidebar-item" data-view="leaderboard">
+                <i class="fas fa-trophy"></i>
+                <span>Leaderboard</span>
+            </a>
+            <a href="#achievements" class="sidebar-item" data-view="achievements">
+                <i class="fas fa-medal"></i>
+                <span>Achievements</span>
+            </a>
+        </nav>
+        
+        <div class="absolute bottom-4 left-4 right-4">
+            <button onclick="handleFirebaseLogout()" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition flex items-center justify-center">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                Logout
+            </button>
+        </div>
+    </div>
+
     <!-- Application Root -->
     <div id="app">
         <!-- Content will be rendered here by JavaScript -->
@@ -270,11 +382,11 @@
             <i class="fas fa-home"></i>
             <span>Dashboard</span>
         </a>
-        <a href="#learn" class="mobile-nav-item" data-view="learn">
+        <a href="learn.html" class="mobile-nav-item" target="_blank">
             <i class="fas fa-book"></i>
             <span>Learn</span>
         </a>
-        <a href="#quiz" class="mobile-nav-item" data-view="quiz">
+        <a href="quiz.html" class="mobile-nav-item" target="_blank">
             <i class="fas fa-brain"></i>
             <span>Quiz</span>
         </a>
@@ -356,6 +468,12 @@
         };
 
         console.log("Firebase initialized successfully!");
+        
+        // Initialize the app after Firebase is loaded
+        window.firebaseReady = true;
+        if (window.initApp) {
+            window.initApp();
+        }
     </script>
 
     <script>
@@ -559,6 +677,19 @@
         function switchView(view) {
             state.currentView = view;
             render();
+            updateSidebar();
+        }
+
+        function updateSidebar() {
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            sidebarItems.forEach(item => {
+                const view = item.getAttribute('data-view');
+                if (view === state.currentView) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
         }
 
         function updateMobileNav() {
@@ -576,18 +707,24 @@
         // SPLASH SCREEN & INITIALIZATION
         // =====================================================
 
-        function showSplashScreen() {
+        function hideSplashScreen() {
             const splashScreen = document.getElementById('splash-screen');
-            splashScreen.classList.remove('hidden');
-            
-            // Hide splash screen after 3 seconds
-            setTimeout(() => {
-                splashScreen.style.opacity = '0';
-                splashScreen.style.transition = 'opacity 0.5s ease';
+            if (splashScreen) {
+                splashScreen.classList.add('hidden');
+                // Remove from DOM after animation
                 setTimeout(() => {
-                    splashScreen.classList.add('hidden');
-                    initializeAuthStateListener();
+                    splashScreen.style.display = 'none';
                 }, 500);
+            }
+        }
+
+        function initializeApp() {
+            console.log("Initializing EduHeTech application...");
+            
+            // Show splash screen for 3 seconds then initialize auth
+            setTimeout(() => {
+                hideSplashScreen();
+                initializeAuthStateListener();
             }, 3000);
         }
 
@@ -860,6 +997,7 @@
                 if (firebaseUser) {
                     // User is signed in
                     try {
+                        showLoading(true);
                         const userDoc = await getDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, firebaseUser.uid));
                         
                         if (userDoc.exists()) {
@@ -870,9 +1008,8 @@
                             // Initialize app data
                             await initializeAppData();
                             
-                            if (state.currentView === 'auth' || state.currentView === 'loading') {
-                                state.currentView = 'dashboard';
-                            }
+                            state.currentView = 'dashboard';
+                            render();
                         } else {
                             // User document doesn't exist - sign them out
                             const { signOut } = window.firebaseModules;
@@ -888,10 +1025,14 @@
                                     <p class="text-gray-600">Your account data was not found. Please contact support.</p>
                                 </div>
                             `);
+                            render();
                         }
                     } catch (error) {
                         console.error("Error loading user data:", error);
                         state.currentView = 'auth';
+                        render();
+                    } finally {
+                        showLoading(false);
                     }
                 } else {
                     // User is signed out
@@ -899,8 +1040,8 @@
                     state.user = null;
                     state.isAdmin = false;
                     state.currentView = 'auth';
+                    render();
                 }
-                render();
             });
         }
 
@@ -1376,10 +1517,23 @@
 
             // Show/hide mobile navigation based on auth state
             const mobileNav = document.getElementById('mobile-nav');
+            const desktopSidebar = document.getElementById('desktop-sidebar');
+            
             if (state.user) {
                 mobileNav.classList.remove('hidden');
+                desktopSidebar.classList.remove('hidden');
+                // Adjust main content margin for sidebar
+                const mainContent = document.querySelector('.main-content');
+                if (mainContent) {
+                    mainContent.style.marginLeft = '250px';
+                }
             } else {
                 mobileNav.classList.add('hidden');
+                desktopSidebar.classList.add('hidden');
+                const mainContent = document.querySelector('.main-content');
+                if (mainContent) {
+                    mainContent.style.marginLeft = '0';
+                }
             }
 
             if (!state.user) {
@@ -1390,6 +1544,7 @@
             } else {
                 appContainer.innerHTML = renderHeader() + renderContent();
                 updateMobileNav();
+                updateSidebar();
                 setupEventListeners();
             }
             
@@ -1548,6 +1703,9 @@
                     <div class="max-w-7xl mx-auto px-4 py-4">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center">
+                                <button class="md:hidden text-gray-600 mr-4" onclick="toggleMobileMenu()">
+                                    <i class="fas fa-bars text-xl"></i>
+                                </button>
                                 <h1 class="text-xl font-bold text-blue-600">EduHeTech</h1>
                                 ${state.isAdmin ? '<span class="ml-2 admin-badge px-2 py-1 rounded text-xs font-bold">ADMIN</span>' : ''}
                             </div>
@@ -1557,11 +1715,12 @@
                                     <i class="fas fa-coins text-yellow-500"></i>
                                     <span class="font-semibold">${formatPoints(state.user.eduPoints || 0)}</span>
                                 </div>
-                                <button onclick="handleFirebaseLogout()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition">
+                                <div class="hidden md:flex items-center space-x-2 bg-orange-50 px-3 py-1 rounded-full">
+                                    <i class="fas fa-fire text-orange-500"></i>
+                                    <span class="font-semibold">${state.user.streak || 0} days</span>
+                                </div>
+                                <button onclick="handleFirebaseLogout()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition hidden md:block">
                                     Logout
-                                </button>
-                                <button class="md:hidden text-gray-600" onclick="toggleMobileMenu()">
-                                    <i class="fas fa-bars text-xl"></i>
                                 </button>
                             </div>
                         </div>
@@ -1583,7 +1742,7 @@
             };
             
             return `
-                <div class="main-content min-h-screen bg-gray-50 pb-20">
+                <div class="main-content min-h-screen bg-gray-50 pb-20 md:pb-0 transition-all duration-300">
                     <div class="max-w-7xl mx-auto px-4 py-6">
                         ${views[state.currentView] || '<div>View not found</div>'}
                     </div>
@@ -1652,15 +1811,15 @@
                     <div class="card p-6">
                         <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
                         <div class="quick-actions grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <button onclick="switchView('learn')" class="bg-blue-50 hover:bg-blue-100 p-4 rounded-lg text-center transition flex flex-col items-center">
+                            <a href="learn.html" target="_blank" class="bg-blue-50 hover:bg-blue-100 p-4 rounded-lg text-center transition flex flex-col items-center">
                                 <i class="fas fa-book text-blue-500 text-xl mb-2"></i>
                                 <p class="font-medium text-sm">Learn & Earn</p>
-                            </button>
+                            </a>
                             
-                            <button onclick="switchView('quiz')" class="bg-green-50 hover:bg-green-100 p-4 rounded-lg text-center transition flex flex-col items-center">
+                            <a href="quiz.html" target="_blank" class="bg-green-50 hover:bg-green-100 p-4 rounded-lg text-center transition flex flex-col items-center">
                                 <i class="fas fa-brain text-green-500 text-xl mb-2"></i>
                                 <p class="font-medium text-sm">Take Quiz</p>
-                            </button>
+                            </a>
                             
                             <button onclick="switchView('ads')" class="bg-purple-50 hover:bg-purple-100 p-4 rounded-lg text-center transition flex flex-col items-center">
                                 <i class="fas fa-ad text-purple-500 text-xl mb-2"></i>
@@ -1701,8 +1860,6 @@
         }
 
         function renderLearn() {
-            const categories = [...new Set(state.lessons.map(lesson => lesson.category))];
-            
             return `
                 <div class="space-y-6">
                     <div class="flex justify-between items-center">
@@ -1713,41 +1870,16 @@
                         </div>
                     </div>
 
-                    <!-- Course Categories -->
-                    <div class="space-y-6">
-                        ${categories.map(category => {
-                            const categoryCourses = state.lessons.filter(lesson => lesson.category === category);
-                            return `
-                                <div class="card p-6">
-                                    <h2 class="text-xl font-bold mb-4">${category}</h2>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        ${categoryCourses.map(course => {
-                                            const isCompleted = state.user.completedCourses && state.user.completedCourses[course.id];
-                                            
-                                            return `
-                                                <div class="border border-gray-200 rounded-lg p-4 ${isCompleted ? 'bg-green-50 border-green-200' : ''}">
-                                                    <div class="flex justify-between items-start mb-3">
-                                                        <h3 class="font-semibold">${course.title}</h3>
-                                                        ${isCompleted ? 
-                                                            '<span class="bg-green-500 text-white px-2 py-1 rounded text-xs">Completed</span>' : 
-                                                            `<span class="bg-blue-500 text-white px-2 py-1 rounded text-xs">${course.points} points</span>`
-                                                        }
-                                                    </div>
-                                                    <p class="text-sm text-gray-600 mb-2">${course.subcategory} • ${course.duration} mins • ${course.difficulty}</p>
-                                                    <button 
-                                                        onclick="startCourse('${course.id}')" 
-                                                        class="w-full ${isCompleted ? 'bg-gray-300 text-gray-500' : 'btn-primary'} p-2 rounded transition text-sm"
-                                                        ${isCompleted ? 'disabled' : ''}
-                                                    >
-                                                        ${isCompleted ? 'Completed' : 'Start Learning'}
-                                                    </button>
-                                                </div>
-                                            `;
-                                        }).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
+                    <div class="card p-6 text-center">
+                        <i class="fas fa-external-link-alt text-6xl text-blue-500 mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">Course Content</h3>
+                        <p class="text-gray-600 mb-6">Our learning materials are available on a separate page for better organization and user experience.</p>
+                        
+                        <a href="learn.html" target="_blank" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg text-lg transition transform hover:scale-105 inline-block">
+                            <i class="fas fa-external-link-alt mr-2"></i>Open Learning Portal
+                        </a>
+                        
+                        <p class="text-sm text-gray-500 mt-4">The learning portal will open in a new tab where you can access all courses and earn points.</p>
                     </div>
                 </div>
             `;
@@ -1764,31 +1896,16 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        ${state.quizzes.map(quiz => {
-                            const isCompleted = state.user.completedQuizzes && state.user.completedQuizzes[quiz.id];
-                            
-                            return `
-                                <div class="card p-6">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <h3 class="text-lg font-semibold">${quiz.title}</h3>
-                                        ${isCompleted ? 
-                                            '<span class="bg-green-500 text-white px-2 py-1 rounded text-xs">Completed</span>' : 
-                                            `<span class="bg-green-500 text-white px-2 py-1 rounded text-xs">${BASE_POINTS_REWARDS.quiz} points</span>`
-                                        }
-                                    </div>
-                                    <p class="text-gray-600 mb-4">Category: ${quiz.category}</p>
-                                    <p class="text-sm text-gray-500 mb-4">${quiz.questions.length} questions</p>
-                                    <button 
-                                        onclick="startQuiz('${quiz.id}')" 
-                                        class="w-full ${isCompleted ? 'bg-gray-300 text-gray-500' : 'bg-green-500 hover:bg-green-600 text-white'} p-3 rounded-lg transition"
-                                        ${isCompleted ? 'disabled' : ''}
-                                    >
-                                        ${isCompleted ? 'Quiz Completed' : 'Start Quiz'}
-                                    </button>
-                                </div>
-                            `;
-                        }).join('')}
+                    <div class="card p-6 text-center">
+                        <i class="fas fa-external-link-alt text-6xl text-green-500 mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">Quiz Portal</h3>
+                        <p class="text-gray-600 mb-6">Take quizzes on our dedicated quiz platform to test your knowledge and earn rewards.</p>
+                        
+                        <a href="quiz.html" target="_blank" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg text-lg transition transform hover:scale-105 inline-block">
+                            <i class="fas fa-external-link-alt mr-2"></i>Open Quiz Portal
+                        </a>
+                        
+                        <p class="text-sm text-gray-500 mt-4">The quiz portal will open in a new tab where you can take quizzes and earn points.</p>
                     </div>
                 </div>
             `;
@@ -2135,110 +2252,6 @@
         // EVENT HANDLERS
         // =====================================================
 
-        function startCourse(courseId) {
-            const course = state.lessons.find(c => c.id === courseId);
-            if (!course) return;
-
-            showModal(`
-                <div class="text-center space-y-4">
-                    <i class="fas fa-book text-5xl text-blue-500 mb-2"></i>
-                    <h3 class="text-xl font-bold">${course.title}</h3>
-                    <p class="text-gray-600">Complete this course to earn ${BASE_POINTS_REWARDS.lesson} points!</p>
-                    <div class="bg-blue-50 p-4 rounded-lg text-left">
-                        <p class="text-sm font-semibold">Course Details:</p>
-                        <p class="text-sm">Duration: ${course.duration} minutes</p>
-                        <p class="text-sm">Difficulty: ${course.difficulty}</p>
-                        <p class="text-sm">Category: ${course.category}</p>
-                    </div>
-                    <button onclick="completeCourse('${courseId}')" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition">
-                        Start Course
-                    </button>
-                </div>
-            `);
-        }
-
-        async function completeCourse(courseId) {
-            if (!state.user) return;
-            
-            // Mark course as completed
-            const completedCourses = { ...state.user.completedCourses };
-            completedCourses[courseId] = {
-                completedAt: Date.now(),
-                pointsEarned: BASE_POINTS_REWARDS.lesson
-            };
-            
-            // Mark as completed today
-            const completedCoursesToday = { ...state.user.completedCoursesToday };
-            completedCoursesToday[courseId] = true;
-            
-            await saveUser({ 
-                completedCourses,
-                completedCoursesToday
-            });
-            
-            // Add points
-            await addPoints(`Completed Course: ${state.lessons.find(c => c.id === courseId)?.title}`, BASE_POINTS_REWARDS.lesson, true);
-            
-            hideModal();
-            
-            showModal(`
-                <div class="text-center space-y-3">
-                    <i class="fas fa-check-circle text-5xl text-green-500"></i>
-                    <h3 class="text-xl font-bold text-green-600">Course Completed!</h3>
-                    <p class="text-gray-600">You earned ${BASE_POINTS_REWARDS.lesson} EduPoints for completing the course.</p>
-                </div>
-            `, () => {
-                setTimeout(hideModal, 2000);
-                switchView('learn');
-            });
-        }
-
-        function startQuiz(quizId) {
-            const quiz = state.quizzes.find(q => q.id === quizId);
-            if (!quiz) return;
-
-            showModal(`
-                <div class="text-center space-y-4">
-                    <i class="fas fa-brain text-5xl text-green-500 mb-2"></i>
-                    <h3 class="text-xl font-bold">${quiz.title}</h3>
-                    <p class="text-gray-600">Answer correctly to earn ${BASE_POINTS_REWARDS.quiz} points!</p>
-                    <p class="text-sm text-gray-500">This quiz has ${quiz.questions.length} questions.</p>
-                    <button onclick="completeQuiz('${quizId}')" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition">
-                        Start Quiz
-                    </button>
-                </div>
-            `);
-        }
-
-        async function completeQuiz(quizId) {
-            if (!state.user) return;
-            
-            // Mark quiz as completed
-            const completedQuizzes = { ...state.user.completedQuizzes };
-            completedQuizzes[quizId] = {
-                completedAt: Date.now(),
-                pointsEarned: BASE_POINTS_REWARDS.quiz
-            };
-            
-            await saveUser({ completedQuizzes });
-            
-            // Add points
-            await addPoints('Completed Quiz', BASE_POINTS_REWARDS.quiz, true);
-            
-            hideModal();
-            
-            showModal(`
-                <div class="text-center space-y-3">
-                    <i class="fas fa-check-circle text-5xl text-green-500"></i>
-                    <h3 class="text-xl font-bold text-green-600">Quiz Completed!</h3>
-                    <p class="text-gray-600">You earned ${BASE_POINTS_REWARDS.quiz} EduPoints for completing the quiz.</p>
-                </div>
-            `, () => {
-                setTimeout(hideModal, 2000);
-                switchView('quiz');
-            });
-        }
-
         function copyReferralLink() {
             const referralLink = document.getElementById('referral-link');
             referralLink.select();
@@ -2346,29 +2359,54 @@
                 item.addEventListener('click', (e) => {
                     e.preventDefault();
                     const view = item.getAttribute('data-view');
-                    switchView(view);
+                    if (view) {
+                        switchView(view);
+                    }
+                });
+            });
+
+            // Desktop sidebar navigation
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const view = item.getAttribute('data-view');
+                    if (view) {
+                        e.preventDefault();
+                        switchView(view);
+                    }
                 });
             });
         }
 
         function toggleMobileMenu() {
-            // This would toggle a mobile menu in a real implementation
-            console.log('Toggle mobile menu');
+            const sidebar = document.getElementById('desktop-sidebar');
+            sidebar.classList.toggle('hidden');
         }
 
         // =====================================================
         // INITIALIZATION
         // =====================================================
 
-        // Start with splash screen
-        window.onload = showSplashScreen;
+        // Initialize the app when Firebase is ready
+        window.initApp = function() {
+            console.log("Firebase is ready, initializing app...");
+            initializeApp();
+        };
+
+        // Start the app initialization
+        if (window.firebaseReady) {
+            window.initApp();
+        } else {
+            // Wait for Firebase to be ready
+            document.addEventListener('DOMContentLoaded', function() {
+                if (window.firebaseReady) {
+                    window.initApp();
+                }
+            });
+        }
 
         // Make functions globally available
         window.switchView = switchView;
-        window.startCourse = startCourse;
-        window.completeCourse = completeCourse;
-        window.startQuiz = startQuiz;
-        window.completeQuiz = completeQuiz;
         window.copyReferralLink = copyReferralLink;
         window.shareOnWhatsApp = shareOnWhatsApp;
         window.shareOnFacebook = shareOnFacebook;
