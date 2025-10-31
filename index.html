@@ -193,27 +193,6 @@
             color: white;
         }
         
-        /* Google Sign-In Button */
-        .google-signin-btn {
-            background: white;
-            color: #757575;
-            border: 1px solid #dadce0;
-            border-radius: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            transition: all 0.2s;
-            width: 100%;
-        }
-        
-        .google-signin-btn:hover {
-            background: #f8f9fa;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-        }
-        
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .mobile-nav {
@@ -285,8 +264,8 @@
         <!-- Content will be rendered here by JavaScript -->
     </div>
 
-    <!-- Mobile Navigation -->
-    <div class="mobile-nav">
+    <!-- Mobile Navigation - Only visible when user is logged in -->
+    <div id="mobile-nav" class="mobile-nav hidden">
         <a href="#dashboard" class="mobile-nav-item active" data-view="dashboard">
             <i class="fas fa-home"></i>
             <span>Dashboard</span>
@@ -303,6 +282,10 @@
             <i class="fas fa-ad"></i>
             <span>Ads</span>
         </a>
+        <a href="#rewards" class="mobile-nav-item" data-view="rewards">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
+        </a>
         <a href="#referral" class="mobile-nav-item" data-view="referral">
             <i class="fas fa-users"></i>
             <span>Refer</span>
@@ -318,9 +301,7 @@
             createUserWithEmailAndPassword, 
             signInWithEmailAndPassword, 
             signOut, 
-            onAuthStateChanged,
-            GoogleAuthProvider,
-            signInWithPopup
+            onAuthStateChanged
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { 
             getFirestore, 
@@ -351,17 +332,14 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const googleProvider = new GoogleAuthProvider();
 
         // Make Firebase available globally
         window.firebaseAuth = auth;
         window.firebaseDb = db;
         window.firebaseApp = app;
-        window.googleProvider = googleProvider;
         window.firebaseModules = {
             createUserWithEmailAndPassword,
             signInWithEmailAndPassword,
-            signInWithPopup,
             signOut,
             onAuthStateChanged,
             doc,
@@ -446,6 +424,9 @@
             firebaseUser: null,
             isAdmin: false,
             currentMonetagLink: '',
+            adTimer: null,
+            adTimerActive: false,
+            adTimerSeconds: 0,
             referralCode: getUrlParameter('ref') // Get referral code from URL
         };
 
@@ -657,7 +638,7 @@
                 // Save to Firestore
                 await setDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, firebaseUser.uid), userData);
                 
-                // Handle referral if applicable
+                // Handle referral if applicable - BOTH referrer and referred get bonuses
                 if (referrerCode) {
                     await handleReferral(referrerCode, firebaseUser.uid);
                 }
@@ -673,7 +654,7 @@
                         <h3 class="text-xl font-bold text-green-600">Account Created!</h3>
                         <p class="text-gray-600">Welcome to EduHeTech, ${name}!</p>
                         <p class="text-sm text-green-600">You received 1000 welcome bonus points!</p>
-                        ${referrerCode ? `<p class="text-sm text-blue-600">Referral bonus applied!</p>` : ''}
+                        ${referrerCode ? `<p class="text-sm text-blue-600">Referral bonus applied! You received 500 extra points!</p>` : ''}
                     </div>
                 `, () => {
                     setTimeout(hideModal, 2000);
@@ -683,113 +664,6 @@
 
             } catch (error) {
                 console.error("Signup error:", error);
-                handleAuthError(getFirebaseErrorMessage(error));
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        async function handleGoogleSignIn() {
-            try {
-                showLoading(true);
-                const { signInWithPopup, doc, setDoc, getDoc, updateDoc } = window.firebaseModules;
-                const auth = window.firebaseAuth;
-                const db = window.firebaseDb;
-                
-                const result = await signInWithPopup(auth, window.googleProvider);
-                const firebaseUser = result.user;
-                
-                // Check if user already exists
-                const userDoc = await getDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, firebaseUser.uid));
-                
-                if (!userDoc.exists()) {
-                    // Create new user profile
-                    const referralCode = generateReferralCode();
-                    const userData = {
-                        uid: firebaseUser.uid,
-                        name: firebaseUser.displayName,
-                        email: firebaseUser.email,
-                        eduPoints: 1000,
-                        referralCount: 0,
-                        referralCode: referralCode,
-                        lastLogin: Date.now(),
-                        loginDates: [new Date().toDateString()],
-                        history: [{ 
-                            action: 'Welcome Bonus', 
-                            points: 1000, 
-                            timestamp: Date.now() 
-                        }],
-                        achievements: [],
-                        completedCourses: {},
-                        completedQuizzes: {},
-                        completedCoursesToday: {},
-                        lastCourseReset: new Date().toDateString(),
-                        streak: 1,
-                        createdAt: Date.now(),
-                        updatedAt: Date.now()
-                    };
-
-                    await setDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, firebaseUser.uid), userData);
-                    
-                    // Handle referral if applicable
-                    if (state.referralCode) {
-                        await handleReferral(state.referralCode, firebaseUser.uid);
-                    }
-                    
-                    state.user = userData;
-                } else {
-                    const userData = userDoc.data();
-                    
-                    // Update login info
-                    const today = new Date().toDateString();
-                    const lastLoginDate = new Date(userData.lastLogin).toDateString();
-                    
-                    if (today !== lastLoginDate) {
-                        if (!userData.loginDates) userData.loginDates = [];
-                        if (!userData.loginDates.includes(today)) {
-                            userData.loginDates.push(today);
-                        }
-                        
-                        // Add daily login bonus
-                        const streak = calculateStreak(userData.loginDates);
-                        userData.streak = streak;
-                        
-                        if (!hasReachedDailyLimit(userData)) {
-                            userData.eduPoints += BASE_POINTS_REWARDS.dailyLogin;
-                            userData.history.push({
-                                action: 'Daily Login Bonus',
-                                points: BASE_POINTS_REWARDS.dailyLogin,
-                                timestamp: Date.now()
-                            });
-                        }
-                        
-                        userData.lastLogin = Date.now();
-                        
-                        // Update in Firestore
-                        await updateDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, firebaseUser.uid), {
-                            loginDates: userData.loginDates,
-                            streak: userData.streak,
-                            eduPoints: userData.eduPoints,
-                            history: userData.history,
-                            lastLogin: userData.lastLogin,
-                            updatedAt: Date.now()
-                        });
-                    }
-                    
-                    state.user = userData;
-                }
-
-                state.firebaseUser = firebaseUser;
-                state.isAdmin = ADMIN_CONFIG.ADMIN_EMAILS.includes(firebaseUser.email);
-                
-                // Initialize app data
-                await initializeAppData();
-                
-                state.currentView = 'dashboard';
-                render();
-
-            } catch (error) {
-                console.error("Google Sign-In error:", error);
                 handleAuthError(getFirebaseErrorMessage(error));
             } finally {
                 showLoading(false);
@@ -911,7 +785,7 @@
                     const referrerDoc = referrersSnapshot.docs[0];
                     const referrerData = referrerDoc.data();
                     
-                    // Update referrer's data
+                    // Update referrer's data - REFERRER GETS BONUS
                     const newReferralCount = (referrerData.referralCount || 0) + 1;
                     const newPoints = referrerData.eduPoints + BASE_POINTS_REWARDS.referral;
                     
@@ -935,7 +809,7 @@
                         updatedAt: Date.now()
                     });
                     
-                    // Give bonus to new user as well
+                    // Give bonus to new user as well - REFERRED USER GETS BONUS TOO
                     const newUserDoc = await getDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, newUserId));
                     if (newUserDoc.exists()) {
                         const newUserData = newUserDoc.data();
@@ -970,9 +844,7 @@
                 'auth/user-disabled': 'This account has been disabled.',
                 'auth/user-not-found': 'No account found with this email.',
                 'auth/wrong-password': 'Incorrect password.',
-                'auth/too-many-requests': 'Too many attempts. Please try again later.',
-                'auth/popup-closed-by-user': 'Sign-in was cancelled.',
-                'auth/popup-blocked': 'Sign-in popup was blocked. Please allow popups for this site.'
+                'auth/too-many-requests': 'Too many attempts. Please try again later.'
             };
             
             return errorMap[error.code] || error.message || 'An error occurred. Please try again.';
@@ -1045,27 +917,87 @@
             state.currentMonetagLink = getRandomMonetagLink();
         }
 
+        function startAdTimer() {
+            state.adTimerSeconds = 30;
+            state.adTimerActive = true;
+            
+            // Show timer modal
+            showModal(`
+                <div class="text-center space-y-4">
+                    <i class="fas fa-ad text-5xl text-purple-500 mb-2"></i>
+                    <h3 class="text-xl font-bold">Watch Ad to Earn Points</h3>
+                    <p class="text-gray-600">Please watch the ad for <span id="ad-timer-seconds">30</span> seconds to earn ${BASE_POINTS_REWARDS.ad} points.</p>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <p class="text-sm font-semibold text-purple-800">Important:</p>
+                        <p class="text-sm text-purple-700">Do not close this window or navigate away, or you won't receive points!</p>
+                    </div>
+                    <div class="flex justify-center">
+                        <div class="bg-gray-200 rounded-full h-4 w-full">
+                            <div id="ad-timer-progress" class="bg-purple-500 h-4 rounded-full" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <button id="ad-complete-btn" class="w-full bg-gray-400 text-white font-semibold py-3 rounded-lg transition" disabled>
+                        Please wait... (<span id="ad-timer">30</span>s)
+                    </button>
+                </div>
+            `);
+            
+            // Update timer every second
+            state.adTimer = setInterval(() => {
+                state.adTimerSeconds--;
+                
+                // Update UI
+                document.getElementById('ad-timer').textContent = state.adTimerSeconds;
+                document.getElementById('ad-timer-seconds').textContent = state.adTimerSeconds;
+                
+                // Update progress bar
+                const progressPercent = (state.adTimerSeconds / 30) * 100;
+                document.getElementById('ad-timer-progress').style.width = `${progressPercent}%`;
+                
+                // Check if timer is complete
+                if (state.adTimerSeconds <= 0) {
+                    clearInterval(state.adTimer);
+                    state.adTimerActive = false;
+                    
+                    // Enable the complete button
+                    const completeBtn = document.getElementById('ad-complete-btn');
+                    completeBtn.disabled = false;
+                    completeBtn.textContent = 'Complete & Earn Points';
+                    completeBtn.className = 'w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 rounded-lg transition';
+                    completeBtn.onclick = completeAdView;
+                }
+            }, 1000);
+        }
+
+        function completeAdView() {
+            if (!state.user) return;
+            
+            // Add points for watching ad
+            addPoints('Watch Ad', BASE_POINTS_REWARDS.ad, true);
+            
+            hideModal();
+            
+            showModal(`
+                <div class="text-center space-y-3">
+                    <i class="fas fa-check-circle text-5xl text-green-500"></i>
+                    <h3 class="text-xl font-bold text-green-600">Ad Completed!</h3>
+                    <p class="text-gray-600">You earned ${BASE_POINTS_REWARDS.ad} EduPoints for watching the ad.</p>
+                </div>
+            `, () => {
+                setTimeout(hideModal, 3000);
+            });
+        }
+
         function openMonetagAd() {
             if (!state.user) return;
             
             updateMonetagLink();
             if (state.currentMonetagLink) {
+                // Start the timer
+                startAdTimer();
+                
                 // Open the monetag link in a new tab
                 window.open(state.currentMonetagLink, '_blank');
-                
-                // Add points after ad view
-                addPoints('Watch Ad', BASE_POINTS_REWARDS.ad, true);
-                
-                showModal(`
-                    <div class="text-center space-y-3">
-                        <i class="fas fa-check-circle text-5xl text-green-500"></i>
-                        <h3 class="text-xl font-bold text-green-600">Ad Viewed!</h3>
-                        <p class="text-gray-600">You earned ${BASE_POINTS_REWARDS.ad} EduPoints for watching the ad.</p>
-                        <p class="text-sm text-blue-600">The ad has been opened in a new tab.</p>
-                    </div>
-                `, () => {
-                    setTimeout(hideModal, 3000);
-                });
             }
         }
 
@@ -1442,6 +1374,14 @@
             appContainer.innerHTML = '';
             showLoading(state.isLoading);
 
+            // Show/hide mobile navigation based on auth state
+            const mobileNav = document.getElementById('mobile-nav');
+            if (state.user) {
+                mobileNav.classList.remove('hidden');
+            } else {
+                mobileNav.classList.add('hidden');
+            }
+
             if (!state.user) {
                 appContainer.innerHTML = renderAuthScreen();
                 attachAuthListeners();
@@ -1500,20 +1440,6 @@
                         <input type="password" id="login-password" placeholder="Enter your password" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                     </div>
                     <button id="login-btn" class="w-full p-3 btn-primary font-semibold rounded-lg shadow-md hover:shadow-lg transition">Log In</button>
-                    
-                    <div class="relative my-4">
-                        <div class="absolute inset-0 flex items-center">
-                            <div class="w-full border-t border-gray-300"></div>
-                        </div>
-                        <div class="relative flex justify-center text-sm">
-                            <span class="px-2 bg-white text-gray-500">Or continue with</span>
-                        </div>
-                    </div>
-                    
-                    <button onclick="handleGoogleSignIn()" class="google-signin-btn">
-                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="w-5 h-5">
-                        Sign in with Google
-                    </button>
                 </div>
                 <div id="auth-error-message" class="text-red-500 text-sm text-center mt-2"></div>
             `;
@@ -1550,20 +1476,6 @@
                         </div>
                     `}
                     <button id="signup-btn" class="w-full p-3 btn-primary font-semibold rounded-lg shadow-md hover:shadow-lg transition">Create Account</button>
-                    
-                    <div class="relative my-4">
-                        <div class="absolute inset-0 flex items-center">
-                            <div class="w-full border-t border-gray-300"></div>
-                        </div>
-                        <div class="relative flex justify-center text-sm">
-                            <span class="px-2 bg-white text-gray-500">Or continue with</span>
-                        </div>
-                    </div>
-                    
-                    <button onclick="handleGoogleSignIn()" class="google-signin-btn">
-                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="w-5 h-5">
-                        Sign up with Google
-                    </button>
                 </div>
                 <div id="auth-error-message" class="text-red-500 text-sm text-center mt-2"></div>
             `;
@@ -1755,9 +1667,9 @@
                                 <p class="font-medium text-sm">Watch Ads</p>
                             </button>
                             
-                            <button onclick="switchView('referral')" class="bg-orange-50 hover:bg-orange-100 p-4 rounded-lg text-center transition flex flex-col items-center">
-                                <i class="fas fa-users text-orange-500 text-xl mb-2"></i>
-                                <p class="font-medium text-sm">Refer Friends</p>
+                            <button onclick="switchView('rewards')" class="bg-orange-50 hover:bg-orange-100 p-4 rounded-lg text-center transition flex flex-col items-center">
+                                <i class="fas fa-wallet text-orange-500 text-xl mb-2"></i>
+                                <p class="font-medium text-sm">Wallet</p>
                             </button>
                         </div>
                     </div>
@@ -1902,7 +1814,7 @@
                             <i class="fas fa-play mr-2"></i>Watch Ad & Earn ${BASE_POINTS_REWARDS.ad} Points
                         </button>
                         
-                        <p class="text-sm text-gray-500 mt-4">The ad will open in a new tab. Points will be awarded automatically.</p>
+                        <p class="text-sm text-gray-500 mt-4">The ad will open in a new tab. You must watch it for 30 seconds to earn points.</p>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1915,33 +1827,33 @@
                                 </li>
                                 <li class="flex items-center">
                                     <i class="fas fa-check text-green-500 mr-2"></i>
-                                    Ad opens in new tab
+                                    Watch the timer count down from 30 seconds
                                 </li>
                                 <li class="flex items-center">
                                     <i class="fas fa-check text-green-500 mr-2"></i>
-                                    Points added automatically
+                                    Don't close the window during the countdown
                                 </li>
                                 <li class="flex items-center">
                                     <i class="fas fa-check text-green-500 mr-2"></i>
-                                    No daily limit on ads!
+                                    Click "Complete & Earn Points" when timer ends
                                 </li>
                             </ul>
                         </div>
 
                         <div class="card p-4">
-                            <h3 class="text-lg font-semibold mb-3">Tips</h3>
+                            <h3 class="text-lg font-semibold mb-3">Important Notes</h3>
                             <ul class="space-y-2 text-gray-600 text-sm">
                                 <li class="flex items-center">
-                                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
-                                    Watch multiple ads daily
+                                    <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
+                                    Points are only awarded after 30 seconds
                                 </li>
                                 <li class="flex items-center">
-                                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
-                                    Complete other activities too
+                                    <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
+                                    Closing the window cancels the reward
                                 </li>
                                 <li class="flex items-center">
-                                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
-                                    Refer friends for bonus points
+                                    <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
+                                    You must click the complete button
                                 </li>
                             </ul>
                         </div>
@@ -2005,7 +1917,7 @@
                                     </button>
                                 </div>
                                 <p class="text-sm text-gray-600">
-                                    Share this link with friends. When they sign up using your link, you'll get ${BASE_POINTS_REWARDS.referral} points!
+                                    Share this link with friends. When they sign up using your link, you'll get ${BASE_POINTS_REWARDS.referral} points and they'll get 500 points!
                                 </p>
                             </div>
                         </div>
@@ -2037,9 +1949,9 @@
             return `
                 <div class="space-y-6">
                     <div class="flex justify-between items-center">
-                        <h1 class="text-2xl font-bold text-gray-800">Withdraw Earnings</h1>
+                        <h1 class="text-2xl font-bold text-gray-800">Wallet & Withdrawals</h1>
                         <div class="flex items-center space-x-2">
-                            <i class="fas fa-gift text-red-500"></i>
+                            <i class="fas fa-wallet text-red-500"></i>
                             <span class="text-sm text-gray-600">Convert points to cash</span>
                         </div>
                     </div>
@@ -2463,7 +2375,6 @@
         window.shareOnTwitter = shareOnTwitter;
         window.submitWithdrawal = submitWithdrawal;
         window.openMonetagAd = openMonetagAd;
-        window.handleGoogleSignIn = handleGoogleSignIn;
         window.handleFirebaseLogout = handleFirebaseLogout;
         window.hideModal = hideModal;
         window.toggleMobileMenu = toggleMobileMenu;
