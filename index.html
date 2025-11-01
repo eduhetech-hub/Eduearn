@@ -1,12 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- ===================================================== -->
+    <!-- OPTIMIZED SEO & METADATA SECTION -->
+    <!-- ===================================================== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduHeTech - Learn & Earn</title>
+    <title>EduHeTech - Learn & Earn | Study Smart, Earn More</title>
+    <meta name="description" content="EduHeTech is a revolutionary Learn & Earn platform where you can study valuable skills and earn money through quizzes, courses, and daily activities. Perfect for students and professionals in Nigeria and across Africa.">
+    <meta name="keywords" content="learn and earn, EduHeTech, online learning Nigeria, earn money online, quizzes for cash, educational app, e-learning Africa">
+    <meta name="author" content="EduHeTech">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="EduHeTech - Learn & Earn | Study Smart, Earn More">
+    <meta property="og:description" content="Study valuable skills and earn money through quizzes, courses, and daily activities on EduHeTech.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://eduhetech.com">
+    <meta property="og:image" content="https://eduhetech.com/images/og-image.jpg">
+    <meta property="og:site_name" content="EduHeTech">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="EduHeTech - Learn & Earn | Study Smart, Earn More">
+    <meta name="twitter:description" content="Study valuable skills and earn money through quizzes, courses, and daily activities.">
+    <meta name="twitter:image" content="https://eduhetech.com/images/twitter-image.jpg">
+    <meta name="twitter:site" content="@EduHeTech">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://eduhetech.com">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- CSS and Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <!-- JSON-LD Schema for EducationalOrganization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "EduHeTech",
+      "description": "Learn & Earn platform where users study valuable skills and earn money through educational activities",
+      "url": "https://eduhetech.com",
+      "logo": "https://eduhetech.com/images/logo.png",
+      "sameAs": [
+        "https://facebook.com/EduHeTech",
+        "https://twitter.com/EduHeTech",
+        "https://instagram.com/EduHeTech"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "NG"
+      },
+      "offers": {
+        "@type": "Offer",
+        "description": "Educational courses with monetary rewards"
+      }
+    }
+    </script>
     
     <style>
         :root {
@@ -23,6 +86,7 @@
             min-height: 100vh;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
         }
         
         .btn-primary {
@@ -138,6 +202,74 @@
             animation: pulse 2s infinite;
         }
         
+        /* Fixed Wheel Styles */
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+        
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                #ff6b6b 0deg 60deg,
+                #4ecdc4 60deg 120deg,
+                #45b7d1 120deg 180deg,
+                #96ceb4 180deg 240deg,
+                #feca57 240deg 300deg,
+                #ff9ff3 300deg 360deg
+            );
+            position: relative;
+            transition: transform 4s cubic-bezier(0.2, 0.8, 0.3, 1);
+            transform: rotate(0deg);
+        }
+        
+        .wheel.spinning {
+            animation: wheelSpin 4s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+        }
+        
+        @keyframes wheelSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(1080deg); } /* 3 full rotations + final position */
+        }
+        
+        .wheel-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: center;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .wheel-item span {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+        }
+        
+        .wheel-pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid #333;
+            z-index: 10;
+        }
+        
         /* Mobile Navigation */
         .mobile-nav {
             position: fixed;
@@ -155,16 +287,23 @@
             text-align: center;
             padding: 0.75rem 0.5rem;
             color: #6b7280;
-            transition: color 0.2s;
+            transition: all 0.3s ease;
+            position: relative;
         }
         
-        .mobile-nav-item.active {
+        .mobile-nav-item:hover, .mobile-nav-item.active {
             color: var(--primary-color);
+            transform: translateY(-2px);
         }
         
         .mobile-nav-item i {
             font-size: 1.25rem;
             margin-bottom: 0.25rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .mobile-nav-item:hover i {
+            transform: scale(1.1);
         }
         
         .mobile-nav-item span {
@@ -185,6 +324,7 @@
             z-index: 30;
             transform: translateX(0);
             transition: transform 0.3s ease;
+            overflow-y: auto;
         }
         
         .desktop-sidebar.hidden {
@@ -198,13 +338,15 @@
             margin-bottom: 0.5rem;
             border-radius: 0.5rem;
             color: #6b7280;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             text-decoration: none;
+            position: relative;
         }
         
         .sidebar-item:hover {
             background-color: #f3f4f6;
             color: var(--primary-color);
+            transform: translateX(5px);
         }
         
         .sidebar-item.active {
@@ -216,6 +358,11 @@
         .sidebar-item i {
             width: 20px;
             margin-right: 0.75rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-item:hover i {
+            transform: scale(1.1);
         }
         
         /* Splash screen styles */
@@ -254,6 +401,116 @@
             color: white;
         }
         
+        /* Progress Bar Styles */
+        .progress-bar {
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        /* Ad Counter Styles */
+        .ad-counter {
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Achievement Badge Styles */
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .achievement-card {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .achievement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Promotional Banner */
+        .promo-banner {
+            background: linear-gradient(45deg, #f59e0b, #f97316);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+        
+        /* Affiliate Banner Styles */
+        .affiliate-banner {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+        
+        /* Share Button Styles */
+        .share-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .share-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color: white;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .share-whatsapp {
+            background-color: #25D366;
+        }
+        
+        .share-facebook {
+            background-color: #1877F2;
+        }
+        
+        .share-twitter {
+            background-color: #1DA1F2;
+        }
+        
+        /* Social Bar Ads Container */
+        .social-bar-ads {
+            position: fixed;
+            bottom: 70px;
+            left: 0;
+            right: 0;
+            background: #f8f9fa;
+            border-top: 1px solid #e5e7eb;
+            padding: 10px;
+            z-index: 35;
+            text-align: center;
+        }
+        
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .mobile-nav {
@@ -276,6 +533,19 @@
             .quick-actions {
                 grid-template-columns: repeat(2, 1fr);
             }
+            
+            .wheel-container {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .achievement-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .social-bar-ads {
+                bottom: 60px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -285,6 +555,19 @@
             
             .quick-actions {
                 grid-template-columns: 1fr;
+            }
+            
+            .wheel-container {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .achievement-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .share-buttons {
+                flex-direction: column;
             }
         }
     </style>
@@ -322,7 +605,7 @@
     </div>
 
     <!-- Desktop Sidebar -->
-    <div id="desktop-sidebar" class="desktop-sidebar hidden">
+    <div id="desktop-sidebar" class="desktop-sidebar">
         <div class="mb-8">
             <h1 class="text-2xl font-bold text-blue-600">EduHeTech</h1>
             <p class="text-sm text-gray-600">Learn • Earn • Grow</p>
@@ -333,17 +616,41 @@
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="learn.html" class="sidebar-item" target="_blank">
+            <a href="#learn" class="sidebar-item" data-view="learn">
                 <i class="fas fa-book"></i>
                 <span>Learn</span>
             </a>
-            <a href="quiz.html" class="sidebar-item" target="_blank">
+            <a href="#quiz" class="sidebar-item" data-view="quiz">
                 <i class="fas fa-brain"></i>
                 <span>Quiz</span>
             </a>
             <a href="#ads" class="sidebar-item" data-view="ads">
                 <i class="fas fa-ad"></i>
                 <span>Watch Ads</span>
+            </a>
+            <a href="#spin" class="sidebar-item" data-view="spin">
+                <i class="fas fa-sync-alt"></i>
+                <span>Spin Wheel</span>
+            </a>
+            <a href="#videos" class="sidebar-item" data-view="videos">
+                <i class="fas fa-play-circle"></i>
+                <span>Watch & Earn</span>
+            </a>
+            <a href="#missions" class="sidebar-item" data-view="missions">
+                <i class="fas fa-tasks"></i>
+                <span>Daily Missions</span>
+            </a>
+            <a href="#blog" class="sidebar-item" data-view="blog">
+                <i class="fas fa-blog"></i>
+                <span>Blog</span>
+            </a>
+            <a href="#premium" class="sidebar-item" data-view="premium">
+                <i class="fas fa-crown"></i>
+                <span>Go Premium</span>
+            </a>
+            <a href="#social" class="sidebar-item" data-view="social">
+                <i class="fas fa-users"></i>
+                <span>Community</span>
             </a>
             <a href="#referral" class="sidebar-item" data-view="referral">
                 <i class="fas fa-users"></i>
@@ -363,6 +670,16 @@
             </a>
         </nav>
         
+        <!-- Footer Links in Sidebar -->
+        <div class="absolute bottom-20 left-4 right-4 text-xs text-gray-500">
+            <div class="flex flex-wrap gap-2 mb-2">
+                <a href="terms.html" class="hover:text-blue-500 transition">Terms</a>
+                <a href="privacy.html" class="hover:text-blue-500 transition">Privacy</a>
+                <a href="faq.html" class="hover:text-blue-500 transition">FAQ</a>
+            </div>
+            <p>&copy; 2024 EduHeTech. All rights reserved.</p>
+        </div>
+        
         <div class="absolute bottom-4 left-4 right-4">
             <button onclick="handleFirebaseLogout()" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition flex items-center justify-center">
                 <i class="fas fa-sign-out-alt mr-2"></i>
@@ -376,17 +693,22 @@
         <!-- Content will be rendered here by JavaScript -->
     </div>
 
+    <!-- Social Bar Ads -->
+    <div id="social-bar-ads" class="social-bar-ads hidden">
+        <!-- Social bar ads script will be loaded here -->
+    </div>
+
     <!-- Mobile Navigation - Only visible when user is logged in -->
     <div id="mobile-nav" class="mobile-nav hidden">
         <a href="#dashboard" class="mobile-nav-item active" data-view="dashboard">
             <i class="fas fa-home"></i>
             <span>Dashboard</span>
         </a>
-        <a href="learn.html" class="mobile-nav-item" target="_blank">
+        <a href="#learn" class="mobile-nav-item" data-view="learn">
             <i class="fas fa-book"></i>
             <span>Learn</span>
         </a>
-        <a href="quiz.html" class="mobile-nav-item" target="_blank">
+        <a href="#quiz" class="mobile-nav-item" data-view="quiz">
             <i class="fas fa-brain"></i>
             <span>Quiz</span>
         </a>
@@ -394,85 +716,106 @@
             <i class="fas fa-ad"></i>
             <span>Ads</span>
         </a>
+        <a href="#spin" class="mobile-nav-item" data-view="spin">
+            <i class="fas fa-sync-alt"></i>
+            <span>Spin</span>
+        </a>
         <a href="#rewards" class="mobile-nav-item" data-view="rewards">
             <i class="fas fa-wallet"></i>
             <span>Wallet</span>
         </a>
-        <a href="#referral" class="mobile-nav-item" data-view="referral">
-            <i class="fas fa-users"></i>
-            <span>Refer</span>
-        </a>
     </div>
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Import Firebase modules
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { 
-            getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            signOut, 
-            onAuthStateChanged
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            setDoc, 
-            getDoc, 
-            updateDoc, 
-            collection, 
-            query, 
-            where, 
-            getDocs, 
-            addDoc, 
-            orderBy, 
-            limit
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <!-- Popunder Ads Script -->
+    <script type='text/javascript' src='//pl27966799.effectivegatecpm.com/40/24/3e/40243ef8e672d1397093cc2261cb9329.js'></script>
 
-        // Your Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDDKcWF9bOA9aSZOkeODE_N8Ag_wS87J_0",
-            authDomain: "studio-4004347076-d761a.firebaseapp.com",
-            projectId: "studio-4004347076-d761a",
-            storageBucket: "studio-4004347076-d761a.firebasestorage.app",
-            messagingSenderId: "316122123573",
-            appId: "1:316122123573:web:b36fe06376e37948ea907c"
-        };
+    <!-- Social Bar Ads Script -->
+    <script type='text/javascript' src='//pl27966780.effectivegatecpm.com/1d/1e/fd/1d1efd5b3352a83d3a15c08814ecc32e.js'></script>
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    <!-- Lazy-loaded Firebase SDK -->
+    <script>
+        // Function to load Firebase SDK after page load
+        function loadFirebaseSDK() {
+            const script = document.createElement('script');
+            script.type = 'module';
+            script.innerHTML = `
+                // Import Firebase modules
+                import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+                import { 
+                    getAuth, 
+                    createUserWithEmailAndPassword, 
+                    signInWithEmailAndPassword, 
+                    signOut, 
+                    onAuthStateChanged
+                } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+                import { 
+                    getFirestore, 
+                    doc, 
+                    setDoc, 
+                    getDoc, 
+                    updateDoc, 
+                    collection, 
+                    query, 
+                    where, 
+                    getDocs, 
+                    addDoc, 
+                    orderBy, 
+                    limit
+                } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Make Firebase available globally
-        window.firebaseAuth = auth;
-        window.firebaseDb = db;
-        window.firebaseApp = app;
-        window.firebaseModules = {
-            createUserWithEmailAndPassword,
-            signInWithEmailAndPassword,
-            signOut,
-            onAuthStateChanged,
-            doc,
-            setDoc,
-            getDoc,
-            updateDoc,
-            collection,
-            query,
-            where,
-            getDocs,
-            addDoc,
-            orderBy,
-            limit
-        };
+                // Your Firebase configuration
+                const firebaseConfig = {
+                    apiKey: "AIzaSyDDKcWF9bOA9aSZOkeODE_N8Ag_wS87J_0",
+                    authDomain: "studio-4004347076-d761a.firebaseapp.com",
+                    projectId: "studio-4004347076-d761a",
+                    storageBucket: "studio-4004347076-d761a.firebasestorage.app",
+                    messagingSenderId: "316122123573",
+                    appId: "1:316122123573:web:b36fe06376e37948ea907c"
+                };
 
-        console.log("Firebase initialized successfully!");
-        
-        // Initialize the app after Firebase is loaded
-        window.firebaseReady = true;
-        if (window.initApp) {
-            window.initApp();
+                // Initialize Firebase
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+
+                // Make Firebase available globally
+                window.firebaseAuth = auth;
+                window.firebaseDb = db;
+                window.firebaseApp = app;
+                window.firebaseModules = {
+                    createUserWithEmailAndPassword,
+                    signInWithEmailAndPassword,
+                    signOut,
+                    onAuthStateChanged,
+                    doc,
+                    setDoc,
+                    getDoc,
+                    updateDoc,
+                    collection,
+                    query,
+                    where,
+                    getDocs,
+                    addDoc,
+                    orderBy,
+                    limit
+                };
+
+                console.log("Firebase initialized successfully!");
+                
+                // Initialize the app after Firebase is loaded
+                window.firebaseReady = true;
+                if (window.initApp) {
+                    window.initApp();
+                }
+            `;
+            document.head.appendChild(script);
+        }
+
+        // Load Firebase SDK after page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadFirebaseSDK);
+        } else {
+            loadFirebaseSDK();
         }
     </script>
 
@@ -510,7 +853,7 @@
         const ADMIN_CONFIG = {
             ADMIN_EMAILS: ['admin@eduhetech.com'],
             MIN_WITHDRAWAL_AMOUNT: 500000,
-            POINTS_TO_CURRENCY_RATE: 10000
+            POINTS_TO_CURRENCY_RATE: 100000 // 100,000 EduPoints = $1
         };
 
         // Updated point rewards as specified
@@ -518,14 +861,28 @@
             lesson: 500,
             quiz: 200,
             ad: 100,
+            quickAd: 50,
+            premiumAd: 200,
             dailyLogin: 100,
             referral: 1000,
             streak: 500,
-            achievement: 1000
+            achievement: 1000,
+            video: 150,
+            spin: 100
         };
         
-        const MIN_WITHDRAWAL_POINTS = 500000;
-        const DAILY_POINTS_LIMIT = 10000;
+        const MIN_WITHDRAWAL_POINTS = 500000; // 500,000 EduPoints = $5
+        const DAILY_POINTS_LIMIT = 10000; // 10,000 EduPoints daily limit
+
+        // Wheel prizes
+        const WHEEL_PRIZES = [
+            { value: 50, label: '50 Points', type: 'points' },
+            { value: 100, label: '100 Points', type: 'points' },
+            { value: 'ad', label: 'Watch Ad', type: 'ad' },
+            { value: 200, label: '200 Points', type: 'points' },
+            { value: 500, label: '500 Points', type: 'points' },
+            { value: 'ad', label: 'Watch Ad', type: 'ad' }
+        ];
 
         // Global State Management
         window.state = {
@@ -545,7 +902,11 @@
             adTimer: null,
             adTimerActive: false,
             adTimerSeconds: 0,
-            referralCode: getUrlParameter('ref') // Get referral code from URL
+            referralCode: getUrlParameter('ref'), // Get referral code from URL
+            dailyAdCount: 0,
+            lastSpinDate: null,
+            missions: {},
+            isPremium: false
         };
 
         // =====================================================
@@ -664,6 +1025,12 @@
                 'learn': 'Learn',
                 'quiz': 'Quiz',
                 'ads': 'Watch Ads',
+                'spin': 'Spin Wheel',
+                'videos': 'Watch & Earn',
+                'missions': 'Daily Missions',
+                'blog': 'Blog',
+                'premium': 'Go Premium',
+                'social': 'Community',
                 'referral': 'Refer & Earn',
                 'rewards': 'Withdraw',
                 'leaderboard': 'Leaderboard',
@@ -721,11 +1088,21 @@
         function initializeApp() {
             console.log("Initializing EduHeTech application...");
             
-            // Show splash screen for 3 seconds then initialize auth
+            // Check if user has visited before
+            const hasVisitedBefore = localStorage.getItem('eduhetech_visited');
+            
+            // Show splash screen for only 1.5 seconds for returning users, 2 seconds for new users
+            const splashTime = hasVisitedBefore ? 1500 : 2000;
+            
             setTimeout(() => {
                 hideSplashScreen();
                 initializeAuthStateListener();
-            }, 3000);
+                
+                // Mark as visited
+                if (!hasVisitedBefore) {
+                    localStorage.setItem('eduhetech_visited', 'true');
+                }
+            }, splashTime);
         }
 
         // =====================================================
@@ -768,6 +1145,14 @@
                     completedCoursesToday: {},
                     lastCourseReset: new Date().toDateString(),
                     streak: 1,
+                    dailyAdCount: 0,
+                    lastSpinDate: null,
+                    missions: {
+                        adsWatched: 0,
+                        coursesCompleted: 0,
+                        referrals: 0
+                    },
+                    isPremium: false,
                     createdAt: Date.now(),
                     updatedAt: Date.now()
                 };
@@ -867,6 +1252,10 @@
                 state.firebaseUser = firebaseUser;
                 state.user = userData;
                 state.isAdmin = ADMIN_CONFIG.ADMIN_EMAILS.includes(email);
+                state.dailyAdCount = userData.dailyAdCount || 0;
+                state.lastSpinDate = userData.lastSpinDate;
+                state.missions = userData.missions || {};
+                state.isPremium = userData.isPremium || false;
                 
                 // Initialize app data
                 await initializeAppData();
@@ -1004,6 +1393,10 @@
                             state.firebaseUser = firebaseUser;
                             state.user = userDoc.data();
                             state.isAdmin = ADMIN_CONFIG.ADMIN_EMAILS.includes(state.user.email);
+                            state.dailyAdCount = state.user.dailyAdCount || 0;
+                            state.lastSpinDate = state.user.lastSpinDate;
+                            state.missions = state.user.missions || {};
+                            state.isPremium = state.user.isPremium || false;
                             
                             // Initialize app data
                             await initializeAppData();
@@ -1058,8 +1451,8 @@
             state.currentMonetagLink = getRandomMonetagLink();
         }
 
-        function startAdTimer() {
-            state.adTimerSeconds = 30;
+        function startAdTimer(duration = 30, points = BASE_POINTS_REWARDS.ad) {
+            state.adTimerSeconds = duration;
             state.adTimerActive = true;
             
             // Show timer modal
@@ -1067,7 +1460,7 @@
                 <div class="text-center space-y-4">
                     <i class="fas fa-ad text-5xl text-purple-500 mb-2"></i>
                     <h3 class="text-xl font-bold">Watch Ad to Earn Points</h3>
-                    <p class="text-gray-600">Please watch the ad for <span id="ad-timer-seconds">30</span> seconds to earn ${BASE_POINTS_REWARDS.ad} points.</p>
+                    <p class="text-gray-600">Please watch the ad for <span id="ad-timer-seconds">${duration}</span> seconds to earn ${points} points.</p>
                     <div class="bg-purple-50 p-4 rounded-lg">
                         <p class="text-sm font-semibold text-purple-800">Important:</p>
                         <p class="text-sm text-purple-700">Do not close this window or navigate away, or you won't receive points!</p>
@@ -1078,7 +1471,7 @@
                         </div>
                     </div>
                     <button id="ad-complete-btn" class="w-full bg-gray-400 text-white font-semibold py-3 rounded-lg transition" disabled>
-                        Please wait... (<span id="ad-timer">30</span>s)
+                        Please wait... (<span id="ad-timer">${duration}</span>s)
                     </button>
                 </div>
             `);
@@ -1092,7 +1485,7 @@
                 document.getElementById('ad-timer-seconds').textContent = state.adTimerSeconds;
                 
                 // Update progress bar
-                const progressPercent = (state.adTimerSeconds / 30) * 100;
+                const progressPercent = (state.adTimerSeconds / duration) * 100;
                 document.getElementById('ad-timer-progress').style.width = `${progressPercent}%`;
                 
                 // Check if timer is complete
@@ -1105,16 +1498,20 @@
                     completeBtn.disabled = false;
                     completeBtn.textContent = 'Complete & Earn Points';
                     completeBtn.className = 'w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 rounded-lg transition';
-                    completeBtn.onclick = completeAdView;
+                    completeBtn.onclick = () => completeAdView(points);
                 }
             }, 1000);
         }
 
-        function completeAdView() {
+        function completeAdView(points = BASE_POINTS_REWARDS.ad) {
             if (!state.user) return;
             
+            // Update daily ad count
+            state.dailyAdCount++;
+            updateMissions('adsWatched', 1);
+            
             // Add points for watching ad
-            addPoints('Watch Ad', BASE_POINTS_REWARDS.ad, true);
+            addPoints('Watch Ad', points, true);
             
             hideModal();
             
@@ -1122,24 +1519,45 @@
                 <div class="text-center space-y-3">
                     <i class="fas fa-check-circle text-5xl text-green-500"></i>
                     <h3 class="text-xl font-bold text-green-600">Ad Completed!</h3>
-                    <p class="text-gray-600">You earned ${BASE_POINTS_REWARDS.ad} EduPoints for watching the ad.</p>
+                    <p class="text-gray-600">You earned ${points} EduPoints for watching the ad.</p>
+                    ${state.dailyAdCount >= 5 ? `
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-3">
+                            <p class="text-yellow-800 font-semibold">🎉 Daily Ad Streak Complete!</p>
+                            <p class="text-yellow-700 text-sm">You've watched 5 ads today! +200 bonus points!</p>
+                        </div>
+                    ` : ''}
                 </div>
             `, () => {
                 setTimeout(hideModal, 3000);
             });
+
+            // Check for ad streak bonus
+            if (state.dailyAdCount >= 5) {
+                setTimeout(() => {
+                    addPoints('Daily Ad Streak Bonus', 200, false);
+                }, 1000);
+            }
         }
 
-        function openMonetagAd() {
+        function openMonetagAd(points = BASE_POINTS_REWARDS.ad, duration = 30) {
             if (!state.user) return;
             
             updateMonetagLink();
             if (state.currentMonetagLink) {
                 // Start the timer
-                startAdTimer();
+                startAdTimer(duration, points);
                 
                 // Open the monetag link in a new tab
                 window.open(state.currentMonetagLink, '_blank');
             }
+        }
+
+        function watchQuickAd() {
+            openMonetagAd(BASE_POINTS_REWARDS.quickAd, 15);
+        }
+
+        function watchPremiumAd() {
+            openMonetagAd(BASE_POINTS_REWARDS.premiumAd, 60);
         }
 
         // =====================================================
@@ -1170,13 +1588,18 @@
             if (!state.user || !state.firebaseUser) return;
             
             // Check if user has reached daily limit (excluding referral bonuses)
-            if (checkDailyLimit && hasReachedDailyLimit(state.user) && !action.includes('Referral')) {
+            if (checkDailyLimit && hasReachedDailyLimit(state.user) && !action.includes('Referral') && !state.isPremium) {
                 showModal(`
                     <div class="text-center space-y-3">
                         <i class="fas fa-exclamation-triangle text-5xl text-yellow-500"></i>
                         <h3 class="text-xl font-bold text-yellow-600">Daily Limit Reached</h3>
                         <p class="text-gray-600">You have reached your daily earning limit of ${formatPoints(DAILY_POINTS_LIMIT)} points. Come back tomorrow to earn more!</p>
                         <p class="text-sm text-blue-600">Note: Referral bonuses are not counted towards daily limits.</p>
+                        ${!state.isPremium ? `
+                            <button onclick="switchView('premium')" class="mt-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-lg transition">
+                                Go Premium to Remove Limits
+                            </button>
+                        ` : ''}
                     </div>
                 `);
                 return;
@@ -1196,6 +1619,8 @@
                 await updateDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, state.firebaseUser.uid), {
                     eduPoints: newPoints,
                     history: updatedHistory,
+                    dailyAdCount: state.dailyAdCount,
+                    missions: state.missions,
                     updatedAt: Date.now()
                 });
 
@@ -1239,6 +1664,62 @@
                 `);
             } finally {
                 showLoading(false);
+            }
+        }
+
+        async function updateMissions(missionType, increment = 1) {
+            if (!state.missions[missionType]) {
+                state.missions[missionType] = 0;
+            }
+            state.missions[missionType] += increment;
+            
+            // Check mission completion
+            checkMissionCompletion();
+        }
+
+        async function checkMissionCompletion() {
+            const completedMissions = [];
+            
+            // Check ads mission
+            if (state.missions.adsWatched >= 3 && !state.missions.adsCompleted) {
+                completedMissions.push({
+                    name: 'Watch 3 Ads',
+                    points: 300
+                });
+                state.missions.adsCompleted = true;
+            }
+            
+            // Check courses mission
+            if (state.missions.coursesCompleted >= 2 && !state.missions.coursesCompletedFlag) {
+                completedMissions.push({
+                    name: 'Complete 2 Courses',
+                    points: 500
+                });
+                state.missions.coursesCompletedFlag = true;
+            }
+            
+            // Award points for completed missions
+            for (const mission of completedMissions) {
+                await addPoints(`Mission: ${mission.name}`, mission.points, false);
+            }
+            
+            if (completedMissions.length > 0) {
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-trophy text-5xl text-yellow-500"></i>
+                        <h3 class="text-xl font-bold text-yellow-600">Mission Completed!</h3>
+                        <div class="space-y-2">
+                            ${completedMissions.map(mission => `
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                                    <p class="font-semibold">${mission.name}</p>
+                                    <p class="text-sm text-green-600">+${formatPoints(mission.points)} points!</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `, () => {
+                    setTimeout(hideModal, 3000);
+                });
             }
         }
 
@@ -1391,7 +1872,9 @@
             return [
                 { id: 'a1', name: 'First Steps', description: 'Complete your first lesson', icon: 'fas fa-footsteps', points: 1000, type: 'bronze', condition: { type: 'lessonsCompleted', threshold: 1 } },
                 { id: 'a2', name: 'Quiz Whiz', description: 'Complete 5 quizzes', icon: 'fas fa-brain', points: 1000, type: 'silver', condition: { type: 'quizzesCompleted', threshold: 5 } },
-                { id: 'a3', name: 'Learning Streak', description: 'Maintain a 7-day learning streak', icon: 'fas fa-fire', points: 1000, type: 'gold', condition: { type: 'streak', threshold: 7 } }
+                { id: 'a3', name: 'Learning Streak', description: 'Maintain a 7-day learning streak', icon: 'fas fa-fire', points: 1000, type: 'gold', condition: { type: 'streak', threshold: 7 } },
+                { id: 'a4', name: 'Ad Enthusiast', description: 'Watch 50 ads', icon: 'fas fa-ad', points: 1500, type: 'silver', condition: { type: 'adsWatched', threshold: 50 } },
+                { id: 'a5', name: 'Referral Master', description: 'Refer 10 friends', icon: 'fas fa-users', points: 2000, type: 'gold', condition: { type: 'referrals', threshold: 10 } }
             ];
         }
 
@@ -1411,6 +1894,9 @@
             
             // Initialize monetag link
             updateMonetagLink();
+
+            // Setup push notifications
+            setupPushNotifications();
         }
 
         function resetDailyCourses() {
@@ -1468,6 +1954,12 @@
                     case 'streak':
                         conditionMet = (state.user.streak || 0) >= achievement.condition.threshold;
                         break;
+                    case 'adsWatched':
+                        conditionMet = (state.user.dailyAdCount || 0) >= achievement.condition.threshold;
+                        break;
+                    case 'referrals':
+                        conditionMet = (state.user.referralCount || 0) >= achievement.condition.threshold;
+                        break;
                 }
                 
                 if (conditionMet) {
@@ -1505,6 +1997,262 @@
         }
 
         // =====================================================
+        // NEW REVENUE FEATURES
+        // =====================================================
+
+        // Spin Wheel Functionality - FIXED
+        function spinWheel() {
+            const today = new Date().toDateString();
+            if (state.lastSpinDate === today) {
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-exclamation-triangle text-5xl text-yellow-500"></i>
+                        <h3 class="text-xl font-bold text-yellow-600">Already Spun Today</h3>
+                        <p class="text-gray-600">You can only spin the wheel once per day. Come back tomorrow!</p>
+                    </div>
+                `);
+                return;
+            }
+
+            // Require ad watch before spinning
+            showModal(`
+                <div class="text-center space-y-4">
+                    <i class="fas fa-sync-alt text-5xl text-purple-500 mb-2"></i>
+                    <h3 class="text-xl font-bold">Spin the Wheel!</h3>
+                    <p class="text-gray-600">Watch a short ad to spin the wheel and win amazing prizes!</p>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <p class="text-sm font-semibold text-purple-800">Prizes include:</p>
+                        <p class="text-sm text-purple-700">50-500 Points, Bonus Ads, and more!</p>
+                    </div>
+                    <button onclick="startWheelAd()" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 rounded-lg transition">
+                        Watch Ad & Spin Wheel
+                    </button>
+                </div>
+            `);
+        }
+
+        function startWheelAd() {
+            hideModal();
+            startAdTimer(15, 0); // 15 second ad for wheel spin
+            window.open(getRandomMonetagLink(), '_blank');
+            
+            // After ad completion, spin the wheel
+            const completeBtn = document.getElementById('ad-complete-btn');
+            completeBtn.onclick = () => {
+                completeWheelSpin();
+            };
+        }
+
+        function completeWheelSpin() {
+            hideModal();
+            
+            // Animate the wheel spin
+            const wheel = document.getElementById('spin-wheel');
+            if (wheel) {
+                wheel.classList.add('spinning');
+                
+                // Determine prize after animation
+                setTimeout(() => {
+                    // Determine prize
+                    const randomPrize = WHEEL_PRIZES[Math.floor(Math.random() * WHEEL_PRIZES.length)];
+                    
+                    // Update last spin date
+                    state.lastSpinDate = new Date().toDateString();
+                    saveUser({ lastSpinDate: state.lastSpinDate });
+                    
+                    // Award prize
+                    if (randomPrize.type === 'points') {
+                        addPoints(`Spin Wheel: ${randomPrize.label}`, randomPrize.value, false);
+                    } else if (randomPrize.type === 'ad') {
+                        showModal(`
+                            <div class="text-center space-y-3">
+                                <i class="fas fa-sync-alt text-5xl text-yellow-500"></i>
+                                <h3 class="text-xl font-bold text-yellow-600">Spin Result!</h3>
+                                <p class="text-gray-600">You won: <strong>${randomPrize.label}</strong></p>
+                                <p class="text-sm text-gray-500">Watch another ad to claim bonus points!</p>
+                                <button onclick="openMonetagAd(200, 30)" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 rounded-lg transition">
+                                    Watch Bonus Ad for 200 Points
+                                </button>
+                            </div>
+                        `);
+                        return;
+                    }
+                    
+                    showModal(`
+                        <div class="text-center space-y-3">
+                            <i class="fas fa-sync-alt text-5xl text-green-500"></i>
+                            <h3 class="text-xl font-bold text-green-600">Spin Result!</h3>
+                            <p class="text-gray-600">You won: <strong>${randomPrize.label}</strong></p>
+                            <p class="text-sm text-green-600">+${randomPrize.value} points added to your account!</p>
+                        </div>
+                    `, () => {
+                        setTimeout(hideModal, 3000);
+                    });
+                    
+                    // Reset wheel animation
+                    setTimeout(() => {
+                        wheel.classList.remove('spinning');
+                    }, 100);
+                }, 4000);
+            }
+        }
+
+        // Video Content Functionality
+        function watchVideoAd() {
+            startAdTimer(45, BASE_POINTS_REWARDS.video);
+            window.open(getRandomMonetagLink(), '_blank');
+        }
+
+        // Premium Features
+        function showPremiumModal() {
+            showModal(`
+                <div class="text-center space-y-4">
+                    <i class="fas fa-crown text-5xl text-yellow-500 mb-2"></i>
+                    <h3 class="text-xl font-bold">Go Premium</h3>
+                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-lg">
+                        <h4 class="font-bold text-lg mb-2">Premium Benefits</h4>
+                        <ul class="text-left space-y-2 text-sm">
+                            <li class="flex items-center">
+                                <i class="fas fa-check mr-2"></i>
+                                2x Points from all activities
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check mr-2"></i>
+                                No daily limits
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check mr-2"></i>
+                                Exclusive premium content
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check mr-2"></i>
+                                Priority withdrawal processing
+                            </li>
+                        </ul>
+                    </div>
+                    <p class="text-2xl font-bold text-purple-600">$4.99/month</p>
+                    <button onclick="purchasePremium()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 rounded-lg transition">
+                        Upgrade to Premium
+                    </button>
+                    <p class="text-sm text-gray-600">7-day free trial available</p>
+                </div>
+            `);
+        }
+
+        function purchasePremium() {
+            // In a real app, this would integrate with a payment processor
+            showModal(`
+                <div class="text-center space-y-3">
+                    <i class="fas fa-crown text-5xl text-yellow-500"></i>
+                    <h3 class="text-xl font-bold text-yellow-600">Premium Activated!</h3>
+                    <p class="text-gray-600">Welcome to EduHeTech Premium! Enjoy all the exclusive benefits.</p>
+                    <p class="text-sm text-green-600">+1000 welcome bonus points!</p>
+                </div>
+            `, () => {
+                state.isPremium = true;
+                addPoints('Premium Welcome Bonus', 1000, false);
+                saveUser({ isPremium: true });
+                hideModal();
+            });
+        }
+
+        function activateBoost() {
+            showModal(`
+                <div class="text-center space-y-4">
+                    <i class="fas fa-bolt text-5xl text-yellow-500 mb-2"></i>
+                    <h3 class="text-xl font-bold">Activate Daily Boost</h3>
+                    <p class="text-gray-600">Watch an ad to double your next course completion points!</p>
+                    <button onclick="startBoostAd()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 rounded-lg transition">
+                        Watch Ad & Activate Boost
+                    </button>
+                </div>
+            `);
+        }
+
+        function startBoostAd() {
+            hideModal();
+            startAdTimer(20, 0);
+            window.open(getRandomMonetagLink(), '_blank');
+            
+            const completeBtn = document.getElementById('ad-complete-btn');
+            completeBtn.onclick = () => {
+                completeBoostActivation();
+            };
+        }
+
+        function completeBoostActivation() {
+            hideModal();
+            addPoints('Daily Boost Activated', 100, false);
+            showModal(`
+                <div class="text-center space-y-3">
+                    <i class="fas fa-bolt text-5xl text-green-500"></i>
+                    <h3 class="text-xl font-bold text-green-600">Boost Activated!</h3>
+                    <p class="text-gray-600">Your next course completion will earn double points!</p>
+                    <p class="text-sm text-green-600">+100 activation bonus points!</p>
+                </div>
+            `, () => {
+                setTimeout(hideModal, 3000);
+            });
+        }
+
+        // Push Notifications
+        function setupPushNotifications() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                setTimeout(() => {
+                    showModal(`
+                        <div class="text-center space-y-4">
+                            <i class="fas fa-bell text-5xl text-blue-500 mb-2"></i>
+                            <h3 class="text-xl font-bold">Enable Notifications</h3>
+                            <p class="text-gray-600">Get notified about daily bonuses, new courses, and exclusive offers!</p>
+                            <button onclick="requestNotificationPermission()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition">
+                                Enable Notifications
+                            </button>
+                        </div>
+                    `);
+                }, 5000);
+            }
+        }
+
+        function requestNotificationPermission() {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    showModal(`
+                        <div class="text-center space-y-3">
+                            <i class="fas fa-check-circle text-5xl text-green-500"></i>
+                            <h3 class="text-xl font-bold text-green-600">Notifications Enabled!</h3>
+                            <p class="text-gray-600">You'll now receive important updates and bonuses.</p>
+                        </div>
+                    `, () => {
+                        setTimeout(hideModal, 3000);
+                    });
+                    scheduleDailyReminders();
+                }
+            });
+            hideModal();
+        }
+
+        function scheduleDailyReminders() {
+            // Schedule random reminders throughout the day
+            setInterval(() => {
+                if (Math.random() < 0.3 && Notification.permission === 'granted') {
+                    const messages = [
+                        "Don't forget to complete your daily missions! Earn extra points today!",
+                        "Your daily login bonus is waiting! Open the app now!",
+                        "Only 2 hours left to complete your daily ad streak!",
+                        "New courses added! Learn and earn points now!",
+                        "Spin the wheel for a chance to win big prizes!",
+                        "Complete 3 ads today to earn a 200-point bonus!"
+                    ];
+                    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                    new Notification('EduHeTech Reminder', {
+                        body: randomMessage,
+                        icon: '/icon.png'
+                    });
+                }
+            }, 4 * 60 * 60 * 1000); // 4 hours
+        }
+
+        // =====================================================
         // RENDER FUNCTIONS - COMPLETE IMPLEMENTATION
         // =====================================================
 
@@ -1518,10 +2266,12 @@
             // Show/hide mobile navigation based on auth state
             const mobileNav = document.getElementById('mobile-nav');
             const desktopSidebar = document.getElementById('desktop-sidebar');
+            const socialBarAds = document.getElementById('social-bar-ads');
             
             if (state.user) {
                 mobileNav.classList.remove('hidden');
                 desktopSidebar.classList.remove('hidden');
+                socialBarAds.classList.remove('hidden');
                 // Adjust main content margin for sidebar
                 const mainContent = document.querySelector('.main-content');
                 if (mainContent) {
@@ -1530,6 +2280,7 @@
             } else {
                 mobileNav.classList.add('hidden');
                 desktopSidebar.classList.add('hidden');
+                socialBarAds.classList.add('hidden');
                 const mainContent = document.querySelector('.main-content');
                 if (mainContent) {
                     mainContent.style.marginLeft = '0';
@@ -1708,6 +2459,7 @@
                                 </button>
                                 <h1 class="text-xl font-bold text-blue-600">EduHeTech</h1>
                                 ${state.isAdmin ? '<span class="ml-2 admin-badge px-2 py-1 rounded text-xs font-bold">ADMIN</span>' : ''}
+                                ${state.isPremium ? '<span class="ml-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-1 rounded text-xs font-bold">PREMIUM</span>' : ''}
                             </div>
                             
                             <div class="flex items-center space-x-4">
@@ -1735,6 +2487,12 @@
                 learn: renderLearn(),
                 quiz: renderQuiz(),
                 ads: renderAds(),
+                spin: renderSpinWheel(),
+                videos: renderVideoSection(),
+                missions: renderMissions(),
+                blog: renderBlog(),
+                premium: renderPremiumSection(),
+                social: renderSocialSection(),
                 referral: renderReferral(),
                 rewards: renderRewards(),
                 leaderboard: renderLeaderboard(),
@@ -1754,6 +2512,17 @@
             const completedCourses = Object.keys(state.user.completedCourses || {}).length;
             const completedQuizzes = Object.keys(state.user.completedQuizzes || {}).length;
             
+            // Calculate earned today
+            const today = new Date().toDateString();
+            const earnedToday = state.user.history
+                ? state.user.history
+                    .filter(entry => {
+                        const entryDate = new Date(entry.timestamp).toDateString();
+                        return entryDate === today && entry.points > 0;
+                    })
+                    .reduce((sum, entry) => sum + entry.points, 0)
+                : 0;
+            
             return `
                 <div class="space-y-6">
                     <div class="flex justify-between items-center">
@@ -1765,6 +2534,22 @@
                                     <span>Streak: ${state.user.streak || 0} days</span>
                                 </div>
                             </div>
+                            <button onclick="handleFirebaseLogout()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition md:hidden">
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Promotional Banner -->
+                    <div class="promo-banner">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-bold">🎉 Earn Double Points Today!</h3>
+                                <p class="text-sm opacity-90">Complete any course for 2x rewards</p>
+                            </div>
+                            <button onclick="switchView('learn')" class="bg-white text-orange-600 px-3 py-1 rounded text-sm font-semibold">
+                                Learn Now
+                            </button>
                         </div>
                     </div>
                     
@@ -1772,10 +2557,18 @@
                     <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white">
                         <h2 class="text-2xl font-bold mb-2">Welcome back, ${state.user.name}!</h2>
                         <p class="opacity-90">Continue your learning journey and earn rewards</p>
+                        ${state.dailyAdCount > 0 ? `
+                            <div class="mt-3 bg-white bg-opacity-20 rounded-lg p-2">
+                                <p class="text-sm">🎯 Daily Ad Progress: ${state.dailyAdCount}/5</p>
+                                <div class="w-full bg-white bg-opacity-30 rounded-full h-2 mt-1">
+                                    <div class="bg-green-400 h-2 rounded-full" style="width: ${(state.dailyAdCount / 5) * 100}%"></div>
+                                </div>
+                            </div>
+                        ` : ''}
                     </div>
                     
                     <!-- Stats Grid -->
-                    <div class="stats-grid grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div class="stats-grid grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div class="card p-4">
                             <div class="flex items-center justify-between">
                                 <div>
@@ -1789,10 +2582,24 @@
                         <div class="card p-4">
                             <div class="flex items-center justify-between">
                                 <div>
+                                    <p class="text-gray-500 text-sm">Earned Today</p>
+                                    <p class="text-xl font-bold">${formatPoints(earnedToday)}</p>
+                                </div>
+                                <i class="fas fa-calendar-day text-green-500 text-xl"></i>
+                            </div>
+                            <div class="progress-bar mt-2">
+                                <div class="progress-fill bg-green-500" style="width: ${Math.min((earnedToday / DAILY_POINTS_LIMIT) * 100, 100)}%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">${Math.min(earnedToday, DAILY_POINTS_LIMIT)}/${DAILY_POINTS_LIMIT}</p>
+                        </div>
+                        
+                        <div class="card p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
                                     <p class="text-gray-500 text-sm">Courses Completed</p>
                                     <p class="text-xl font-bold">${completedCourses}</p>
                                 </div>
-                                <i class="fas fa-book text-green-500 text-xl"></i>
+                                <i class="fas fa-book text-blue-500 text-xl"></i>
                             </div>
                         </div>
                         
@@ -1802,7 +2609,7 @@
                                     <p class="text-gray-500 text-sm">Referrals</p>
                                     <p class="text-xl font-bold">${state.user.referralCount || 0}</p>
                                 </div>
-                                <i class="fas fa-users text-blue-500 text-xl"></i>
+                                <i class="fas fa-users text-purple-500 text-xl"></i>
                             </div>
                         </div>
                     </div>
@@ -1811,25 +2618,35 @@
                     <div class="card p-6">
                         <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
                         <div class="quick-actions grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <a href="learn.html" target="_blank" class="bg-blue-50 hover:bg-blue-100 p-4 rounded-lg text-center transition flex flex-col items-center">
+                            <button onclick="switchView('learn')" class="bg-blue-50 hover:bg-blue-100 p-4 rounded-lg text-center transition flex flex-col items-center">
                                 <i class="fas fa-book text-blue-500 text-xl mb-2"></i>
                                 <p class="font-medium text-sm">Learn & Earn</p>
-                            </a>
+                            </button>
                             
-                            <a href="quiz.html" target="_blank" class="bg-green-50 hover:bg-green-100 p-4 rounded-lg text-center transition flex flex-col items-center">
+                            <button onclick="switchView('quiz')" class="bg-green-50 hover:bg-green-100 p-4 rounded-lg text-center transition flex flex-col items-center">
                                 <i class="fas fa-brain text-green-500 text-xl mb-2"></i>
                                 <p class="font-medium text-sm">Take Quiz</p>
-                            </a>
+                            </button>
                             
                             <button onclick="switchView('ads')" class="bg-purple-50 hover:bg-purple-100 p-4 rounded-lg text-center transition flex flex-col items-center">
                                 <i class="fas fa-ad text-purple-500 text-xl mb-2"></i>
                                 <p class="font-medium text-sm">Watch Ads</p>
                             </button>
                             
-                            <button onclick="switchView('rewards')" class="bg-orange-50 hover:bg-orange-100 p-4 rounded-lg text-center transition flex flex-col items-center">
-                                <i class="fas fa-wallet text-orange-500 text-xl mb-2"></i>
-                                <p class="font-medium text-sm">Wallet</p>
+                            <button onclick="switchView('spin')" class="bg-orange-50 hover:bg-orange-100 p-4 rounded-lg text-center transition flex flex-col items-center">
+                                <i class="fas fa-sync-alt text-orange-500 text-xl mb-2"></i>
+                                <p class="font-medium text-sm">Spin Wheel</p>
                             </button>
+                        </div>
+                    </div>
+
+                    <!-- Affiliate Banner -->
+                    <div class="affiliate-banner">
+                        <h3 class="font-semibold mb-2">Recommended Learning Platforms</h3>
+                        <div class="flex flex-wrap justify-center gap-4">
+                            <a href="https://www.udemy.com" target="_blank" class="bg-purple-100 hover:bg-purple-200 px-3 py-1 rounded text-sm transition">Udemy</a>
+                            <a href="https://www.coursera.org" target="_blank" class="bg-blue-100 hover:bg-blue-200 px-3 py-1 rounded text-sm transition">Coursera</a>
+                            <a href="https://www.binance.com/en/learn" target="_blank" class="bg-yellow-100 hover:bg-yellow-200 px-3 py-1 rounded text-sm transition">Binance Learn</a>
                         </div>
                     </div>
 
@@ -1912,67 +2729,541 @@
         }
 
         function renderAds() {
+            const adProgress = Math.min(state.dailyAdCount, 10);
+            
             return `
                 <div class="space-y-6">
                     <div class="flex justify-between items-center">
                         <h1 class="text-2xl font-bold text-gray-800">Watch Ads & Earn</h1>
                         <div class="flex items-center space-x-2">
                             <i class="fas fa-ad text-purple-500"></i>
-                            <span class="text-sm text-gray-600">Earn ${BASE_POINTS_REWARDS.ad} points per ad</span>
+                            <span class="text-sm text-gray-600">Multiple ad options available</span>
                         </div>
                     </div>
 
-                    <div class="card p-6 text-center">
-                        <i class="fas fa-play-circle text-6xl text-purple-500 mb-4"></i>
-                        <h3 class="text-xl font-bold mb-2">Watch an Ad to Earn Points</h3>
-                        <p class="text-gray-600 mb-6">Click the button below to watch an advertisement and earn ${BASE_POINTS_REWARDS.ad} EduPoints.</p>
-                        
-                        <button onclick="openMonetagAd()" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-8 rounded-lg text-lg transition transform hover:scale-105">
-                            <i class="fas fa-play mr-2"></i>Watch Ad & Earn ${BASE_POINTS_REWARDS.ad} Points
+                    <!-- Ad Counter -->
+                    <div class="ad-counter">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-semibold">Daily Ad Progress</span>
+                            <span class="font-bold">${adProgress}/10</span>
+                        </div>
+                        <div class="progress-bar bg-white bg-opacity-30">
+                            <div class="progress-fill bg-green-400" style="width: ${(adProgress / 10) * 100}%"></div>
+                        </div>
+                        <p class="text-xs mt-1 text-white text-opacity-90">Ad ${adProgress} of 10 today</p>
+                    </div>
+
+                    <!-- Quick Ads -->
+                    <div class="card p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-lg font-semibold">Quick Ads</h3>
+                                <p class="text-sm text-gray-600">5-15 second ads</p>
+                            </div>
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+                                +${BASE_POINTS_REWARDS.quickAd} Points
+                            </span>
+                        </div>
+                        <button onclick="watchQuickAd()" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold">
+                            Watch Quick Ad
                         </button>
+                    </div>
+
+                    <!-- Standard Ads -->
+                    <div class="card p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-lg font-semibold">Standard Ads</h3>
+                                <p class="text-sm text-gray-600">30 second ads</p>
+                            </div>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">
+                                +${BASE_POINTS_REWARDS.ad} Points
+                            </span>
+                        </div>
+                        <button onclick="openMonetagAd()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold">
+                            Watch Standard Ad
+                        </button>
+                    </div>
+
+                    <!-- Premium Ads -->
+                    <div class="card p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-lg font-semibold">Premium Ads</h3>
+                                <p class="text-sm text-gray-600">60 second ads</p>
+                            </div>
+                            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-semibold">
+                                +${BASE_POINTS_REWARDS.premiumAd} Points
+                            </span>
+                        </div>
+                        <button onclick="watchPremiumAd()" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-3 rounded-lg font-semibold">
+                            Watch Premium Ad
+                        </button>
+                    </div>
+
+                    <!-- Ad Streak Bonus -->
+                    <div class="card p-6 bg-gradient-to-r from-orange-400 to-red-500 text-white">
+                        <h3 class="text-lg font-semibold mb-2">Daily Ad Streak</h3>
+                        <p class="text-sm opacity-90 mb-4">Watch 5 ads today to earn 200 bonus points!</p>
+                        <div class="flex justify-between items-center">
+                            <span>Progress: ${state.dailyAdCount}/5 ads</span>
+                            <span class="font-bold">+200 Bonus</span>
+                        </div>
+                        <div class="w-full bg-white bg-opacity-30 rounded-full h-2 mt-2">
+                            <div class="bg-green-400 h-2 rounded-full" style="width: ${(state.dailyAdCount / 5) * 100}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSpinWheel() {
+            const today = new Date().toDateString();
+            const canSpin = state.lastSpinDate !== today;
+            
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Daily Spin Wheel</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-sync-alt text-yellow-500"></i>
+                            <span class="text-sm text-gray-600">Spin once daily for amazing prizes!</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 text-center">
+                        <div class="wheel-container mb-6">
+                            <div class="wheel" id="spin-wheel">
+                                ${WHEEL_PRIZES.map((prize, index) => {
+                                    const rotation = (index * 60); // 60 degrees per segment
+                                    return `
+                                        <div class="wheel-item" style="transform: rotate(${rotation}deg);">
+                                            <span style="transform: rotate(${30}deg); display: inline-block;">${prize.label}</span>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                            <div class="wheel-pointer"></div>
+                        </div>
                         
-                        <p class="text-sm text-gray-500 mt-4">The ad will open in a new tab. You must watch it for 30 seconds to earn points.</p>
+                        ${canSpin ? `
+                            <button onclick="spinWheel()" class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-bold py-4 px-8 rounded-full text-lg">
+                                SPIN FOR REWARDS!
+                            </button>
+                            <p class="text-sm text-gray-600 mt-4">Watch a short ad to spin the wheel</p>
+                        ` : `
+                            <div class="bg-gray-100 rounded-lg p-4">
+                                <i class="fas fa-check-circle text-2xl text-green-500 mb-2"></i>
+                                <p class="font-semibold text-gray-700">Already Spun Today</p>
+                                <p class="text-sm text-gray-600 mt-1">Come back tomorrow for another spin!</p>
+                            </div>
+                        `}
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="card p-4">
-                            <h3 class="text-lg font-semibold mb-3">How it works</h3>
+                            <h3 class="text-lg font-semibold mb-3">Possible Prizes</h3>
                             <ul class="space-y-2 text-gray-600 text-sm">
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    Click "Watch Ad" button
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    Watch the timer count down from 30 seconds
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    Don't close the window during the countdown
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
-                                    Click "Complete & Earn Points" when timer ends
-                                </li>
+                                ${WHEEL_PRIZES.map(prize => `
+                                    <li class="flex items-center justify-between">
+                                        <span>${prize.label}</span>
+                                        ${prize.type === 'points' ? `<span class="text-yellow-600 font-semibold">+${prize.value}</span>` : ''}
+                                    </li>
+                                `).join('')}
                             </ul>
                         </div>
 
                         <div class="card p-4">
-                            <h3 class="text-lg font-semibold mb-3">Important Notes</h3>
+                            <h3 class="text-lg font-semibold mb-3">How it Works</h3>
                             <ul class="space-y-2 text-gray-600 text-sm">
                                 <li class="flex items-center">
-                                    <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
-                                    Points are only awarded after 30 seconds
+                                    <i class="fas fa-check text-green-500 mr-2"></i>
+                                    Watch a 15-second ad
                                 </li>
                                 <li class="flex items-center">
-                                    <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
-                                    Closing the window cancels the reward
+                                    <i class="fas fa-check text-green-500 mr-2"></i>
+                                    Spin the wheel for free
                                 </li>
                                 <li class="flex items-center">
-                                    <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
-                                    You must click the complete button
+                                    <i class="fas fa-check text-green-500 mr-2"></i>
+                                    Win instant prizes
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-green-500 mr-2"></i>
+                                    One spin per day
                                 </li>
                             </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderVideoSection() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Watch & Earn</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-play-circle text-red-500"></i>
+                            <span class="text-sm text-gray-600">Earn points by watching videos</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="card p-4">
+                            <div class="bg-gray-200 h-40 rounded-lg mb-3 flex items-center justify-center">
+                                <i class="fas fa-play-circle text-4xl text-gray-400"></i>
+                            </div>
+                            <h3 class="font-semibold mb-2">Educational Video</h3>
+                            <p class="text-sm text-gray-600 mb-3">Watch this 2-minute video about web development</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-yellow-600 font-semibold">+${BASE_POINTS_REWARDS.video} Points</span>
+                                <button onclick="watchVideoAd()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm">
+                                    Watch Video
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="card p-4">
+                            <div class="bg-gray-200 h-40 rounded-lg mb-3 flex items-center justify-center">
+                                <i class="fas fa-play-circle text-4xl text-gray-400"></i>
+                            </div>
+                            <h3 class="font-semibold mb-2">Tutorial Video</h3>
+                            <p class="text-sm text-gray-600 mb-3">Learn about health and wellness in 3 minutes</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-yellow-600 font-semibold">+${BASE_POINTS_REWARDS.video + 50} Points</span>
+                                <button onclick="watchVideoAd()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm">
+                                    Watch Video
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card p-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                        <h3 class="text-lg font-semibold mb-2">Video Learning Benefits</h3>
+                        <p class="text-sm opacity-90">Watch educational videos to learn new skills while earning points. Perfect for visual learners!</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMissions() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Daily Missions</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-tasks text-green-500"></i>
+                            <span class="text-sm text-gray-600">Complete missions for bonus points</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Watch Ads Mission -->
+                        <div class="card p-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-semibold">Watch 3 Ads Today</h3>
+                                    <p class="text-sm text-gray-600">Complete to earn bonus points</p>
+                                    <div class="w-48 bg-gray-200 rounded-full h-2 mt-2">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: ${Math.min((state.missions.adsWatched || 0) / 3 * 100, 100)}%"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">${state.missions.adsWatched || 0}/3 ads watched</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-yellow-600 font-bold">+300 Points</span>
+                                    ${(state.missions.adsWatched || 0) >= 3 ? `
+                                        <div class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium mt-1">
+                                            Completed
+                                        </div>
+                                    ` : `
+                                        <button onclick="switchView('ads')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm mt-1">
+                                            Watch Ads
+                                        </button>
+                                    `}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Complete Courses Mission -->
+                        <div class="card p-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-semibold">Complete 2 Courses</h3>
+                                    <p class="text-sm text-gray-600">Learn and earn simultaneously</p>
+                                    <div class="w-48 bg-gray-200 rounded-full h-2 mt-2">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: ${Math.min((state.missions.coursesCompleted || 0) / 2 * 100, 100)}%"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">${state.missions.coursesCompleted || 0}/2 courses completed</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-yellow-600 font-bold">+500 Points</span>
+                                    <button onclick="switchView('learn')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm mt-1">
+                                        Learn Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Referral Mission -->
+                        <div class="card p-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-semibold">Refer 1 Friend</h3>
+                                    <p class="text-sm text-gray-600">Expand our learning community</p>
+                                    <div class="w-48 bg-gray-200 rounded-full h-2 mt-2">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: ${Math.min((state.user.referralCount || 0) / 1 * 100, 100)}%"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">${state.user.referralCount || 0}/1 referrals</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-yellow-600 font-bold">+1000 Points</span>
+                                    <button onclick="switchView('referral')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm mt-1">
+                                        Refer Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card p-6 bg-gradient-to-r from-green-500 to-blue-500 text-white">
+                        <h3 class="text-lg font-semibold mb-2">Mission Completion Bonus</h3>
+                        <p class="text-sm opacity-90">Complete all daily missions to unlock a special 500-point bonus!</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderBlog() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">EduHeTech Blog</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-blog text-blue-500"></i>
+                            <span class="text-sm text-gray-600">Learn tips and tricks to maximize earnings</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Blog Post 1 -->
+                        <div class="card overflow-hidden hover:shadow-lg transition">
+                            <div class="h-40 bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
+                                <i class="fas fa-lightbulb text-white text-4xl"></i>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-bold text-lg mb-2">10 Ways to Maximize Your Earnings on EduHeTech</h3>
+                                <p class="text-gray-600 text-sm mb-4">Discover proven strategies to increase your points and earnings through our platform.</p>
+                                <a href="post1.html" class="text-blue-500 font-semibold text-sm flex items-center">
+                                    Read More <i class="fas fa-arrow-right ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Blog Post 2 -->
+                        <div class="card overflow-hidden hover:shadow-lg transition">
+                            <div class="h-40 bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
+                                <i class="fas fa-graduation-cap text-white text-4xl"></i>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-bold text-lg mb-2">The Future of Learn & Earn Platforms</h3>
+                                <p class="text-gray-600 text-sm mb-4">How educational platforms are revolutionizing the way we learn and earn simultaneously.</p>
+                                <a href="post2.html" class="text-blue-500 font-semibold text-sm flex items-center">
+                                    Read More <i class="fas fa-arrow-right ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Blog Post 3 -->
+                        <div class="card overflow-hidden hover:shadow-lg transition">
+                            <div class="h-40 bg-gradient-to-r from-orange-400 to-red-500 flex items-center justify-center">
+                                <i class="fas fa-rocket text-white text-4xl"></i>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-bold text-lg mb-2">Success Stories: How Our Users Are Thriving</h3>
+                                <p class="text-gray-600 text-sm mb-4">Real stories from EduHeTech users who have transformed their skills and earnings.</p>
+                                <a href="post3.html" class="text-blue-500 font-semibold text-sm flex items-center">
+                                    Read More <i class="fas fa-arrow-right ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-8">
+                        <a href="blog.html" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition">
+                            View All Blog Posts
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPremiumSection() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Go Premium</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-crown text-yellow-500"></i>
+                            <span class="text-sm text-gray-600">Unlock exclusive features</span>
+                        </div>
+                    </div>
+                    
+                    ${!state.isPremium ? `
+                        <div class="card p-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                            <h2 class="text-xl font-bold mb-2">Premium Membership</h2>
+                            <p class="mb-4">Unlock exclusive features and earn more points!</p>
+                            <ul class="space-y-2 mb-6">
+                                <li class="flex items-center">
+                                    <i class="fas fa-check mr-2"></i>
+                                    2x Points from all activities
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check mr-2"></i>
+                                    No daily limits
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check mr-2"></i>
+                                    Exclusive premium content
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check mr-2"></i>
+                                    Priority withdrawal processing
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check mr-2"></i>
+                                    Ad-free experience
+                                </li>
+                            </ul>
+                            <button onclick="showPremiumModal()" class="w-full bg-white text-purple-600 font-bold py-3 rounded-lg">
+                                Upgrade Now - $4.99/month
+                            </button>
+                            <p class="text-center text-sm opacity-90 mt-2">7-day free trial available</p>
+                        </div>
+                    ` : `
+                        <div class="card p-6 bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
+                            <h2 class="text-xl font-bold mb-2">Premium Member</h2>
+                            <p class="mb-4">You're enjoying all the benefits of EduHeTech Premium!</p>
+                            <ul class="space-y-2">
+                                <li class="flex items-center">
+                                    <i class="fas fa-check mr-2"></i>
+                                    ✅ 2x Points Active
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check mr-2"></i>
+                                    ✅ No Daily Limits
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check mr-2"></i>
+                                    ✅ Premium Content Unlocked
+                                </li>
+                            </ul>
+                        </div>
+                    `}
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="card p-4 text-center">
+                            <i class="fas fa-bolt text-3xl text-yellow-500 mb-3"></i>
+                            <h3 class="font-semibold mb-2">Daily Boost</h3>
+                            <p class="text-sm text-gray-600 mb-3">Watch an ad to double your next course points</p>
+                            <button onclick="activateBoost()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded text-sm">
+                                Activate Boost (+100 Points)
+                            </button>
+                        </div>
+                        
+                        <div class="card p-4 text-center">
+                            <i class="fas fa-shield-alt text-3xl text-blue-500 mb-3"></i>
+                            <h3 class="font-semibold mb-2">Ad-Free Pass</h3>
+                            <p class="text-sm text-gray-600 mb-3">Remove ads for 24 hours</p>
+                            <button onclick="buyAdFree()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm">
+                                Remove Ads (500 Points)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Premium Statistics</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-purple-600">2x</p>
+                                <p class="text-sm text-gray-600">Points Multiplier</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-green-600">∞</p>
+                                <p class="text-sm text-gray-600">Daily Limit</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSocialSection() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Community</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-users text-blue-500"></i>
+                            <span class="text-sm text-gray-600">Connect with other learners</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Sponsored Post -->
+                    <div class="card p-4">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-3">
+                                EHT
+                            </div>
+                            <div>
+                                <p class="font-semibold">EduHeTech Official</p>
+                                <p class="text-sm text-gray-600">Sponsored</p>
+                            </div>
+                        </div>
+                        <p class="mb-4">🎉 New course available! Complete it now and earn double points for the next 24 hours!</p>
+                        <div class="bg-gray-100 p-3 rounded-lg mb-3">
+                            <p class="text-sm font-semibold">Watch a short ad to unlock double points</p>
+                            <button onclick="openMonetagAd(200, 30)" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-sm mt-2">
+                                Watch Ad & Unlock Double Points
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- User Posts -->
+                    <div class="card p-4">
+                        <div class="flex items-center mb-3">
+                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">
+                                U
+                            </div>
+                            <p class="font-semibold">User123</p>
+                        </div>
+                        <p class="mb-3">Just earned 500 points from the new web development course! 🚀</p>
+                        <div class="flex space-x-4 text-sm text-gray-600">
+                            <button class="flex items-center">
+                                <i class="far fa-heart mr-1"></i> Like
+                            </button>
+                            <button class="flex items-center">
+                                <i class="far fa-comment mr-1"></i> Comment
+                            </button>
+                            <button class="flex items-center">
+                                <i class="far fa-share-square mr-1"></i> Share
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Community Stats -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Community Stats</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-blue-600">${state.leaderboard ? state.leaderboard.length : '0'}</p>
+                                <p class="text-sm text-gray-600">Active Learners</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-green-600">${state.leaderboard ? state.leaderboard.reduce((sum, user) => sum + (user.eduPoints || 0), 0).toLocaleString() : '0'}</p>
+                                <p class="text-sm text-gray-600">Total Points Earned</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2043,14 +3334,14 @@
                     <!-- Share Options -->
                     <div class="card p-4">
                         <h3 class="text-lg font-semibold mb-4">Share Your Link</h3>
-                        <div class="flex flex-wrap gap-2">
-                            <button onclick="shareOnWhatsApp()" class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg transition flex items-center text-sm">
+                        <div class="share-buttons">
+                            <button onclick="shareOnWhatsApp()" class="share-btn share-whatsapp">
                                 <i class="fab fa-whatsapp mr-2"></i> WhatsApp
                             </button>
-                            <button onclick="shareOnFacebook()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition flex items-center text-sm">
+                            <button onclick="shareOnFacebook()" class="share-btn share-facebook">
                                 <i class="fab fa-facebook mr-2"></i> Facebook
                             </button>
-                            <button onclick="shareOnTwitter()" class="bg-blue-400 hover:bg-blue-500 text-white px-3 py-2 rounded-lg transition flex items-center text-sm">
+                            <button onclick="shareOnTwitter()" class="share-btn share-twitter">
                                 <i class="fab fa-twitter mr-2"></i> Twitter
                             </button>
                         </div>
@@ -2087,10 +3378,12 @@
                             <div class="flex items-start">
                                 <i class="fas fa-exclamation-circle text-yellow-500 mt-1 mr-2"></i>
                                 <div>
-                                    <p class="font-semibold text-yellow-800">Minimum Withdrawal: ${formatPoints(MIN_WITHDRAWAL_POINTS)} points</p>
+                                    <p class="font-semibold text-yellow-800">Withdrawal Information</p>
                                     <p class="text-sm text-yellow-700 mt-1">
-                                        You need at least ${formatPoints(MIN_WITHDRAWAL_POINTS)} points to make a withdrawal request.
-                                        ${!canWithdraw ? ` You need ${formatPoints(MIN_WITHDRAWAL_POINTS - state.user.eduPoints)} more points.` : ''}
+                                        • Daily Limit: ${formatPoints(DAILY_POINTS_LIMIT)} EduPoints<br>
+                                        • Exchange Rate: 100,000 EduPoints = $1<br>
+                                        • Minimum Withdrawal: ${formatPoints(MIN_WITHDRAWAL_POINTS)} EduPoints ($5)<br>
+                                        ${!canWithdraw ? `• You need ${formatPoints(MIN_WITHDRAWAL_POINTS - state.user.eduPoints)} more points to withdraw` : ''}
                                     </p>
                                 </div>
                             </div>
@@ -2143,7 +3436,7 @@
                         ` : `
                             <div class="text-center py-6">
                                 <i class="fas fa-lock text-4xl text-gray-400 mb-3"></i>
-                                <p class="text-gray-600">You need ${formatPoints(MIN_WITHDRAWAL_POINTS)} points to make a withdrawal</p>
+                                <p class="text-gray-600">You need ${formatPoints(MIN_WITHDRAWAL_POINTS)} points ($${(MIN_WITHDRAWAL_POINTS / ADMIN_CONFIG.POINTS_TO_CURRENCY_RATE).toFixed(2)}) to make a withdrawal</p>
                                 <button onclick="switchView('learn')" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition">
                                     Earn More Points
                                 </button>
@@ -2215,12 +3508,12 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="achievement-grid">
                         ${state.achievements.map(achievement => {
                             const isUnlocked = userAchievements.includes(achievement.id);
                             
                             return `
-                                <div class="card p-4 text-center ${isUnlocked ? 'border-2 border-yellow-400' : 'opacity-70'}">
+                                <div class="achievement-card card ${isUnlocked ? 'border-2 border-yellow-400' : 'opacity-70'}">
                                     <div class="achievement-badge mb-3">
                                         <i class="${achievement.icon} text-3xl ${
                                             isUnlocked ? 
@@ -2297,7 +3590,7 @@
                     <div class="text-center space-y-3">
                         <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
                         <h3 class="text-xl font-bold text-red-600">Invalid Amount</h3>
-                        <p class="text-gray-600">Minimum withdrawal amount is ${formatPoints(MIN_WITHDRAWAL_POINTS)} points.</p>
+                        <p class="text-gray-600">Minimum withdrawal amount is ${formatPoints(MIN_WITHDRAWAL_POINTS)} points ($${(MIN_WITHDRAWAL_POINTS / ADMIN_CONFIG.POINTS_TO_CURRENCY_RATE).toFixed(2)}).</p>
                     </div>
                 `);
                 return;
@@ -2344,7 +3637,7 @@
                 <div class="text-center space-y-3">
                     <i class="fas fa-check-circle text-5xl text-green-500"></i>
                     <h3 class="text-xl font-bold text-green-600">Withdrawal Request Submitted!</h3>
-                    <p class="text-gray-600">Your request for ${formatPoints(amount)} points has been submitted.</p>
+                    <p class="text-gray-600">Your request for ${formatPoints(amount)} points ($${(amount / ADMIN_CONFIG.POINTS_TO_CURRENCY_RATE).toFixed(2)}) has been submitted.</p>
                     <p class="text-sm text-gray-500">We will process your request within 24-48 hours.</p>
                 </div>
             `, () => {
@@ -2413,6 +3706,12 @@
         window.shareOnTwitter = shareOnTwitter;
         window.submitWithdrawal = submitWithdrawal;
         window.openMonetagAd = openMonetagAd;
+        window.watchQuickAd = watchQuickAd;
+        window.watchPremiumAd = watchPremiumAd;
+        window.watchVideoAd = watchVideoAd;
+        window.spinWheel = spinWheel;
+        window.activateBoost = activateBoost;
+        window.showPremiumModal = showPremiumModal;
         window.handleFirebaseLogout = handleFirebaseLogout;
         window.hideModal = hideModal;
         window.toggleMobileMenu = toggleMobileMenu;
