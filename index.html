@@ -504,10 +504,6 @@
                 display: flex;
             }
             
-            .desktop-sidebar {
-                display: none;
-            }
-            
             .main-content {
                 padding-bottom: 5rem;
                 margin-left: 0 !important;
@@ -584,90 +580,6 @@
                 <button id="modal-cancel" onclick="hideModal()" class="p-2 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">Cancel</button>
                 <button id="modal-confirm" class="p-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition hidden">Confirm</button>
             </div>
-        </div>
-    </div>
-
-    <!-- Desktop Sidebar -->
-    <div id="desktop-sidebar" class="desktop-sidebar">
-        <div class="mb-8">
-            <h1 class="text-2xl font-bold text-blue-600">EduHeTech</h1>
-            <p class="text-sm text-gray-600">Learn • Earn • Grow</p>
-        </div>
-        
-        <nav class="space-y-1">
-            <a href="#dashboard" class="sidebar-item active" data-view="dashboard">
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="#learn" class="sidebar-item" data-view="learn">
-                <i class="fas fa-book"></i>
-                <span>Learn</span>
-            </a>
-            <a href="#quiz" class="sidebar-item" data-view="quiz">
-                <i class="fas fa-brain"></i>
-                <span>Quiz</span>
-            </a>
-            <a href="#ads" class="sidebar-item" data-view="ads">
-                <i class="fas fa-ad"></i>
-                <span>Watch Ads</span>
-            </a>
-            <a href="#spin" class="sidebar-item" data-view="spin">
-                <i class="fas fa-sync-alt"></i>
-                <span>Spin Wheel</span>
-            </a>
-            <a href="#videos" class="sidebar-item" data-view="videos">
-                <i class="fas fa-play-circle"></i>
-                <span>Watch & Earn</span>
-            </a>
-            <a href="#missions" class="sidebar-item" data-view="missions">
-                <i class="fas fa-tasks"></i>
-                <span>Daily Missions</span>
-            </a>
-            <a href="#blog" class="sidebar-item" data-view="blog">
-                <i class="fas fa-blog"></i>
-                <span>Blog</span>
-            </a>
-            <a href="#premium" class="sidebar-item" data-view="premium">
-                <i class="fas fa-crown"></i>
-                <span>Go Premium</span>
-            </a>
-            <a href="#social" class="sidebar-item" data-view="social">
-                <i class="fas fa-users"></i>
-                <span>Community</span>
-            </a>
-            <a href="#referral" class="sidebar-item" data-view="referral">
-                <i class="fas fa-users"></i>
-                <span>Refer & Earn</span>
-            </a>
-            <a href="#rewards" class="sidebar-item" data-view="rewards">
-                <i class="fas fa-wallet"></i>
-                <span>Wallet</span>
-            </a>
-            <a href="#leaderboard" class="sidebar-item" data-view="leaderboard">
-                <i class="fas fa-trophy"></i>
-                <span>Leaderboard</span>
-            </a>
-            <a href="#achievements" class="sidebar-item" data-view="achievements">
-                <i class="fas fa-medal"></i>
-                <span>Achievements</span>
-            </a>
-        </nav>
-        
-        <!-- Footer Links in Sidebar -->
-        <div class="absolute bottom-20 left-4 right-4 text-xs text-gray-500">
-            <div class="flex flex-wrap gap-2 mb-2">
-                <a href="terms.html" class="hover:text-blue-500 transition">Terms</a>
-                <a href="privacy.html" class="hover:text-blue-500 transition">Privacy</a>
-                <a href="faq.html" class="hover:text-blue-500 transition">FAQ</a>
-            </div>
-            <p>&copy; 2024 EduHeTech. All rights reserved.</p>
-        </div>
-        
-        <div class="absolute bottom-4 left-4 right-4">
-            <button onclick="handleFirebaseLogout()" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition flex items-center justify-center">
-                <i class="fas fa-sign-out-alt mr-2"></i>
-                Logout
-            </button>
         </div>
     </div>
 
@@ -1014,12 +926,15 @@
                 'videos': 'Watch & Earn',
                 'missions': 'Daily Missions',
                 'blog': 'Blog',
+                'forums': 'Forums',
                 'premium': 'Go Premium',
                 'social': 'Community',
                 'referral': 'Refer & Earn',
                 'rewards': 'Withdraw',
                 'leaderboard': 'Leaderboard',
-                'achievements': 'Achievements'
+                'achievements': 'Achievements',
+                'settings': 'Settings',
+                'support': 'Support'
             };
             
             const title = viewTitles[state.currentView] || 'EduHeTech';
@@ -2219,6 +2134,31 @@
             }, 4 * 60 * 60 * 1000); // 4 hours
         }
 
+        function buyAdFree() {
+            if (state.user.eduPoints < 500) {
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
+                        <h3 class="text-xl font-bold text-red-600">Insufficient Points</h3>
+                        <p class="text-gray-600">You need 500 points to purchase ad-free pass.</p>
+                    </div>
+                `);
+                return;
+            }
+            // Deduct points
+            addPoints('Ad-Free Pass', -500, false);
+            // Set ad-free (stub)
+            showModal(`
+                <div class="text-center space-y-3">
+                    <i class="fas fa-shield-alt text-5xl text-blue-500"></i>
+                    <h3 class="text-xl font-bold text-blue-600">Ad-Free Activated!</h3>
+                    <p class="text-gray-600">Enjoy 24 hours without ads. 500 points deducted.</p>
+                </div>
+            `, () => {
+                setTimeout(hideModal, 3000);
+            });
+        }
+
         // =====================================================
         // RENDER FUNCTIONS - COMPLETE IMPLEMENTATION
         // =====================================================
@@ -2232,19 +2172,16 @@
 
             // Show/hide mobile navigation based on auth state
             const mobileNav = document.getElementById('mobile-nav');
-            const desktopSidebar = document.getElementById('desktop-sidebar');
             
             if (state.user) {
                 mobileNav.classList.remove('hidden');
-                desktopSidebar.classList.remove('hidden');
                 // Adjust main content margin for sidebar
                 const mainContent = document.querySelector('.main-content');
                 if (mainContent) {
-                    mainContent.style.marginLeft = '250px';
+                    mainContent.style.marginLeft = '0';
                 }
             } else {
                 mobileNav.classList.add('hidden');
-                desktopSidebar.classList.add('hidden');
                 const mainContent = document.querySelector('.main-content');
                 if (mainContent) {
                     mainContent.style.marginLeft = '0';
@@ -2259,7 +2196,6 @@
             } else {
                 appContainer.innerHTML = renderHeader() + renderContent();
                 updateMobileNav();
-                updateSidebar();
                 setupEventListeners();
             }
             
@@ -2455,12 +2391,15 @@
                 videos: renderVideoSection(),
                 missions: renderMissions(),
                 blog: renderBlog(),
+                forums: renderForums(),
                 premium: renderPremiumSection(),
                 social: renderSocialSection(),
                 referral: renderReferral(),
                 rewards: renderRewards(),
                 leaderboard: renderLeaderboard(),
-                achievements: renderAchievements()
+                achievements: renderAchievements(),
+                settings: renderSettings(),
+                support: renderSupport()
             };
             
             return `
@@ -3176,6 +3115,43 @@
             `;
         }
 
+        function renderForums() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Forums</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-comments text-indigo-500"></i>
+                            <span class="text-sm text-gray-600">Discuss topics and share knowledge</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Popular Forums</h3>
+                        <div class="space-y-4">
+                            <div class="p-4 bg-gray-50 rounded-lg">
+                                <h4 class="font-semibold">General Discussion</h4>
+                                <p class="text-sm text-gray-600">Share your thoughts on learning and earning</p>
+                            </div>
+                            <div class="p-4 bg-gray-50 rounded-lg">
+                                <h4 class="font-semibold">Course Help</h4>
+                                <p class="text-sm text-gray-600">Get assistance with courses</p>
+                            </div>
+                            <div class="p-4 bg-gray-50 rounded-lg">
+                                <h4 class="font-semibold">Earning Tips</h4>
+                                <p class="text-sm text-gray-600">Share strategies to maximize points</p>
+                            </div>
+                        </div>
+                        <div class="text-center mt-6">
+                            <button class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg transition">
+                                Start New Discussion
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         function renderPremiumSection() {
             return `
                 <div class="space-y-6">
@@ -3618,6 +3594,259 @@
             `;
         }
 
+        function renderSettings() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Settings</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-cog text-gray-500"></i>
+                            <span class="text-sm text-gray-600">Customize your experience</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Account Settings</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-700">Email Notifications</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-700">Push Notifications</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-700">Dark Mode</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Privacy Settings</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-700">Profile Visibility</span>
+                                <select class="p-2 border border-gray-300 rounded-lg">
+                                    <option>Public</option>
+                                    <option>Private</option>
+                                </select>
+                            </div>
+                            <button class="w-full bg-red-100 text-red-700 py-2 rounded-lg hover:bg-red-200 transition">
+                                Delete Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSupport() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Support</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-life-ring text-blue-500"></i>
+                            <span class="text-sm text-gray-600">Get help and support</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
+                        <form class="space-y-4">
+                            <div>
+                                <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                                <input type="text" id="subject" class="w-full p-3 border border-gray-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                                <textarea id="message" rows="4" class="w-full p-3 border border-gray-300 rounded-lg"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-4">FAQ</h3>
+                        <div class="space-y-4">
+                            <div class="border-b pb-4">
+                                <h4 class="font-semibold mb-2">How do I earn points?</h4>
+                                <p class="text-sm text-gray-600">Complete courses, quizzes, watch ads, and more.</p>
+                            </div>
+                            <div class="border-b pb-4">
+                                <h4 class="font-semibold mb-2">How to withdraw earnings?</h4>
+                                <p class="text-sm text-gray-600">Go to Wallet and request withdrawal when you reach the minimum.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2">What is Premium?</h4>
+                                <p class="text-sm text-gray-600">Unlock extra benefits like no limits and 2x points.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProfile() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Profile</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-user text-indigo-500"></i>
+                            <span class="text-sm text-gray-600">Your personal information</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6">
+                        <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
+                            <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center text-4xl font-bold text-blue-500">
+                                ${state.user.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="flex-1 text-center md:text-left">
+                                <h2 class="text-2xl font-bold">${state.user.name}</h2>
+                                <p class="text-gray-600">${state.user.email}</p>
+                                <p class="mt-2">
+                                    <span class="font-semibold">Member since:</span> ${new Date(state.user.createdAt).toLocaleDateString()}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Your Stats</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                <p class="text-2xl font-bold text-blue-600">${formatPoints(state.user.eduPoints || 0)}</p>
+                                <p class="text-sm text-gray-600">EduPoints</p>
+                            </div>
+                            <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                <p class="text-2xl font-bold text-green-600">${state.user.streak || 0}</p>
+                                <p class="text-sm text-gray-600">Day Streak</p>
+                            </div>
+                            <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                <p class="text-2xl font-bold text-purple-600">${Object.keys(state.user.completedCourses || {}).length}</p>
+                                <p class="text-sm text-gray-600">Courses Completed</p>
+                            </div>
+                            <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                <p class="text-2xl font-bold text-orange-600">${state.user.referralCount || 0}</p>
+                                <p class="text-sm text-gray-600">Referrals</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Account Actions</h3>
+                        <div class="space-y-3">
+                            <button onclick="switchView('settings')" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg transition flex items-center justify-center">
+                                <i class="fas fa-cog mr-2"></i> Settings
+                            </button>
+                            <button onclick="switchView('support')" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg transition flex items-center justify-center">
+                                <i class="fas fa-life-ring mr-2"></i> Get Support
+                            </button>
+                            <button onclick="handleFirebaseLogout()" class="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg transition flex items-center justify-center">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderChallenges() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Daily Challenges</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-star text-yellow-500"></i>
+                            <span class="text-sm text-gray-600">Complete challenges for extra points</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Challenge 1 -->
+                        <div class="card p-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-semibold">Complete 1 Course Today</h3>
+                                    <p class="text-sm text-gray-600">Finish any course to earn bonus</p>
+                                    <div class="w-48 bg-gray-200 rounded-full h-2 mt-2">
+                                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">0/1 completed</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-yellow-600 font-bold">+200 Points</span>
+                                    <button onclick="switchView('learn')" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm mt-1">
+                                        Start Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Challenge 2 -->
+                        <div class="card p-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-semibold">Take 2 Quizzes</h3>
+                                    <p class="text-sm text-gray-600">Test your knowledge</p>
+                                    <div class="w-48 bg-gray-200 rounded-full h-2 mt-2">
+                                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">0/2 completed</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-yellow-600 font-bold">+300 Points</span>
+                                    <button onclick="switchView('quiz')" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm mt-1">
+                                        Start Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Challenge 3 -->
+                        <div class="card p-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-semibold">Refer a Friend</h3>
+                                    <p class="text-sm text-gray-600">Invite someone to join</p>
+                                    <div class="w-48 bg-gray-200 rounded-full h-2 mt-2">
+                                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">0/1 referrals</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-yellow-600 font-bold">+1000 Points</span>
+                                    <button onclick="switchView('referral')" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm mt-1">
+                                        Invite Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
+                        <h3 class="text-lg font-semibold mb-2">Challenge Completion Bonus</h3>
+                        <p class="text-sm opacity-90">Complete all daily challenges to unlock a special 1000-point bonus!</p>
+                    </div>
+                </div>
+            `;
+        }
+
         // =====================================================
         // EVENT HANDLERS
         // =====================================================
@@ -3750,18 +3979,6 @@
                     }
                 });
             });
-
-            // Desktop sidebar navigation
-            const sidebarItems = document.querySelectorAll('.sidebar-item');
-            sidebarItems.forEach(item => {
-                item.addEventListener('click', (e) => {
-                    const view = item.getAttribute('data-view');
-                    if (view) {
-                        e.preventDefault();
-                        switchView(view);
-                    }
-                });
-            });
         }
 
         function toggleMobileMenu() {
@@ -3809,6 +4026,7 @@
         window.handleFirebaseLogout = handleFirebaseLogout;
         window.hideModal = hideModal;
         window.toggleMobileMenu = toggleMobileMenu;
+        window.buyAdFree = buyAdFree;
     </script>
 </body>
 </html>
