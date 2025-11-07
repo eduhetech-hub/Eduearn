@@ -460,7 +460,7 @@
             align-items: center;
             justify-content: center;
             z-index: 100;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.3s ease;
         }
         
         .splash-screen.hidden {
@@ -469,13 +469,13 @@
         }
         
         .splash-logo {
-            animation: bounce 2s infinite;
+            animation: bounce 1s infinite;
         }
         
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-            40% {transform: translateY(-30px);}
-            60% {transform: translateY(-15px);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
         }
         
         /* Admin dashboard styles */
@@ -656,7 +656,10 @@
 
     <!-- Global Loading Spinner -->
     <div id="global-loader" class="fixed inset-0 bg-white bg-opacity-80 flex items-center justify-center hidden z-50">
-        <div class="loader"></div>
+        <div class="text-center">
+            <div class="loader mb-4"></div>
+            <p class="text-gray-600">Loading...</p>
+        </div>
     </div>
 
     <!-- Global Modal Structure -->
@@ -685,9 +688,9 @@
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="#learn" class="mobile-sidebar-item" data-view="learn" onclick="navigateAndCloseSidebar('learn')">
+                <a href="learn.html" class="mobile-sidebar-item" onclick="navigateAndCloseSidebar('learn')">
                     <i class="fas fa-book"></i>
-                    <span>Learn</span>
+                    <span>Learn & Earn</span>
                 </a>
                 <a href="#quiz" class="mobile-sidebar-item" data-view="quiz" onclick="navigateAndCloseSidebar('quiz')">
                     <i class="fas fa-brain"></i>
@@ -773,9 +776,9 @@
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="#learn" class="sidebar-item" data-view="learn">
+            <a href="learn.html" class="sidebar-item">
                 <i class="fas fa-book"></i>
-                <span>Learn</span>
+                <span>Learn & Earn</span>
             </a>
             <a href="#quiz" class="sidebar-item" data-view="quiz">
                 <i class="fas fa-brain"></i>
@@ -856,7 +859,7 @@
             <i class="fas fa-home"></i>
             <span>Dashboard</span>
         </a>
-        <a href="#learn" class="mobile-nav-item" data-view="learn">
+        <a href="learn.html" class="mobile-nav-item">
             <i class="fas fa-book"></i>
             <span>Learn</span>
         </a>
@@ -961,7 +964,7 @@
             document.head.appendChild(script);
         }
 
-        // Load Firebase SDK after page load
+        // Load Firebase SDK immediately
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', loadFirebaseSDK);
         } else {
@@ -1037,7 +1040,7 @@
         // Global State Management
         window.state = {
             user: null,
-            currentView: 'loading',
+            currentView: 'auth', // Start with auth view directly
             isLoading: false,
             quizData: null,
             withdrawalRequests: [],
@@ -1185,7 +1188,7 @@
         function updateBrowserTitle() {
             const viewTitles = {
                 'dashboard': 'Dashboard',
-                'learn': 'Learn',
+                'learn': 'Learn & Earn',
                 'quiz': 'Quiz',
                 'ads': 'Watch Ads',
                 'spin': 'Spin Wheel',
@@ -1205,6 +1208,12 @@
         }
 
         function switchView(view) {
+            // Handle external page navigation
+            if (view === 'learn') {
+                window.location.href = 'learn.html';
+                return;
+            }
+            
             state.currentView = view;
             render();
             updateSidebar();
@@ -1255,7 +1264,7 @@
         }
 
         // =====================================================
-        // SPLASH SCREEN & INITIALIZATION
+        // SPLASH SCREEN & INITIALIZATION - OPTIMIZED
         // =====================================================
 
         function hideSplashScreen() {
@@ -1265,32 +1274,23 @@
                 // Remove from DOM after animation
                 setTimeout(() => {
                     splashScreen.style.display = 'none';
-                }, 500);
+                }, 300);
             }
         }
 
         function initializeApp() {
             console.log("Initializing EduHeTech application...");
             
-            // Check if user has visited before
-            const hasVisitedBefore = localStorage.getItem('eduhetech_visited');
-            
-            // Show splash screen for only 1.5 seconds for returning users, 2 seconds for new users
-            const splashTime = hasVisitedBefore ? 1500 : 2000;
-            
+            // Hide splash screen quickly and show auth screen
             setTimeout(() => {
                 hideSplashScreen();
+                // Initialize auth state listener immediately
                 initializeAuthStateListener();
-                
-                // Mark as visited
-                if (!hasVisitedBefore) {
-                    localStorage.setItem('eduhetech_visited', 'true');
-                }
-            }, splashTime);
+            }, 800); // Reduced from 1500-2000ms to 800ms
         }
 
         // =====================================================
-        // FIREBASE AUTHENTICATION FUNCTIONS
+        // FIREBASE AUTHENTICATION FUNCTIONS - OPTIMIZED
         // =====================================================
 
         async function handleFirebaseSignup(name, email, password, referrerCode = null) {
@@ -1439,11 +1439,14 @@
                 state.missions = userData.missions || {};
                 state.isPremium = userData.isPremium || false;
                 
-                // Initialize app data
-                await initializeAppData();
-                
+                // Show dashboard immediately, load other data in background
                 state.currentView = 'dashboard';
                 render();
+                
+                // Load additional data in background
+                setTimeout(() => {
+                    initializeAppData();
+                }, 100);
 
             } catch (error) {
                 console.error("Login error:", error);
@@ -1558,7 +1561,7 @@
             return errorMap[error.code] || error.message || 'An error occurred. Please try again.';
         }
 
-        // Auth State Listener
+        // Auth State Listener - OPTIMIZED
         function initializeAuthStateListener() {
             const { onAuthStateChanged, doc, getDoc } = window.firebaseModules;
             const auth = window.firebaseAuth;
@@ -1566,7 +1569,7 @@
             
             onAuthStateChanged(auth, async (firebaseUser) => {
                 if (firebaseUser) {
-                    // User is signed in
+                    // User is signed in - load minimal data first
                     try {
                         showLoading(true);
                         const userDoc = await getDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, firebaseUser.uid));
@@ -1579,11 +1582,14 @@
                             state.missions = state.user.missions || {};
                             state.isPremium = state.user.isPremium || false;
                             
-                            // Initialize app data
-                            await initializeAppData();
-                            
+                            // Show dashboard immediately, load other data in background
                             state.currentView = 'dashboard';
                             render();
+                            
+                            // Load additional data in background
+                            setTimeout(() => {
+                                initializeAppData();
+                            }, 100);
                         } else {
                             // User document doesn't exist - sign them out
                             const { signOut } = window.firebaseModules;
@@ -1609,7 +1615,7 @@
                         showLoading(false);
                     }
                 } else {
-                    // User is signed out
+                    // User is signed out - show auth screen immediately
                     state.firebaseUser = null;
                     state.user = null;
                     state.isAdmin = false;
@@ -2048,24 +2054,28 @@
         }
 
         async function initializeAppData() {
-            // Load data from Firestore
-            state.lessons = await loadCollection(FIRESTORE_COLLECTIONS.LESSONS);
-            state.quizzes = await loadCollection(FIRESTORE_COLLECTIONS.QUIZZES);
-            state.achievements = await loadCollection(FIRESTORE_COLLECTIONS.ACHIEVEMENTS);
-            state.withdrawalRequests = await loadCollection(FIRESTORE_COLLECTIONS.WITHDRAWALS);
+            // Load data from Firestore in background
+            try {
+                state.lessons = await loadCollection(FIRESTORE_COLLECTIONS.LESSONS);
+                state.quizzes = await loadCollection(FIRESTORE_COLLECTIONS.QUIZZES);
+                state.achievements = await loadCollection(FIRESTORE_COLLECTIONS.ACHIEVEMENTS);
+                state.withdrawalRequests = await loadCollection(FIRESTORE_COLLECTIONS.WITHDRAWALS);
 
-            // Initialize mock data if needed
-            await initMockData();
-            
-            resetDailyCourses();
-            await updateLeaderboards();
-            checkAchievements();
-            
-            // Initialize monetag link
-            updateMonetagLink();
+                // Initialize mock data if needed
+                await initMockData();
+                
+                resetDailyCourses();
+                await updateLeaderboards();
+                checkAchievements();
+                
+                // Initialize monetag link
+                updateMonetagLink();
 
-            // Setup push notifications
-            setupPushNotifications();
+                // Setup push notifications
+                setupPushNotifications();
+            } catch (error) {
+                console.error("Error loading app data:", error);
+            }
         }
 
         function resetDailyCourses() {
@@ -2166,390 +2176,7 @@
         }
 
         // =====================================================
-        // COURSE COMPLETION FUNCTIONALITY
-        // =====================================================
-
-        async function completeCourse(courseId, courseTitle) {
-            if (!state.user || !state.firebaseUser) return;
-            
-            const today = new Date().toDateString();
-            
-            // Check if course was already completed today
-            if (state.user.completedCoursesToday && state.user.completedCoursesToday[courseId] === today) {
-                showModal(`
-                    <div class="text-center space-y-3">
-                        <i class="fas fa-exclamation-triangle text-5xl text-yellow-500"></i>
-                        <h3 class="text-xl font-bold text-yellow-600">Already Completed</h3>
-                        <p class="text-gray-600">You have already completed this course today. Come back tomorrow to earn points again!</p>
-                    </div>
-                `);
-                return;
-            }
-            
-            showLoading(true);
-            
-            try {
-                const { doc, updateDoc } = window.firebaseModules;
-                const db = window.firebaseDb;
-                
-                // Calculate points (apply premium multiplier if applicable)
-                let points = BASE_POINTS_REWARDS.lesson;
-                if (state.isPremium) {
-                    points *= 2; // Premium users get double points
-                }
-                
-                // Update user data
-                const newPoints = state.user.eduPoints + points;
-                const historyEntry = { 
-                    action: `Completed Course: ${courseTitle}`, 
-                    points: points, 
-                    timestamp: Date.now() 
-                };
-                const updatedHistory = [historyEntry, ...(state.user.history || [])];
-                
-                // Update completed courses
-                const completedCourses = { ...(state.user.completedCourses || {}) };
-                completedCourses[courseId] = Date.now();
-                
-                // Update completed courses for today
-                const completedCoursesToday = { ...(state.user.completedCoursesToday || {}) };
-                completedCoursesToday[courseId] = today;
-                
-                // Update missions
-                const newMissions = { ...state.missions };
-                newMissions.coursesCompleted = (newMissions.coursesCompleted || 0) + 1;
-                
-                // Update in Firestore
-                await updateDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, state.firebaseUser.uid), {
-                    eduPoints: newPoints,
-                    history: updatedHistory,
-                    completedCourses: completedCourses,
-                    completedCoursesToday: completedCoursesToday,
-                    missions: newMissions,
-                    updatedAt: Date.now()
-                });
-
-                // Update local state
-                state.user.eduPoints = newPoints;
-                state.user.history = updatedHistory;
-                state.user.completedCourses = completedCourses;
-                state.user.completedCoursesToday = completedCoursesToday;
-                state.missions = newMissions;
-
-                // Re-render the dashboard to reflect updated points
-                if (state.currentView === 'dashboard') {
-                    render();
-                }
-
-                await updateLeaderboards();
-                checkAchievements();
-                checkMissionCompletion();
-
-                // Show success modal
-                showModal(`
-                    <div class="text-center space-y-3">
-                        <i class="fas fa-check-circle text-5xl text-green-500"></i>
-                        <h3 class="text-xl font-bold text-green-600">Course Completed!</h3>
-                        <p class="text-gray-600">You have successfully completed "${courseTitle}"</p>
-                        <p class="text-sm text-green-600">+${points} EduPoints added to your account!</p>
-                        ${state.isPremium ? '<p class="text-sm text-yellow-600">Premium Bonus: 2x Points Applied!</p>' : ''}
-                    </div>
-                `, () => {
-                    setTimeout(hideModal, 3000);
-                });
-
-                // Show points animation
-                const coinAnimation = document.createElement('div');
-                coinAnimation.className = 'fixed top-4 right-4 z-30';
-                coinAnimation.innerHTML = `
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg slide-in">
-                        <div class="flex items-center">
-                            <i class="fas fa-coins text-xl mr-2"></i>
-                            <span class="font-bold">+${points} EduPoints!</span>
-                        </div>
-                        <p class="text-sm mt-1">Course: ${courseTitle}</p>
-                    </div>
-                `;
-                document.body.appendChild(coinAnimation);
-                
-                setTimeout(() => {
-                    if (coinAnimation.parentNode) {
-                        document.body.removeChild(coinAnimation);
-                    }
-                }, 3000);
-
-            } catch (error) {
-                console.error("Error completing course:", error);
-                showModal(`
-                    <div class="text-center space-y-3">
-                        <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
-                        <h3 class="text-xl font-bold text-red-600">Error</h3>
-                        <p class="text-gray-600">Failed to complete course. Please try again.</p>
-                    </div>
-                `);
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // =====================================================
-        // NEW REVENUE FEATURES
-        // =====================================================
-
-        // Spin Wheel Functionality - FIXED
-        function spinWheel() {
-            const today = new Date().toDateString();
-            if (state.lastSpinDate === today) {
-                showModal(`
-                    <div class="text-center space-y-3">
-                        <i class="fas fa-exclamation-triangle text-5xl text-yellow-500"></i>
-                        <h3 class="text-xl font-bold text-yellow-600">Already Spun Today</h3>
-                        <p class="text-gray-600">You can only spin the wheel once per day. Come back tomorrow!</p>
-                    </div>
-                `);
-                return;
-            }
-
-            // Require ad watch before spinning
-            showModal(`
-                <div class="text-center space-y-4">
-                    <i class="fas fa-sync-alt text-5xl text-purple-500 mb-2"></i>
-                    <h3 class="text-xl font-bold">Spin the Wheel!</h3>
-                    <p class="text-gray-600">Watch a short ad to spin the wheel and win amazing prizes!</p>
-                    <div class="bg-purple-50 p-4 rounded-lg">
-                        <p class="text-sm font-semibold text-purple-800">Prizes include:</p>
-                        <p class="text-sm text-purple-700">50-500 Points, Bonus Ads, and more!</p>
-                    </div>
-                    <button onclick="startWheelAd()" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 rounded-lg transition">
-                        Watch Ad & Spin Wheel
-                    </button>
-                </div>
-            `);
-        }
-
-        function startWheelAd() {
-            hideModal();
-            startAdTimer(15, 0); // 15 second ad for wheel spin
-            window.open(getRandomMonetagLink(), '_blank');
-            
-            // After ad completion, spin the wheel
-            const completeBtn = document.getElementById('ad-complete-btn');
-            completeBtn.onclick = () => {
-                completeWheelSpin();
-            };
-        }
-
-        function completeWheelSpin() {
-            hideModal();
-            
-            // Animate the wheel spin
-            const wheel = document.getElementById('spin-wheel');
-            if (wheel) {
-                wheel.classList.add('spinning');
-                
-                // Determine prize after animation
-                setTimeout(() => {
-                    // Determine prize
-                    const randomPrize = WHEEL_PRIZES[Math.floor(Math.random() * WHEEL_PRIZES.length)];
-                    
-                    // Update last spin date
-                    state.lastSpinDate = new Date().toDateString();
-                    saveUser({ lastSpinDate: state.lastSpinDate });
-                    
-                    // Award prize
-                    if (randomPrize.type === 'points') {
-                        addPoints(`Spin Wheel: ${randomPrize.label}`, randomPrize.value, false);
-                    } else if (randomPrize.type === 'ad') {
-                        showModal(`
-                            <div class="text-center space-y-3">
-                                <i class="fas fa-sync-alt text-5xl text-yellow-500"></i>
-                                <h3 class="text-xl font-bold text-yellow-600">Spin Result!</h3>
-                                <p class="text-gray-600">You won: <strong>${randomPrize.label}</strong></p>
-                                <p class="text-sm text-gray-500">Watch another ad to claim bonus points!</p>
-                                <button onclick="openMonetagAd(200, 30)" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 rounded-lg transition">
-                                    Watch Bonus Ad for 200 Points
-                                </button>
-                            </div>
-                        `);
-                        return;
-                    }
-                    
-                    showModal(`
-                        <div class="text-center space-y-3">
-                            <i class="fas fa-sync-alt text-5xl text-green-500"></i>
-                            <h3 class="text-xl font-bold text-green-600">Spin Result!</h3>
-                            <p class="text-gray-600">You won: <strong>${randomPrize.label}</strong></p>
-                            <p class="text-sm text-green-600">+${randomPrize.value} points added to your account!</p>
-                        </div>
-                    `, () => {
-                        setTimeout(hideModal, 3000);
-                    });
-                    
-                    // Reset wheel animation
-                    setTimeout(() => {
-                        wheel.classList.remove('spinning');
-                    }, 100);
-                }, 4000);
-            }
-        }
-
-        // Video Content Functionality
-        function watchVideoAd() {
-            startAdTimer(45, BASE_POINTS_REWARDS.video);
-            window.open(getRandomMonetagLink(), '_blank');
-        }
-
-        // Premium Features
-        function showPremiumModal() {
-            showModal(`
-                <div class="text-center space-y-4">
-                    <i class="fas fa-crown text-5xl text-yellow-500 mb-2"></i>
-                    <h3 class="text-xl font-bold">Go Premium</h3>
-                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-lg">
-                        <h4 class="font-bold text-lg mb-2">Premium Benefits</h4>
-                        <ul class="text-left space-y-2 text-sm">
-                            <li class="flex items-center">
-                                <i class="fas fa-check mr-2"></i>
-                                2x Points from all activities
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-check mr-2"></i>
-                                No daily limits
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-check mr-2"></i>
-                                Exclusive premium content
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-check mr-2"></i>
-                                Priority withdrawal processing
-                            </li>
-                        </ul>
-                    </div>
-                    <p class="text-2xl font-bold text-purple-600">$4.99/month</p>
-                    <button onclick="purchasePremium()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 rounded-lg transition">
-                        Upgrade to Premium
-                    </button>
-                    <p class="text-sm text-gray-600">7-day free trial available</p>
-                </div>
-            `);
-        }
-
-        function purchasePremium() {
-            // In a real app, this would integrate with a payment processor
-            showModal(`
-                <div class="text-center space-y-3">
-                    <i class="fas fa-crown text-5xl text-yellow-500"></i>
-                    <h3 class="text-xl font-bold text-yellow-600">Premium Activated!</h3>
-                    <p class="text-gray-600">Welcome to EduHeTech Premium! Enjoy all the exclusive benefits.</p>
-                    <p class="text-sm text-green-600">+1000 welcome bonus points!</p>
-                </div>
-            `, () => {
-                state.isPremium = true;
-                addPoints('Premium Welcome Bonus', 1000, false);
-                saveUser({ isPremium: true });
-                hideModal();
-            });
-        }
-
-        function activateBoost() {
-            showModal(`
-                <div class="text-center space-y-4">
-                    <i class="fas fa-bolt text-5xl text-yellow-500 mb-2"></i>
-                    <h3 class="text-xl font-bold">Activate Daily Boost</h3>
-                    <p class="text-gray-600">Watch an ad to double your next course completion points!</p>
-                    <button onclick="startBoostAd()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 rounded-lg transition">
-                        Watch Ad & Activate Boost
-                    </button>
-                </div>
-            `);
-        }
-
-        function startBoostAd() {
-            hideModal();
-            startAdTimer(20, 0);
-            window.open(getRandomMonetagLink(), '_blank');
-            
-            const completeBtn = document.getElementById('ad-complete-btn');
-            completeBtn.onclick = () => {
-                completeBoostActivation();
-            };
-        }
-
-        function completeBoostActivation() {
-            hideModal();
-            addPoints('Daily Boost Activated', 100, false);
-            showModal(`
-                <div class="text-center space-y-3">
-                    <i class="fas fa-bolt text-5xl text-green-500"></i>
-                    <h3 class="text-xl font-bold text-green-600">Boost Activated!</h3>
-                    <p class="text-gray-600">Your next course completion will earn double points!</p>
-                    <p class="text-sm text-green-600">+100 activation bonus points!</p>
-                </div>
-            `, () => {
-                setTimeout(hideModal, 3000);
-            });
-        }
-
-        // Push Notifications
-        function setupPushNotifications() {
-            if ('Notification' in window && Notification.permission === 'default') {
-                setTimeout(() => {
-                    showModal(`
-                        <div class="text-center space-y-4">
-                            <i class="fas fa-bell text-5xl text-blue-500 mb-2"></i>
-                            <h3 class="text-xl font-bold">Enable Notifications</h3>
-                            <p class="text-gray-600">Get notified about daily bonuses, new courses, and exclusive offers!</p>
-                            <button onclick="requestNotificationPermission()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition">
-                                Enable Notifications
-                            </button>
-                        </div>
-                    `);
-                }, 5000);
-            }
-        }
-
-        function requestNotificationPermission() {
-            Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
-                    showModal(`
-                        <div class="text-center space-y-3">
-                            <i class="fas fa-check-circle text-5xl text-green-500"></i>
-                            <h3 class="text-xl font-bold text-green-600">Notifications Enabled!</h3>
-                            <p class="text-gray-600">You'll now receive important updates and bonuses.</p>
-                        </div>
-                    `, () => {
-                        setTimeout(hideModal, 3000);
-                    });
-                    scheduleDailyReminders();
-                }
-            });
-            hideModal();
-        }
-
-        function scheduleDailyReminders() {
-            // Schedule random reminders throughout the day
-            setInterval(() => {
-                if (Math.random() < 0.3 && Notification.permission === 'granted') {
-                    const messages = [
-                        "Don't forget to complete your daily missions! Earn extra points today!",
-                        "Your daily login bonus is waiting! Open the app now!",
-                        "Only 2 hours left to complete your daily ad streak!",
-                        "New courses added! Learn and earn points now!",
-                        "Spin the wheel for a chance to win big prizes!",
-                        "Complete 3 ads today to earn a 200-point bonus!"
-                    ];
-                    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-                    new Notification('EduHeTech Reminder', {
-                        body: randomMessage,
-                        icon: '/icon.png'
-                    });
-                }
-            }, 4 * 60 * 60 * 1000); // 4 hours
-        }
-
-        // =====================================================
-        // RENDER FUNCTIONS - COMPLETE IMPLEMENTATION
+        // RENDER FUNCTIONS - OPTIMIZED
         // =====================================================
 
         function render() {
@@ -2557,23 +2184,27 @@
             if (!appContainer) return;
             
             appContainer.innerHTML = '';
-            showLoading(state.isLoading);
+            
+            // Only show loading for async operations, not for view switches
+            if (state.isLoading) {
+                showLoading(true);
+            }
 
             // Show/hide mobile navigation based on auth state
             const mobileNav = document.getElementById('mobile-nav');
             const desktopSidebar = document.getElementById('desktop-sidebar');
             
             if (state.user) {
-                mobileNav.classList.remove('hidden');
-                desktopSidebar.classList.remove('hidden');
+                mobileNav?.classList.remove('hidden');
+                desktopSidebar?.classList.remove('hidden');
                 // Adjust main content margin for sidebar
                 const mainContent = document.querySelector('.main-content');
                 if (mainContent) {
                     mainContent.style.marginLeft = '250px';
                 }
             } else {
-                mobileNav.classList.add('hidden');
-                desktopSidebar.classList.add('hidden');
+                mobileNav?.classList.add('hidden');
+                desktopSidebar?.classList.add('hidden');
                 const mainContent = document.querySelector('.main-content');
                 if (mainContent) {
                     mainContent.style.marginLeft = '0';
@@ -2593,6 +2224,11 @@
             }
             
             updateBrowserTitle();
+            
+            // Hide loading after render is complete
+            setTimeout(() => {
+                showLoading(false);
+            }, 100);
         }
 
         function renderAuthScreen() {
@@ -2831,7 +2467,7 @@
                                 <h3 class="font-bold">🎉 Earn Double Points Today!</h3>
                                 <p class="text-sm opacity-90">Complete any course for 2x rewards</p>
                             </div>
-                            <button onclick="switchView('learn')" class="bg-white text-orange-600 px-3 py-1 rounded text-sm font-semibold">
+                            <button onclick="window.location.href='learn.html'" class="bg-white text-orange-600 px-3 py-1 rounded text-sm font-semibold">
                                 Learn Now
                             </button>
                         </div>
@@ -2900,7 +2536,7 @@
                     <div class="card p-6">
                         <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
                         <div class="quick-actions grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <button onclick="switchView('learn')" class="bg-blue-50 hover:bg-blue-100 p-4 rounded-lg text-center transition flex flex-col items-center">
+                            <button onclick="window.location.href='learn.html'" class="bg-blue-50 hover:bg-blue-100 p-4 rounded-lg text-center transition flex flex-col items-center">
                                 <i class="fas fa-book text-blue-500 text-xl mb-2"></i>
                                 <p class="font-medium text-sm">Learn & Earn</p>
                             </button>
@@ -3082,107 +2718,47 @@
         }
 
         function renderLearn() {
-            const completedCourses = state.user.completedCourses || {};
-            const completedCoursesToday = state.user.completedCoursesToday || {};
-            const today = new Date().toDateString();
-            
             return `
                 <div class="space-y-6">
                     <div class="flex justify-between items-center">
                         <h1 class="text-2xl font-bold text-gray-800">Learn & Earn</h1>
                         <div class="flex items-center space-x-2">
                             <i class="fas fa-book text-blue-500"></i>
-                            <span class="text-sm text-gray-600">Earn ${BASE_POINTS_REWARDS.lesson} points per course</span>
+                            <span class="text-sm text-gray-600">Complete courses and earn 500 points each</span>
                         </div>
                     </div>
 
-                    <div class="card p-6">
-                        <h3 class="text-lg font-semibold mb-4">Available Courses</h3>
-                        <div class="space-y-4">
-                            ${state.lessons && state.lessons.length > 0 
-                                ? state.lessons.map(course => {
-                                    const isCompleted = completedCourses[course.id];
-                                    const completedToday = completedCoursesToday[course.id] === today;
-                                    
-                                    return `
-                                        <div class="border border-gray-200 rounded-lg p-4 ${isCompleted ? 'bg-green-50' : 'bg-white'}">
-                                            <div class="flex justify-between items-start">
-                                                <div>
-                                                    <h4 class="font-semibold text-lg">${course.title}</h4>
-                                                    <p class="text-sm text-gray-600 mb-2">${course.category} • ${course.duration} min • ${course.difficulty}</p>
-                                                    <p class="text-sm text-gray-700">${course.description || 'Complete this course to earn points and expand your knowledge.'}</p>
-                                                </div>
-                                                <div class="text-right">
-                                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm font-semibold">
-                                                        +${BASE_POINTS_REWARDS.lesson} Points
-                                                    </span>
-                                                    ${isCompleted ? `
-                                                        <div class="mt-2 bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">
-                                                            ${completedToday ? 'Completed Today' : 'Completed'}
-                                                        </div>
-                                                    ` : ''}
-                                                </div>
-                                            </div>
-                                            <div class="mt-4">
-                                                ${!isCompleted ? `
-                                                    <button onclick="startCourse('${course.id}', '${course.title}')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm transition">
-                                                        Start Course
-                                                    </button>
-                                                ` : completedToday ? `
-                                                    <button class="bg-gray-400 text-white px-4 py-2 rounded text-sm cursor-not-allowed" disabled>
-                                                        Already Completed Today
-                                                    </button>
-                                                ` : `
-                                                    <button onclick="startCourse('${course.id}', '${course.title}')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-sm transition">
-                                                        Review Course
-                                                    </button>
-                                                `}
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join('')
-                                : '<p class="text-gray-500 text-center py-4">No courses available at the moment.</p>'
-                            }
+                    <div class="card p-6 text-center">
+                        <i class="fas fa-external-link-alt text-6xl text-blue-500 mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">Learn & Earn Portal</h3>
+                        <p class="text-gray-600 mb-6">Access our comprehensive learning platform where you can complete courses from Alison and earn 500 points per course after verification.</p>
+                        
+                        <a href="learn.html" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg text-lg transition transform hover:scale-105 inline-block">
+                            <i class="fas fa-external-link-alt mr-2"></i>Open Learn & Earn Portal
+                        </a>
+                        
+                        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">1</div>
+                                <h4 class="font-semibold mb-2">Complete Course</h4>
+                                <p class="text-sm text-gray-600">Finish courses on Alison platform</p>
+                            </div>
+                            <div class="text-center p-4 bg-green-50 rounded-lg">
+                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">2</div>
+                                <h4 class="font-semibold mb-2">Take Screenshot</h4>
+                                <p class="text-sm text-gray-600">Capture certificate or completion page</p>
+                            </div>
+                            <div class="text-center p-4 bg-purple-50 rounded-lg">
+                                <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">3</div>
+                                <h4 class="font-semibold mb-2">Upload & Verify</h4>
+                                <p class="text-sm text-gray-600">Submit for review and earn 500 points</p>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="card p-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                        <h3 class="text-lg font-semibold mb-2">Learning Tips</h3>
-                        <p class="text-sm opacity-90">Complete courses daily to maximize your earnings. Premium users earn 2x points on all courses!</p>
+                        
+                        <p class="text-sm text-gray-500 mt-6">The Learn & Earn portal will open in the same tab where you can manage your course completions and verifications.</p>
                     </div>
                 </div>
             `;
-        }
-
-        function startCourse(courseId, courseTitle) {
-            // Find the course
-            const course = state.lessons.find(c => c.id === courseId);
-            if (!course) return;
-            
-            // Show course content in a modal
-            showModal(`
-                <div class="space-y-4">
-                    <h3 class="text-xl font-bold text-center">${courseTitle}</h3>
-                    <div class="course-content">
-                        ${course.content || `
-                            <div class="text-center py-8">
-                                <i class="fas fa-book text-4xl text-gray-400 mb-4"></i>
-                                <p class="text-gray-600">Course content will be displayed here.</p>
-                                <p class="text-sm text-gray-500 mt-2">Complete the course to earn ${BASE_POINTS_REWARDS.lesson} points!</p>
-                            </div>
-                        `}
-                    </div>
-                    <div class="bg-blue-50 p-3 rounded-lg">
-                        <p class="text-sm text-blue-700">
-                            <i class="fas fa-info-circle mr-1"></i>
-                            Read through the course material and click "Complete Course" to earn your points.
-                        </p>
-                    </div>
-                    <button onclick="completeCourse('${courseId}', '${courseTitle}')" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition">
-                        Complete Course & Earn ${BASE_POINTS_REWARDS.lesson} Points
-                    </button>
-                </div>
-            `);
         }
 
         function renderQuiz() {
@@ -3482,7 +3058,7 @@
                                 </div>
                                 <div class="text-right">
                                     <span class="text-yellow-600 font-bold">+500 Points</span>
-                                    <button onclick="switchView('learn')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm mt-1">
+                                    <button onclick="window.location.href='learn.html'" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm mt-1">
                                         Learn Now
                                     </button>
                                 </div>
@@ -3920,7 +3496,7 @@
                             <div class="text-center py-6">
                                 <i class="fas fa-lock text-4xl text-gray-400 mb-3"></i>
                                 <p class="text-gray-600">You need ${formatPoints(MIN_WITHDRAWAL_POINTS)} points ($${(MIN_WITHDRAWAL_POINTS / ADMIN_CONFIG.POINTS_TO_CURRENCY_RATE).toFixed(2)}) to make a withdrawal</p>
-                                <button onclick="switchView('learn')" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition">
+                                <button onclick="window.location.href='learn.html'" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition">
                                     Earn More Points
                                 </button>
                             </div>
@@ -4171,25 +3747,32 @@
         }
 
         // =====================================================
-        // INITIALIZATION
+        // INITIALIZATION - OPTIMIZED
         // =====================================================
 
         // Initialize the app when Firebase is ready
         window.initApp = function() {
             console.log("Firebase is ready, initializing app...");
-            initializeApp();
+            
+            // Pre-load essential data while showing splash
+            setTimeout(() => {
+                initializeApp();
+            }, 300);
         };
 
-        // Start the app initialization
+        // Start the app initialization immediately
         if (window.firebaseReady) {
             window.initApp();
         } else {
-            // Wait for Firebase to be ready
-            document.addEventListener('DOMContentLoaded', function() {
-                if (window.firebaseReady) {
-                    window.initApp();
+            // If Firebase takes time, show auth screen faster
+            setTimeout(() => {
+                if (!window.firebaseReady) {
+                    console.log("Firebase taking time, showing auth screen...");
+                    hideSplashScreen();
+                    state.currentView = 'auth';
+                    render();
                 }
-            });
+            }, 2000);
         }
 
         // Make functions globally available
@@ -4212,8 +3795,6 @@
         window.openMobileSidebar = openMobileSidebar;
         window.closeMobileSidebar = closeMobileSidebar;
         window.navigateAndCloseSidebar = navigateAndCloseSidebar;
-        window.startCourse = startCourse;
-        window.completeCourse = completeCourse;
     </script>
 </body>
 </html>
