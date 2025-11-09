@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    
     <style>
         :root {
             --primary-color: #3b82f6;
@@ -20,6 +19,8 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
         }
         
         .card {
@@ -60,6 +61,25 @@
             100% { transform: rotate(360deg); }
         }
         
+        .course-badge {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .completed-badge {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
         .slide-in {
             animation: slideIn 0.3s ease-out;
         }
@@ -69,657 +89,836 @@
             to { transform: translateY(0); opacity: 1; }
         }
         
-        .course-status-badge {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-weight: 600;
+        .progress-bar {
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
         }
         
-        .status-pending { background-color: #fef3c7; color: #92400e; }
-        .status-completed { background-color: #d1fae5; color: #065f46; }
-        .status-available { background-color: #dbeafe; color: #1e40af; }
-        
-        .screenshot-preview {
-            max-height: 300px;
-            border: 2px dashed #d1d5db;
-            border-radius: 0.5rem;
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
         }
     </style>
 </head>
 <body class="text-gray-800">
-    <!-- Navigation Header -->
+    <!-- Header -->
     <header class="bg-white shadow-sm border-b">
         <div class="max-w-7xl mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center">
-                    <a href="index.html" class="text-xl font-bold text-blue-600">EduHeTech</a>
+                    <a href="index.html" class="flex items-center text-blue-600 hover:text-blue-700 transition">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        <h1 class="text-xl font-bold">Back to EduHeTech</h1>
+                    </a>
                 </div>
+                
                 <div class="flex items-center space-x-4">
                     <div class="flex items-center space-x-2 bg-blue-50 px-3 py-1 rounded-full">
                         <i class="fas fa-coins text-yellow-500"></i>
-                        <span id="points-balance" class="font-semibold">0</span>
+                        <span class="font-semibold" id="user-points">0</span>
                     </div>
-                    <button onclick="handleLogout()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition">
-                        Logout
-                    </button>
+                    <span class="text-sm text-gray-600">Earn 500 points per course</span>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 py-6">
-        <div class="space-y-6">
-            <!-- Page Header -->
-            <div class="flex justify-between items-center">
-                <h1 class="text-2xl font-bold text-gray-800">Learn & Earn</h1>
-                <div class="flex items-center space-x-2">
-                    <i class="fas fa-book text-blue-500"></i>
-                    <span class="text-sm text-gray-600">Earn 500 points after verification</span>
-                </div>
-            </div>
-
-            <!-- Verification Info Banner -->
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div class="flex items-start">
-                    <i class="fas fa-info-circle text-blue-500 mt-1 mr-3"></i>
-                    <div>
-                        <h3 class="font-semibold text-blue-800 mb-2">Course Completion Verification Required</h3>
-                        <p class="text-sm text-blue-700">
-                            After completing a course on Alison, upload a screenshot of your certificate or completion page to receive your 500 points.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Courses Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="courses-container">
-                <!-- Courses will be loaded here -->
-            </div>
-
-            <!-- How It Works Section -->
-            <div class="card p-6">
-                <h3 class="text-lg font-semibold mb-4">How to Complete Courses</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="text-center p-4 bg-blue-50 rounded-lg">
-                        <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">1</div>
-                        <h4 class="font-semibold mb-2">Complete Course on Alison</h4>
-                        <p class="text-sm text-gray-600">Finish all modules and pass the assessment on Alison</p>
-                    </div>
-                    <div class="text-center p-4 bg-green-50 rounded-lg">
-                        <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">2</div>
-                        <h4 class="font-semibold mb-2">Take Screenshot</h4>
-                        <p class="text-sm text-gray-600">Capture your certificate or completion page</p>
-                    </div>
-                    <div class="text-center p-4 bg-purple-50 rounded-lg">
-                        <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">3</div>
-                        <h4 class="font-semibold mb-2">Upload & Verify</h4>
-                        <p class="text-sm text-gray-600">Submit screenshot for quick review</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Screenshot Guidelines -->
-            <div class="card p-6">
-                <h3 class="text-lg font-semibold mb-4">Screenshot Requirements</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h4 class="font-semibold text-green-600 mb-3">✅ What to Include:</h4>
-                        <ul class="space-y-2 text-sm text-gray-600">
-                            <li class="flex items-start">
-                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                                <span>Your full name visible</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                                <span>Course title clearly shown</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                                <span>Completion status or certificate</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                                <span>Alison platform visible</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-red-600 mb-3">❌ What to Avoid:</h4>
-                        <ul class="space-y-2 text-sm text-gray-600">
-                            <li class="flex items-start">
-                                <i class="fas fa-times text-red-500 mt-1 mr-2"></i>
-                                <span>Blurry or cropped images</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-times text-red-500 mt-1 mr-2"></i>
-                                <span>Personal information hidden</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-times text-red-500 mt-1 mr-2"></i>
-                                <span>Incomplete course pages</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-times text-red-500 mt-1 mr-2"></i>
-                                <span>Edited or fake screenshots</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Learn & Earn Portal</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Complete courses on Alison and earn 500 EduPoints for each verified completion. 
+                Expand your skills while earning rewards!
+            </p>
         </div>
-    </div>
 
-    <!-- Verification Modal -->
-    <div id="verification-modal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4 z-50">
-        <div class="card w-full max-w-2xl p-6 space-y-4 slide-in max-h-[90vh] overflow-y-auto">
-            <div id="modal-content">
-                <!-- Modal content will be loaded here -->
+        <!-- Progress Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="card p-6 text-center">
+                <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Courses Available</h3>
+                <p class="text-3xl font-bold text-blue-600" id="total-courses">30</p>
             </div>
-        </div>
-    </div>
-
-    <!-- Loading Spinner -->
-    <div id="loading-spinner" class="fixed inset-0 bg-white bg-opacity-80 flex items-center justify-center hidden z-50">
-        <div class="loader"></div>
-    </div>
-
-    <script>
-        // =====================================================
-        // APPLICATION STATE AND CONFIGURATION
-        // =====================================================
-        
-        const BASE_POINTS_REWARDS = {
-            lesson: 500
-        };
-
-        const COURSE_VERIFICATION_STATES = {
-            PENDING: 'pending',
-            APPROVED: 'approved',
-            AVAILABLE: 'available'
-        };
-
-        // Mock courses data
-        const COURSES = [
-            {
-                id: 'health-1',
-                title: 'Introduction to Complementary and Alternative Medicine',
-                category: 'Health & Medicine',
-                duration: 10,
-                points: 500,
-                alisonUrl: 'https://alison.com/courses/health',
-                description: 'Learn about alternative medicine practices and their applications.',
-                verificationExample: 'health-verification.jpg'
-            },
-            {
-                id: 'tech-1',
-                title: 'Introduction to Web Development',
-                category: 'Technology',
-                duration: 15,
-                points: 500,
-                alisonUrl: 'https://alison.com/courses/web-development',
-                description: 'Build foundational knowledge in HTML, CSS, and JavaScript.',
-                verificationExample: 'tech-verification.jpg'
-            },
-            {
-                id: 'business-1',
-                title: 'Digital Marketing Fundamentals',
-                category: 'Business',
-                duration: 12,
-                points: 500,
-                alisonUrl: 'https://alison.com/courses/digital-marketing',
-                description: 'Master the basics of online marketing and social media strategies.',
-                verificationExample: 'business-verification.jpg'
-            },
-            {
-                id: 'language-1',
-                title: 'Business English Communication',
-                category: 'Language',
-                duration: 8,
-                points: 500,
-                alisonUrl: 'https://alison.com/courses/business-english',
-                description: 'Improve your professional English communication skills.',
-                verificationExample: 'language-verification.jpg'
-            },
-            {
-                id: 'tech-2',
-                title: 'Python Programming Basics',
-                category: 'Technology',
-                duration: 20,
-                points: 500,
-                alisonUrl: 'https://alison.com/courses/python',
-                description: 'Learn Python programming from scratch with practical examples.',
-                verificationExample: 'python-verification.jpg'
-            },
-            {
-                id: 'health-2',
-                title: 'Nutrition and Healthy Eating',
-                category: 'Health & Medicine',
-                duration: 14,
-                points: 500,
-                alisonUrl: 'https://alison.com/courses/nutrition',
-                description: 'Understand the principles of nutrition and healthy eating habits.',
-                verificationExample: 'nutrition-verification.jpg'
-            }
-        ];
-
-        // Application state
-        const state = {
-            user: null,
-            userPoints: 0,
-            completedCourses: {},
-            pendingVerifications: {},
-            currentScreenshot: null
-        };
-
-        // =====================================================
-        // UTILITY FUNCTIONS
-        // =====================================================
-
-        function showLoading(show) {
-            const loader = document.getElementById('loading-spinner');
-            if (loader) {
-                loader.style.display = show ? 'flex' : 'none';
-            }
-        }
-
-        function showModal(content) {
-            const modal = document.getElementById('verification-modal');
-            const modalContent = document.getElementById('modal-content');
             
-            if (modal && modalContent) {
-                modalContent.innerHTML = content;
-                modal.classList.remove('hidden');
-            }
-        }
+            <div class="card p-6 text-center">
+                <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Courses Completed</h3>
+                <p class="text-3xl font-bold text-green-600" id="completed-courses">0</p>
+            </div>
+            
+            <div class="card p-6 text-center">
+                <div class="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Points Earned</h3>
+                <p class="text-3xl font-bold text-yellow-600" id="earned-points">0</p>
+            </div>
+        </div>
 
-        function hideModal() {
-            const modal = document.getElementById('verification-modal');
-            if (modal) {
-                modal.classList.add('hidden');
-            }
-            // Reset screenshot state
-            state.currentScreenshot = null;
-        }
+        <!-- How It Works -->
+        <div class="card p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-6">How It Works</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center p-4">
+                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">1</div>
+                    <h4 class="font-semibold mb-2">Complete Course</h4>
+                    <p class="text-sm text-gray-600">Click any course below to open Alison and complete the course</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">2</div>
+                    <h4 class="font-semibold mb-2">Take Screenshot</h4>
+                    <p class="text-sm text-gray-600">Capture your certificate or completion page as proof</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">3</div>
+                    <h4 class="font-semibold mb-2">Upload & Earn</h4>
+                    <p class="text-sm text-gray-600">Submit screenshot for verification and get 500 points</p>
+                </div>
+            </div>
+        </div>
 
-        function formatPoints(points) {
-            return points?.toLocaleString() || '0';
-        }
+        <!-- Course Categories -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-6">Course Categories</h2>
+            <div class="flex flex-wrap gap-2 mb-6">
+                <button class="category-filter px-4 py-2 bg-blue-500 text-white rounded-lg transition hover:bg-blue-600 active" data-category="all">
+                    All Courses
+                </button>
+                <button class="category-filter px-4 py-2 bg-gray-200 text-gray-700 rounded-lg transition hover:bg-gray-300" data-category="business">
+                    Business
+                </button>
+                <button class="category-filter px-4 py-2 bg-gray-200 text-gray-700 rounded-lg transition hover:bg-gray-300" data-category="technology">
+                    Technology
+                </button>
+                <button class="category-filter px-4 py-2 bg-gray-200 text-gray-700 rounded-lg transition hover:bg-gray-300" data-category="health">
+                    Health & Safety
+                </button>
+                <button class="category-filter px-4 py-2 bg-gray-200 text-gray-700 rounded-lg transition hover:bg-gray-300" data-category="language">
+                    Language
+                </button>
+                <button class="category-filter px-4 py-2 bg-gray-200 text-gray-700 rounded-lg transition hover:bg-gray-300" data-category="marketing">
+                    Marketing
+                </button>
+            </div>
+        </div>
 
-        // =====================================================
-        // SCREENSHOT VERIFICATION SYSTEM
-        // =====================================================
+        <!-- Courses Grid -->
+        <div id="courses-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Courses will be dynamically loaded here -->
+        </div>
 
-        function getCourseVerificationStatus(courseId) {
-            if (state.completedCourses[courseId]) {
-                return COURSE_VERIFICATION_STATES.APPROVED;
-            }
-            if (state.pendingVerifications[courseId]) {
-                return COURSE_VERIFICATION_STATES.PENDING;
-            }
-            return COURSE_VERIFICATION_STATES.AVAILABLE;
-        }
-
-        function requestCourseVerification(courseId, courseTitle) {
-            showModal(`
+        <!-- Verification Modal -->
+        <div id="verification-modal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4 z-50">
+            <div class="card w-full max-w-md p-6 space-y-4 slide-in">
+                <div class="text-center">
+                    <i class="fas fa-camera text-4xl text-blue-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Verify Course Completion</h3>
+                    <p class="text-gray-600" id="verification-course-title">Course Title</p>
+                </div>
+                
                 <div class="space-y-4">
-                    <div class="text-center">
-                        <i class="fas fa-camera text-5xl text-blue-500 mb-2"></i>
-                        <h3 class="text-xl font-bold">Verify Course Completion</h3>
-                        <p class="text-gray-600">Upload a screenshot of your <strong>"${courseTitle}"</strong> completion</p>
-                    </div>
-                    
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <h4 class="font-semibold text-blue-800 mb-2">📸 Required in Screenshot:</h4>
-                        <ul class="text-sm text-blue-700 space-y-1">
-                            <li>• Your full name visible</li>
-                            <li>• Course title clearly shown</li>
-                            <li>• Completion status or certificate</li>
-                            <li>• Alison platform visible</li>
-                        </ul>
-                    </div>
-
-                    <div id="screenshot-upload-area" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 transition-colors">
-                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
-                        <p class="text-sm text-gray-600">Click to upload screenshot</p>
-                        <p class="text-xs text-gray-500">JPG, PNG, or WebP (Max 5MB)</p>
-                        <input type="file" id="screenshot-file" accept="image/*" class="hidden" onchange="handleScreenshotUpload(this.files[0], '${courseId}')">
-                    </div>
-
-                    <div id="upload-preview" class="hidden">
-                        <img id="preview-image" class="screenshot-preview w-full object-contain">
-                        <div class="flex justify-center space-x-2 mt-3">
-                            <button onclick="removeScreenshot()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm transition">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Upload Screenshot</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition" id="upload-area">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-sm text-gray-600">Click to upload screenshot of your certificate</p>
+                            <p class="text-xs text-gray-500 mt-1">PNG, JPG up to 5MB</p>
+                            <input type="file" id="screenshot-upload" accept="image/*" class="hidden">
+                        </div>
+                        <div id="upload-preview" class="hidden mt-4">
+                            <img id="preview-image" class="max-w-full h-auto rounded-lg mx-auto max-h-48">
+                            <button onclick="removeUpload()" class="mt-2 text-red-500 text-sm">
                                 <i class="fas fa-times mr-1"></i>Remove
-                            </button>
-                            <button onclick="retakeScreenshot()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm transition">
-                                <i class="fas fa-sync mr-1"></i>Retake
                             </button>
                         </div>
                     </div>
-
-                    <div class="flex space-x-2">
-                        <button onclick="hideModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded transition">
-                            Cancel
-                        </button>
-                        <button id="submit-verification" onclick="submitVerification('${courseId}', '${courseTitle}')" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition" disabled>
-                            Submit for Review
-                        </button>
-                    </div>
-
-                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                        <p class="text-sm text-yellow-700">
-                            <i class="fas fa-clock mr-1"></i>
-                            Verification usually takes 1-6 hours during business days
-                        </p>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Completion Date</label>
+                        <input type="date" id="completion-date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                     </div>
                 </div>
-            `);
+                
+                <div class="flex justify-end space-x-2 pt-4">
+                    <button onclick="hideVerificationModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                        Cancel
+                    </button>
+                    <button onclick="submitVerification()" id="submit-verification" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition" disabled>
+                        Submit for Verification
+                    </button>
+                </div>
+            </div>
+        </div>
 
-            // Setup file upload click
-            document.getElementById('screenshot-upload-area').addEventListener('click', () => {
-                document.getElementById('screenshot-file').click();
+        <!-- Success Modal -->
+        <div id="success-modal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4 z-50">
+            <div class="card w-full max-w-sm p-6 space-y-4 text-center slide-in">
+                <i class="fas fa-check-circle text-5xl text-green-500 mb-2"></i>
+                <h3 class="text-xl font-bold text-green-600">Verification Submitted!</h3>
+                <p class="text-gray-600">Your course completion has been submitted for verification.</p>
+                <p class="text-sm text-green-600">You'll receive 500 points once verified!</p>
+                <button onclick="hideSuccessModal()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg transition">
+                    Continue Learning
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Loading Spinner -->
+    <div id="global-loader" class="fixed inset-0 bg-white bg-opacity-80 flex items-center justify-center hidden z-50">
+        <div class="text-center">
+            <div class="loader mb-4"></div>
+            <p class="text-gray-600">Loading...</p>
+        </div>
+    </div>
+
+    <script>
+        // Course Data
+        const COURSES = [
+            {
+                id: 'project-management',
+                title: 'Diploma in Project Management',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-project-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn essential project management skills and methodologies.',
+                duration: '10-15 hours',
+                level: 'Intermediate',
+                points: 500
+            },
+            {
+                id: 'ethical-hacking',
+                title: 'Diploma in Ethical Hacking',
+                category: 'technology',
+                url: 'https://alison.com/course/diploma-in-ethical-hacking?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Master the skills needed to become an ethical hacker and cybersecurity expert.',
+                duration: '15-20 hours',
+                level: 'Advanced',
+                points: 500
+            },
+            {
+                id: 'cpr-first-aid',
+                title: 'CPR, AED and First Aid',
+                category: 'health',
+                url: 'https://alison.com/course/cpr-aed-and-first-aid?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn life-saving techniques including CPR and automated external defibrillator use.',
+                duration: '6-8 hours',
+                level: 'Beginner',
+                points: 500
+            },
+            {
+                id: 'business-administration',
+                title: 'Diploma in Business Administration',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-business-administration?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Comprehensive business administration principles and practices.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 500
+            },
+            {
+                id: 'human-resources',
+                title: 'Diploma in Human Resources',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-human-resources?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Essential HR management skills and best practices.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 500
+            },
+            {
+                id: 'cryptocurrency',
+                title: 'Diploma in Cryptocurrency',
+                category: 'technology',
+                url: 'https://alison.com/course/diploma-in-cryptocurrency?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Understand cryptocurrency, blockchain technology, and digital assets.',
+                duration: '8-10 hours',
+                level: 'Intermediate',
+                points: 500
+            },
+            {
+                id: 'operations-management',
+                title: 'Diploma in Operations Management',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-operations-management-ops?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn operations management principles and supply chain optimization.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 500
+            },
+            {
+                id: 'facebook-marketing',
+                title: 'Facebook Marketing and Marketplace',
+                category: 'marketing',
+                url: 'https://alison.com/course/foundations-of-facebook-marketing-and-marketplace?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Master Facebook marketing strategies and Marketplace selling.',
+                duration: '6-8 hours',
+                level: 'Beginner',
+                points: 500
+            },
+            {
+                id: 'caregiving',
+                title: 'Diploma in Caregiving',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-caregiving?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Professional caregiving skills for various healthcare settings.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 500
+            },
+            {
+                id: 'elderly-care',
+                title: 'Elderly Care and Disability Care',
+                category: 'health',
+                url: 'https://alison.com/course/elderly-care-and-caring-for-the-disabled?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Specialized care techniques for elderly and disabled individuals.',
+                duration: '8-10 hours',
+                level: 'Intermediate',
+                points: 500
+            },
+            {
+                id: 'japanese-language',
+                title: 'Diploma in Japanese Language',
+                category: 'language',
+                url: 'https://alison.com/course/diploma-in-japanese-language?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Comprehensive Japanese language learning from basics to advanced.',
+                duration: '15-20 hours',
+                level: 'Beginner to Advanced',
+                points: 500
+            },
+            {
+                id: 'sales-techniques',
+                title: 'Sales Techniques and Strategies',
+                category: 'business',
+                url: 'https://alison.com/course/sales-techniques-using-competitive-sales-strategies?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Advanced sales techniques and competitive strategies.',
+                duration: '6-8 hours',
+                level: 'Intermediate',
+                points: 500
+            },
+            {
+                id: 'python-pentesters',
+                title: 'Python for Pentesters',
+                category: 'technology',
+                url: 'https://alison.com/course/python-for-pentesters?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Python programming for penetration testing and cybersecurity.',
+                duration: '10-12 hours',
+                level: 'Advanced',
+                points: 500
+            },
+            {
+                id: 'autocad-training',
+                title: 'AutoCAD Beginner to Professional',
+                category: 'technology',
+                url: 'https://alison.com/course/autocad-beginner-to-professional-training?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Complete AutoCAD training from beginner to professional level.',
+                duration: '15-20 hours',
+                level: 'Beginner to Advanced',
+                points: 500
+            },
+            {
+                id: 'accounting-basics',
+                title: 'Accounting Basics',
+                category: 'business',
+                url: 'https://alison.com/course/accounting-basics?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fundamental accounting principles and practices.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 500
+            },
+            {
+                id: 'online-marketing',
+                title: 'Online Marketing Strategies',
+                category: 'marketing',
+                url: 'https://alison.com/course/introduction-to-online-marketing-strategies?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Comprehensive online marketing strategies and implementation.',
+                duration: '6-8 hours',
+                level: 'Beginner',
+                points: 500
+            },
+            {
+                id: 'cardiac-life-support',
+                title: 'Advanced Cardiac Life Support',
+                category: 'health',
+                url: 'https://alison.com/course/advanced-cardiac-life-support-acls?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Advanced life support techniques for cardiac emergencies.',
+                duration: '8-10 hours',
+                level: 'Advanced',
+                points: 500
+            },
+            {
+                id: 'pediatric-life-support',
+                title: 'Pediatric Advanced Life Support',
+                category: 'health',
+                url: 'https://alison.com/course/pediatric-advanced-life-support-pals?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Specialized life support for pediatric patients.',
+                duration: '8-10 hours',
+                level: 'Advanced',
+                points: 500
+            },
+            {
+                id: 'construction-safety',
+                title: 'Construction Safety and Health',
+                category: 'health',
+                url: 'https://alison.com/course/construction-safety-and-health?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Safety protocols and health standards in construction.',
+                duration: '6-8 hours',
+                level: 'Beginner',
+                points: 500
+            },
+            {
+                id: 'quickbooks-pro',
+                title: 'Getting Started in QuickBooks Pro',
+                category: 'business',
+                url: 'https://alison.com/course/getting-started-in-quickbooks-pro?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Complete QuickBooks Pro training for business accounting.',
+                duration: '10-12 hours',
+                level: 'Beginner',
+                points: 500
+            },
+            {
+                id: 'digital-advertising',
+                title: 'Digital Advertising and Marketing',
+                category: 'marketing',
+                url: 'https://alison.com/course/digital-advertising-and-marketing-201?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Advanced digital advertising strategies and platforms.',
+                duration: '8-10 hours',
+                level: 'Intermediate',
+                points: 500
+            },
+            {
+                id: 'sales-funnel',
+                title: 'Basics of the Sales Funnel',
+                category: 'marketing',
+                url: 'https://alison.com/course/basics-of-the-sales-funnel?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Understanding and optimizing sales funnels.',
+                duration: '4-6 hours',
+                level: 'Beginner',
+                points: 500
+            },
+            {
+                id: 'operations-management-inventory',
+                title: 'Applied Operations Management',
+                category: 'business',
+                url: 'https://alison.com/course/applied-operations-management-inventory-models?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Inventory management models and operations optimization.',
+                duration: '6-8 hours',
+                level: 'Intermediate',
+                points: 500
+            },
+            {
+                id: 'digital-photography',
+                title: 'Introduction to Digital Photography',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-digital-photography?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fundamentals of digital photography and camera techniques.',
+                duration: '6-8 hours',
+                level: 'Beginner',
+                points: 500
+            },
+            {
+                id: 'supply-chain-management',
+                title: 'Supply Chain Management',
+                category: 'business',
+                url: 'https://alison.com/course/supply-chain-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Comprehensive supply chain management principles.',
+                duration: '8-10 hours',
+                level: 'Intermediate',
+                points: 500
+            },
+            {
+                id: 'strategic-management',
+                title: 'Strategic Management',
+                category: 'business',
+                url: 'https://alison.com/course/strategic-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Strategic planning and business management techniques.',
+                duration: '10-12 hours',
+                level: 'Advanced',
+                points: 500
+            },
+            {
+                id: 'services-management',
+                title: 'Services Management',
+                category: 'business',
+                url: 'https://alison.com/course/services-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Management principles for service-based businesses.',
+                duration: '8-10 hours',
+                level: 'Intermediate',
+                points: 500
+            },
+            {
+                id: 'anger-management',
+                title: 'Anger Management and Conflict Resolution',
+                category: 'health',
+                url: 'https://alison.com/course/anger-management-and-conflict-resolution?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Techniques for managing anger and resolving conflicts.',
+                duration: '4-6 hours',
+                level: 'Beginner',
+                points: 500
+            },
+            {
+                id: 'electrical-engineering',
+                title: 'Electrical Transformer Components',
+                category: 'technology',
+                url: 'https://alison.com/course/electrical-engineering-electrical-transformer-components?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Electrical engineering focusing on transformer technology.',
+                duration: '6-8 hours',
+                level: 'Intermediate',
+                points: 500
+            },
+            {
+                id: 'affiliate-marketing',
+                title: 'Master Affiliate Marketing',
+                category: 'marketing',
+                url: 'https://alison.com/course/master-affiliate-marketing-with-this-step-by-step-guide?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Step-by-step guide to successful affiliate marketing.',
+                duration: '8-10 hours',
+                level: 'Beginner to Advanced',
+                points: 500
+            }
+        ];
+
+        // Application State
+        const state = {
+            userPoints: 0,
+            completedCourses: [],
+            currentCourse: null,
+            uploadedScreenshot: null
+        };
+
+        // DOM Elements
+        const coursesContainer = document.getElementById('courses-container');
+        const verificationModal = document.getElementById('verification-modal');
+        const successModal = document.getElementById('success-modal');
+        const uploadArea = document.getElementById('upload-area');
+        const screenshotUpload = document.getElementById('screenshot-upload');
+        const uploadPreview = document.getElementById('upload-preview');
+        const previewImage = document.getElementById('preview-image');
+        const submitVerificationBtn = document.getElementById('submit-verification');
+
+        // Initialize the application
+        function init() {
+            loadUserData();
+            renderCourses();
+            setupEventListeners();
+            updateStats();
+        }
+
+        // Load user data from localStorage
+        function loadUserData() {
+            const savedPoints = localStorage.getItem('userEduPoints');
+            const savedCompleted = localStorage.getItem('completedCourses');
+            
+            if (savedPoints) {
+                state.userPoints = parseInt(savedPoints);
+                document.getElementById('user-points').textContent = state.userPoints.toLocaleString();
+            }
+            
+            if (savedCompleted) {
+                state.completedCourses = JSON.parse(savedCompleted);
+            }
+        }
+
+        // Render courses grid
+        function renderCourses(filterCategory = 'all') {
+            coursesContainer.innerHTML = '';
+            
+            const filteredCourses = filterCategory === 'all' 
+                ? COURSES 
+                : COURSES.filter(course => course.category === filterCategory);
+            
+            document.getElementById('total-courses').textContent = filteredCourses.length;
+            
+            filteredCourses.forEach(course => {
+                const isCompleted = state.completedCourses.includes(course.id);
+                
+                const courseCard = document.createElement('div');
+                courseCard.className = 'card p-6 hover:shadow-lg transition cursor-pointer fade-in';
+                courseCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-bold text-lg mb-2">${course.title}</h3>
+                            <span class="inline-block px-2 py-1 text-xs rounded-full course-badge">
+                                ${course.category.charAt(0).toUpperCase() + course.category.slice(1)}
+                            </span>
+                        </div>
+                        ${isCompleted ? `
+                            <span class="completed-badge px-2 py-1 text-xs rounded-full">
+                                <i class="fas fa-check mr-1"></i>Completed
+                            </span>
+                        ` : ''}
+                    </div>
+                    
+                    <p class="text-gray-600 text-sm mb-4">${course.description}</p>
+                    
+                    <div class="flex justify-between items-center text-sm text-gray-500 mb-4">
+                        <span><i class="fas fa-clock mr-1"></i>${course.duration}</span>
+                        <span><i class="fas fa-signal mr-1"></i>${course.level}</span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <span class="text-yellow-600 font-semibold">
+                            <i class="fas fa-coins mr-1"></i>${course.points} Points
+                        </span>
+                        ${isCompleted ? `
+                            <button class="px-4 py-2 bg-green-500 text-white rounded-lg text-sm" disabled>
+                                Completed
+                            </button>
+                        ` : `
+                            <button class="start-course-btn px-4 py-2 btn-primary text-sm" data-course-id="${course.id}">
+                                Start Learning
+                            </button>
+                        `}
+                    </div>
+                `;
+                
+                coursesContainer.appendChild(courseCard);
+            });
+            
+            // Add event listeners to course buttons
+            document.querySelectorAll('.start-course-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const courseId = btn.getAttribute('data-course-id');
+                    startCourse(courseId);
+                });
+            });
+            
+            // Add click event to course cards
+            document.querySelectorAll('.card').forEach((card, index) => {
+                if (!filteredCourses[index]?.completed) {
+                    card.addEventListener('click', () => {
+                        const courseId = filteredCourses[index].id;
+                        startCourse(courseId);
+                    });
+                }
             });
         }
 
-        function handleScreenshotUpload(file, courseId) {
+        // Start a course
+        function startCourse(courseId) {
+            const course = COURSES.find(c => c.id === courseId);
+            if (!course) return;
+            
+            state.currentCourse = course;
+            
+            // Open course in new tab
+            window.open(course.url, '_blank');
+            
+            // Show verification modal after a delay (simulating course completion)
+            setTimeout(() => {
+                showVerificationModal(course);
+            }, 2000);
+        }
+
+        // Show verification modal
+        function showVerificationModal(course) {
+            document.getElementById('verification-course-title').textContent = course.title;
+            verificationModal.classList.remove('hidden');
+        }
+
+        // Hide verification modal
+        function hideVerificationModal() {
+            verificationModal.classList.add('hidden');
+            resetVerificationForm();
+        }
+
+        // Show success modal
+        function showSuccessModal() {
+            successModal.classList.remove('hidden');
+        }
+
+        // Hide success modal
+        function hideSuccessModal() {
+            successModal.classList.add('hidden');
+        }
+
+        // Reset verification form
+        function resetVerificationForm() {
+            uploadPreview.classList.add('hidden');
+            screenshotUpload.value = '';
+            document.getElementById('completion-date').value = '';
+            submitVerificationBtn.disabled = true;
+            state.uploadedScreenshot = null;
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Category filters
+            document.querySelectorAll('.category-filter').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.category-filter').forEach(b => {
+                        b.classList.remove('active', 'bg-blue-500', 'text-white');
+                        b.classList.add('bg-gray-200', 'text-gray-700');
+                    });
+                    
+                    btn.classList.add('active', 'bg-blue-500', 'text-white');
+                    btn.classList.remove('bg-gray-200', 'text-gray-700');
+                    
+                    const category = btn.getAttribute('data-category');
+                    renderCourses(category);
+                });
+            });
+
+            // Upload area click
+            uploadArea.addEventListener('click', () => {
+                screenshotUpload.click();
+            });
+
+            // File upload change
+            screenshotUpload.addEventListener('change', handleFileUpload);
+
+            // Completion date validation
+            document.getElementById('completion-date').addEventListener('change', validateForm);
+        }
+
+        // Handle file upload
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
             if (!file) return;
 
             // Validate file type
-            const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-            if (!validTypes.includes(file.type)) {
-                showModal(`
-                    <div class="text-center space-y-3">
-                        <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
-                        <h3 class="text-xl font-bold text-red-600">Invalid File Type</h3>
-                        <p class="text-gray-600">Please upload JPG, PNG, or WebP images only.</p>
-                    </div>
-                `);
+            if (!file.type.startsWith('image/')) {
+                alert('Please upload an image file (PNG, JPG, JPEG)');
                 return;
             }
 
-            // Validate file size (5MB max)
+            // Validate file size (5MB)
             if (file.size > 5 * 1024 * 1024) {
-                showModal(`
-                    <div class="text-center space-y-3">
-                        <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
-                        <h3 class="text-xl font-bold text-red-600">File Too Large</h3>
-                        <p class="text-gray-600">Please upload images smaller than 5MB.</p>
-                    </div>
-                `);
+                alert('File size must be less than 5MB');
                 return;
             }
 
-            // Store file in state
-            state.currentScreenshot = {
-                courseId: courseId,
-                file: file,
-                timestamp: Date.now()
-            };
-
-            // Show preview
+            // Create preview
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById('preview-image').src = e.target.result;
-                document.getElementById('upload-preview').classList.remove('hidden');
-                document.getElementById('screenshot-upload-area').classList.add('hidden');
-                document.getElementById('submit-verification').disabled = false;
+                previewImage.src = e.target.result;
+                uploadPreview.classList.remove('hidden');
+                state.uploadedScreenshot = file;
+                validateForm();
             };
             reader.readAsDataURL(file);
         }
 
-        function removeScreenshot() {
-            state.currentScreenshot = null;
-            document.getElementById('upload-preview').classList.add('hidden');
-            document.getElementById('screenshot-upload-area').classList.remove('hidden');
-            document.getElementById('submit-verification').disabled = true;
-            document.getElementById('screenshot-file').value = '';
+        // Remove uploaded file
+        function removeUpload() {
+            uploadPreview.classList.add('hidden');
+            screenshotUpload.value = '';
+            state.uploadedScreenshot = null;
+            validateForm();
         }
 
-        function retakeScreenshot() {
-            removeScreenshot();
-            document.getElementById('screenshot-file').click();
+        // Validate verification form
+        function validateForm() {
+            const hasScreenshot = state.uploadedScreenshot !== null;
+            const hasDate = document.getElementById('completion-date').value !== '';
+            
+            submitVerificationBtn.disabled = !(hasScreenshot && hasDate);
         }
 
-        async function submitVerification(courseId, courseTitle) {
-            if (!state.currentScreenshot || !state.currentScreenshot.file) {
-                showModal(`
-                    <div class="text-center space-y-3">
-                        <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
-                        <h3 class="text-xl font-bold text-red-600">No Screenshot</h3>
-                        <p class="text-gray-600">Please upload a screenshot first.</p>
-                    </div>
-                `);
-                return;
-            }
+        // Submit verification
+        function submitVerification() {
+            if (!state.currentCourse || !state.uploadedScreenshot) return;
 
             showLoading(true);
 
-            // Simulate upload and verification process
+            // Simulate API call/verification process
             setTimeout(() => {
+                // Mark course as completed
+                if (!state.completedCourses.includes(state.currentCourse.id)) {
+                    state.completedCourses.push(state.currentCourse.id);
+                    state.userPoints += state.currentCourse.points;
+                    
+                    // Save to localStorage
+                    localStorage.setItem('completedCourses', JSON.stringify(state.completedCourses));
+                    localStorage.setItem('userEduPoints', state.userPoints.toString());
+                    
+                    // Sync with main app
+                    syncWithMainApp();
+                }
+
                 showLoading(false);
-                
-                // In production, this would upload to your server
-                // For demo, we'll simulate successful submission
-                state.pendingVerifications[courseId] = {
-                    submittedAt: Date.now(),
-                    status: 'pending'
-                };
-
-                // Save to localStorage
-                localStorage.setItem('eduhetech_pending_verifications', JSON.stringify(state.pendingVerifications));
-
-                showModal(`
-                    <div class="text-center space-y-3">
-                        <i class="fas fa-check-circle text-5xl text-green-500"></i>
-                        <h3 class="text-xl font-bold text-green-600">Verification Submitted!</h3>
-                        <p class="text-gray-600">Your course completion has been submitted for review.</p>
-                        <p class="text-sm text-blue-600">You'll receive ${BASE_POINTS_REWARDS.lesson} points once approved.</p>
-                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                            <p class="text-sm text-yellow-700">
-                                <i class="fas fa-clock mr-1"></i>
-                                Review time: 1-6 hours during business days
-                            </p>
-                        </div>
-                    </div>
-                `);
-
-                // Update UI
-                setTimeout(() => {
-                    hideModal();
-                    renderCourses();
-                }, 3000);
+                hideVerificationModal();
+                showSuccessModal();
+                updateStats();
+                renderCourses(); // Refresh courses to show completion status
             }, 2000);
         }
 
-        // Simulate admin approval (for demo purposes)
-        function simulateAdminApproval(courseId) {
-            if (state.pendingVerifications[courseId]) {
-                // Mark as completed
-                state.completedCourses[courseId] = Date.now();
-                state.userPoints += BASE_POINTS_REWARDS.lesson;
-                
-                // Remove from pending
-                delete state.pendingVerifications[courseId];
-                
-                // Save to localStorage
-                localStorage.setItem('eduhetech_completed_courses', JSON.stringify(state.completedCourses));
-                localStorage.setItem('eduhetech_user_points', state.userPoints.toString());
-                localStorage.setItem('eduhetech_pending_verifications', JSON.stringify(state.pendingVerifications));
-                
-                // Update UI
-                updatePointsDisplay();
-                renderCourses();
-                
-                // Show success notification
-                showModal(`
-                    <div class="text-center space-y-3">
-                        <i class="fas fa-check-circle text-5xl text-green-500"></i>
-                        <h3 class="text-xl font-bold text-green-600">Course Verified!</h3>
-                        <p class="text-gray-600">Your course completion has been verified and approved.</p>
-                        <div class="bg-green-50 border border-green-200 rounded-lg p-3">
-                            <p class="text-green-700 font-semibold">
-                                <i class="fas fa-coins mr-1"></i>
-                                +${BASE_POINTS_REWARDS.lesson} Points Awarded!
-                            </p>
-                        </div>
-                    </div>
-                `);
-                
-                setTimeout(hideModal, 3000);
+        // Sync with main EduHeTech app
+        function syncWithMainApp() {
+            // Method 1: localStorage (for same-tab navigation)
+            localStorage.setItem('pendingEduPoints', state.currentCourse.points.toString());
+            localStorage.setItem('pendingCourseTitle', state.currentCourse.title);
+
+            // Method 2: Window messaging (if main app is open in another tab)
+            if (window.opener) {
+                window.opener.postMessage({
+                    type: 'POINTS_AWARDED',
+                    points: state.currentCourse.points,
+                    courseTitle: state.currentCourse.title,
+                    timestamp: Date.now()
+                }, '*');
+            }
+
+            // Method 3: Broadcast to all tabs
+            if (typeof BroadcastChannel !== 'undefined') {
+                const channel = new BroadcastChannel('eduhetech_points');
+                channel.postMessage({
+                    type: 'POINTS_AWARDED',
+                    points: state.currentCourse.points,
+                    courseTitle: state.currentCourse.title
+                });
+            }
+
+            console.log(`Synced ${state.currentCourse.points} points for: ${state.currentCourse.title}`);
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('user-points').textContent = state.userPoints.toLocaleString();
+            document.getElementById('completed-courses').textContent = state.completedCourses.length;
+            document.getElementById('earned-points').textContent = (state.completedCourses.length * 500).toLocaleString();
+        }
+
+        // Show loading spinner
+        function showLoading(show) {
+            const loader = document.getElementById('global-loader');
+            if (show) {
+                loader.classList.remove('hidden');
+            } else {
+                loader.classList.add('hidden');
             }
         }
 
-        // =====================================================
-        // COURSE RENDERING AND UI
-        // =====================================================
-
-        function renderCourses() {
-            const container = document.getElementById('courses-container');
-            if (!container) return;
-
-            container.innerHTML = COURSES.map(course => {
-                const status = getCourseVerificationStatus(course.id);
-                let statusBadge, buttonText, buttonAction, buttonClass, disabled;
-
-                switch (status) {
-                    case COURSE_VERIFICATION_STATES.APPROVED:
-                        statusBadge = '<span class="course-status-badge status-completed">Completed ✓</span>';
-                        buttonText = 'Completed';
-                        buttonAction = '';
-                        buttonClass = 'bg-green-500 cursor-default';
-                        disabled = true;
-                        break;
-                    case COURSE_VERIFICATION_STATES.PENDING:
-                        statusBadge = '<span class="course-status-badge status-pending">Under Review</span>';
-                        buttonText = 'Verification Pending';
-                        buttonAction = '';
-                        buttonClass = 'bg-yellow-500 cursor-default';
-                        disabled = true;
-                        break;
-                    default:
-                        statusBadge = '<span class="course-status-badge status-available">Available</span>';
-                        buttonText = 'Verify Completion';
-                        buttonAction = `requestCourseVerification('${course.id}', '${course.title}')`;
-                        buttonClass = 'bg-blue-500 hover:bg-blue-600';
-                        disabled = false;
-                }
-
-                return `
-                    <div class="card p-6">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="font-semibold text-lg">${course.title}</h3>
-                            ${statusBadge}
-                        </div>
-                        
-                        <p class="text-sm text-gray-600 mb-4">${course.description}</p>
-                        
-                        <div class="space-y-2 mb-4">
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Category:</span>
-                                <span class="font-medium">${course.category}</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Points:</span>
-                                <span class="font-bold text-yellow-600">${course.points}</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Duration:</span>
-                                <span>${course.duration} min</span>
-                            </div>
-                        </div>
-
-                        <div class="flex space-x-2">
-                            <a href="${course.alisonUrl}" target="_blank" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white text-center py-2 px-3 rounded text-sm transition">
-                                <i class="fas fa-external-link-alt mr-1"></i>Open Alison
-                            </a>
-                            <button onclick="${buttonAction}" 
-                                    class="flex-1 ${buttonClass} text-white py-2 px-3 rounded text-sm transition" 
-                                    ${disabled ? 'disabled' : ''}>
-                                ${buttonText}
-                            </button>
-                        </div>
-
-                        ${status === COURSE_VERIFICATION_STATES.AVAILABLE ? `
-                            <p class="text-xs text-gray-500 mt-2 text-center">
-                                Complete on Alison → Take Screenshot → Upload Here
-                            </p>
-                        ` : ''}
-
-                        <!-- Demo admin controls (remove in production) -->
-                        ${status === COURSE_VERIFICATION_STATES.PENDING ? `
-                            <div class="mt-3 pt-3 border-t border-gray-200">
-                                <p class="text-xs text-gray-500 mb-2">Demo: Simulate admin approval</p>
-                                <button onclick="simulateAdminApproval('${course.id}')" class="w-full bg-green-500 hover:bg-green-600 text-white py-1 rounded text-xs transition">
-                                    Approve Verification
-                                </button>
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function updatePointsDisplay() {
-            const pointsElement = document.getElementById('points-balance');
-            if (pointsElement) {
-                pointsElement.textContent = formatPoints(state.userPoints);
+        // Listen for messages from main app (if needed)
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'REQUEST_USER_DATA') {
+                // Send user data back to main app
+                window.opener.postMessage({
+                    type: 'USER_DATA',
+                    points: state.userPoints,
+                    completedCourses: state.completedCourses
+                }, '*');
             }
-        }
-
-        // =====================================================
-        // USER MANAGEMENT
-        // =====================================================
-
-        function handleLogout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('eduhetech_user');
-                localStorage.removeItem('eduhetech_user_points');
-                localStorage.removeItem('eduhetech_completed_courses');
-                localStorage.removeItem('eduhetech_pending_verifications');
-                window.location.href = 'index.html';
-            }
-        }
-
-        function initializeUser() {
-            // Load user data from localStorage
-            const savedPoints = localStorage.getItem('eduhetech_user_points');
-            const savedCourses = localStorage.getItem('eduhetech_completed_courses');
-            const savedPending = localStorage.getItem('eduhetech_pending_verifications');
-
-            state.userPoints = savedPoints ? parseInt(savedPoints) : 0;
-            state.completedCourses = savedCourses ? JSON.parse(savedCourses) : {};
-            state.pendingVerifications = savedPending ? JSON.parse(savedPending) : {};
-
-            updatePointsDisplay();
-            renderCourses();
-        }
-
-        // =====================================================
-        // INITIALIZATION
-        // =====================================================
-
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeUser();
-            
-            // Add global click handler to close modal when clicking outside
-            document.getElementById('verification-modal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    hideModal();
-                }
-            });
         });
 
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+
         // Make functions globally available
-        window.requestCourseVerification = requestCourseVerification;
-        window.handleScreenshotUpload = handleScreenshotUpload;
-        window.removeScreenshot = removeScreenshot;
-        window.retakeScreenshot = retakeScreenshot;
+        window.hideVerificationModal = hideVerificationModal;
+        window.hideSuccessModal = hideSuccessModal;
+        window.removeUpload = removeUpload;
         window.submitVerification = submitVerification;
-        window.simulateAdminApproval = simulateAdminApproval;
-        window.handleLogout = handleLogout;
-        window.hideModal = hideModal;
     </script>
 </body>
 </html>
