@@ -1214,6 +1214,7 @@
         function switchView(view) {
             // Handle external page navigation
             if (view === 'learn') {
+                // Navigate to learn page
                 window.location.href = 'learn.html';
                 return;
             }
@@ -1941,7 +1942,7 @@
                         <p class="text-gray-600">You have reached your daily earning limit of ${formatPoints(DAILY_POINTS_LIMIT)} points. Come back tomorrow to earn more!</p>
                         <p class="text-sm text-blue-600">Note: Referral bonuses are not counted towards daily limits.</p>
                         ${!state.isPremium ? `
-                            <button onclick="switchView('premium')" class="mt-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-lg transition">
+                            <button onclick="window.location.href='learn.html'" class="mt-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-lg transition">
                                 Go Premium to Remove Limits
                             </button>
                         ` : ''}
@@ -2344,6 +2345,142 @@
                 `, () => {
                     setTimeout(hideModal, 3000);
                 });
+            }
+        }
+
+        // =====================================================
+        // SPIN WHEEL FUNCTIONS
+        // =====================================================
+
+        async function spinWheel() {
+            if (!state.user) return;
+            
+            const today = new Date().toDateString();
+            if (state.lastSpinDate === today) {
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-exclamation-triangle text-5xl text-yellow-500"></i>
+                        <h3 class="text-xl font-bold text-yellow-600">Already Spun Today</h3>
+                        <p class="text-gray-600">You can only spin the wheel once per day. Come back tomorrow!</p>
+                    </div>
+                `);
+                return;
+            }
+
+            // Show ad before spinning
+            showModal(`
+                <div class="text-center space-y-4">
+                    <i class="fas fa-ad text-5xl text-purple-500 mb-2"></i>
+                    <h3 class="text-xl font-bold">Watch Ad to Spin</h3>
+                    <p class="text-gray-600">Please watch a short ad to unlock your daily spin.</p>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <p class="text-sm font-semibold text-purple-800">Important:</p>
+                        <p class="text-sm text-purple-700">Watch the ad completely to activate your spin!</p>
+                    </div>
+                    <button onclick="startSpinAfterAd()" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 rounded-lg transition">
+                        Watch Ad & Spin
+                    </button>
+                </div>
+            `);
+        }
+
+        function startSpinAfterAd() {
+            hideModal();
+            
+            // Start the actual spin
+            performWheelSpin();
+        }
+
+        function performWheelSpin() {
+            const wheel = document.getElementById('spin-wheel');
+            if (!wheel) return;
+
+            // Disable spin button during animation
+            const spinBtn = document.querySelector('button[onclick="spinWheel()"]');
+            if (spinBtn) {
+                spinBtn.disabled = true;
+                spinBtn.innerHTML = 'Spinning...';
+            }
+
+            // Calculate random prize
+            const randomPrizeIndex = Math.floor(Math.random() * WHEEL_PRIZES.length);
+            const prize = WHEEL_PRIZES[randomPrizeIndex];
+            
+            // Calculate rotation (3 full rotations + prize position)
+            const segmentAngle = 360 / WHEEL_PRIZES.length;
+            const prizePosition = randomPrizeIndex * segmentAngle;
+            const totalRotation = 1080 + (360 - prizePosition); // 3 full rotations + offset to land on prize
+            
+            // Apply spin animation
+            wheel.style.transition = 'transform 4s cubic-bezier(0.2, 0.8, 0.3, 1)';
+            wheel.style.transform = `rotate(${totalRotation}deg)`;
+            
+            // Wait for animation to complete
+            setTimeout(async () => {
+                await handleSpinResult(prize);
+                
+                // Re-enable button (though it will show as completed for the day)
+                if (spinBtn) {
+                    spinBtn.disabled = false;
+                    spinBtn.innerHTML = 'Already Spun Today';
+                }
+            }, 4000);
+        }
+
+        async function handleSpinResult(prize) {
+            if (!state.user || !state.firebaseUser) return;
+
+            try {
+                const { doc, updateDoc } = window.firebaseModules;
+                const db = window.firebaseDb;
+                
+                // Update last spin date
+                const today = new Date().toDateString();
+                state.lastSpinDate = today;
+                
+                let pointsEarned = 0;
+                let message = '';
+                
+                if (prize.type === 'points') {
+                    pointsEarned = prize.value;
+                    message = `You won ${prize.value} points from the spin wheel!`;
+                    await addPoints(`Spin Wheel: ${prize.label}`, pointsEarned, true);
+                } else if (prize.type === 'ad') {
+                    // For ad prizes, show another ad
+                    message = `You won a bonus ad view! Watch another ad to earn extra points.`;
+                    setTimeout(() => {
+                        openMonetagAd(BASE_POINTS_REWARDS.ad, 30);
+                    }, 2000);
+                }
+                
+                // Update user's last spin date in Firestore
+                await updateDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, state.firebaseUser.uid), {
+                    lastSpinDate: today,
+                    updatedAt: Date.now()
+                });
+
+                // Show result modal
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-gift text-5xl text-green-500"></i>
+                        <h3 class="text-xl font-bold text-green-600">Spin Result!</h3>
+                        <p class="text-gray-600">${message}</p>
+                        ${pointsEarned > 0 ? `<p class="text-lg font-bold text-yellow-600">+${pointsEarned} Points!</p>` : ''}
+                    </div>
+                `, () => {
+                    setTimeout(hideModal, 3000);
+                    render(); // Refresh to update UI
+                });
+
+            } catch (error) {
+                console.error("Error handling spin result:", error);
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
+                        <h3 class="text-xl font-bold text-red-600">Spin Error</h3>
+                        <p class="text-gray-600">There was an error processing your spin. Please try again.</p>
+                    </div>
+                `);
             }
         }
 
@@ -3141,7 +3278,7 @@
                             <p class="text-sm text-gray-600 mb-3">Watch this 2-minute video about web development</p>
                             <div class="flex justify-between items-center">
                                 <span class="text-yellow-600 font-semibold">+${BASE_POINTS_REWARDS.video} Points</span>
-                                <button onclick="watchVideoAd()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm">
+                                <button onclick="openMonetagAd(BASE_POINTS_REWARDS.video, 30)" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm">
                                     Watch Video
                                 </button>
                             </div>
@@ -3155,7 +3292,7 @@
                             <p class="text-sm text-gray-600 mb-3">Learn about health and wellness in 3 minutes</p>
                             <div class="flex justify-between items-center">
                                 <span class="text-yellow-600 font-semibold">+${BASE_POINTS_REWARDS.video + 50} Points</span>
-                                <button onclick="watchVideoAd()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm">
+                                <button onclick="openMonetagAd(BASE_POINTS_REWARDS.video + 50, 45)" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm">
                                     Watch Video
                                 </button>
                             </div>
@@ -3907,6 +4044,126 @@
                     }
                 });
             });
+
+            // Mobile sidebar navigation
+            const mobileSidebarItems = document.querySelectorAll('.mobile-sidebar-item');
+            mobileSidebarItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const view = item.getAttribute('data-view');
+                    if (view) {
+                        e.preventDefault();
+                        navigateAndCloseSidebar(view);
+                    }
+                });
+            });
+        }
+
+        // =====================================================
+        // HELPER FUNCTIONS
+        // =====================================================
+
+        function watchVideoAd() {
+            openMonetagAd(BASE_POINTS_REWARDS.video, 30);
+        }
+
+        function activateBoost() {
+            showModal(`
+                <div class="text-center space-y-3">
+                    <i class="fas fa-bolt text-5xl text-yellow-500"></i>
+                    <h3 class="text-xl font-bold text-yellow-600">Activate Daily Boost</h3>
+                    <p class="text-gray-600">Watch an ad to double your next course completion points!</p>
+                    <button onclick="startBoostAd()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 rounded-lg transition">
+                        Watch Ad to Activate Boost
+                    </button>
+                </div>
+            `);
+        }
+
+        function startBoostAd() {
+            hideModal();
+            openMonetagAd(100, 20); // 100 points for watching boost ad
+        }
+
+        function showPremiumModal() {
+            showModal(`
+                <div class="text-center space-y-3">
+                    <i class="fas fa-crown text-5xl text-yellow-500"></i>
+                    <h3 class="text-xl font-bold text-yellow-600">Go Premium</h3>
+                    <p class="text-gray-600">Upgrade to Premium for $4.99/month and unlock exclusive features!</p>
+                    <div class="space-y-2 text-left">
+                        <div class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>2x Points Multiplier</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>No Daily Limits</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Ad-Free Experience</span>
+                        </div>
+                    </div>
+                    <button onclick="purchasePremium()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-3 rounded-lg transition">
+                        Upgrade Now - $4.99/month
+                    </button>
+                </div>
+            `);
+        }
+
+        function purchasePremium() {
+            showModal(`
+                <div class="text-center space-y-3">
+                    <i class="fas fa-info-circle text-5xl text-blue-500"></i>
+                    <h3 class="text-xl font-bold text-blue-600">Premium Feature</h3>
+                    <p class="text-gray-600">Premium membership will be available soon. Stay tuned!</p>
+                </div>
+            `);
+        }
+
+        function buyAdFree() {
+            if (state.user.eduPoints < 500) {
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
+                        <h3 class="text-xl font-bold text-red-600">Insufficient Points</h3>
+                        <p class="text-gray-600">You need 500 points to remove ads for 24 hours.</p>
+                    </div>
+                `);
+                return;
+            }
+            
+            showModal(`
+                <div class="text-center space-y-3">
+                    <i class="fas fa-shield-alt text-5xl text-blue-500"></i>
+                    <h3 class="text-xl font-bold text-blue-600">Remove Ads</h3>
+                    <p class="text-gray-600">Spend 500 points to remove ads for 24 hours?</p>
+                    <div class="flex space-x-2">
+                        <button onclick="hideModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded transition">
+                            Cancel
+                        </button>
+                        <button onclick="confirmAdFree()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition">
+                            Confirm
+                        </button>
+                    </div>
+                </div>
+            `);
+        }
+
+        function confirmAdFree() {
+            // This would be implemented when you have ad-free functionality
+            showModal(`
+                <div class="text-center space-y-3">
+                    <i class="fas fa-check-circle text-5xl text-green-500"></i>
+                    <h3 class="text-xl font-bold text-green-600">Ads Removed!</h3>
+                    <p class="text-gray-600">You won't see ads for the next 24 hours.</p>
+                </div>
+            `);
+        }
+
+        function setupPushNotifications() {
+            // Placeholder for push notifications setup
+            console.log("Push notifications would be set up here");
         }
 
         // =====================================================
@@ -3951,8 +4208,14 @@
         window.watchPremiumAd = watchPremiumAd;
         window.watchVideoAd = watchVideoAd;
         window.spinWheel = spinWheel;
+        window.startSpinAfterAd = startSpinAfterAd;
+        window.performWheelSpin = performWheelSpin;
         window.activateBoost = activateBoost;
+        window.startBoostAd = startBoostAd;
         window.showPremiumModal = showPremiumModal;
+        window.purchasePremium = purchasePremium;
+        window.buyAdFree = buyAdFree;
+        window.confirmAdFree = confirmAdFree;
         window.handleFirebaseLogout = handleFirebaseLogout;
         window.hideModal = hideModal;
         window.openMobileSidebar = openMobileSidebar;
