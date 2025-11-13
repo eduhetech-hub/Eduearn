@@ -901,7 +901,8 @@
                     getDocs, 
                     addDoc, 
                     orderBy, 
-                    limit
+                    limit,
+                    onSnapshot
                 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
                 // Your Firebase configuration
@@ -938,7 +939,8 @@
                     getDocs,
                     addDoc,
                     orderBy,
-                    limit
+                    limit,
+                    onSnapshot
                 };
 
                 console.log("Firebase initialized successfully!");
@@ -999,14 +1001,14 @@
 
         // Updated point rewards as specified
         const BASE_POINTS_REWARDS = {
-            lesson: 500,
+            lesson: 2000, // Updated from 500 to 2000
             quiz: 200,
             ad: 100,
             quickAd: 50,
             premiumAd: 200,
             dailyLogin: 100,
             referral: 1000,
-            streak: 500,
+            streak: 1000, // 7-day streak bonus
             achievement: 1000,
             video: 150,
             spin: 100,
@@ -1049,7 +1051,9 @@
             missions: {},
             isPremium: false,
             readArticlesToday: 0,
-            lastReadingReset: null
+            lastReadingReset: null,
+            leaderboardListener: null,
+            achievementsListener: null
         };
 
         // =====================================================
@@ -1553,7 +1557,7 @@
                 
                 const userData = userDoc.data();
                 
-                // Update login info
+                // Update login info and check for streak bonus
                 const today = new Date().toDateString();
                 const lastLoginDate = new Date(userData.lastLogin).toDateString();
                 
@@ -1563,10 +1567,11 @@
                         userData.loginDates.push(today);
                     }
                     
-                    // Add daily login bonus
+                    // Calculate streak and check for 7-day bonus
                     const streak = calculateStreak(userData.loginDates);
                     userData.streak = streak;
                     
+                    // Add daily login bonus
                     if (!hasReachedDailyLimit(userData)) {
                         userData.eduPoints += BASE_POINTS_REWARDS.dailyLogin;
                         userData.history.push({
@@ -1574,6 +1579,31 @@
                             points: BASE_POINTS_REWARDS.dailyLogin,
                             timestamp: Date.now()
                         });
+                    }
+                    
+                    // Check for 7-day streak bonus
+                    if (streak === 7 && !userData.streakBonusClaimed) {
+                        userData.eduPoints += BASE_POINTS_REWARDS.streak;
+                        userData.history.push({
+                            action: '7-Day Streak Bonus!',
+                            points: BASE_POINTS_REWARDS.streak,
+                            timestamp: Date.now()
+                        });
+                        userData.streakBonusClaimed = true;
+                        
+                        // Show streak bonus notification
+                        setTimeout(() => {
+                            showModal(`
+                                <div class="text-center space-y-3">
+                                    <i class="fas fa-fire text-5xl text-orange-500"></i>
+                                    <h3 class="text-xl font-bold text-orange-600">7-Day Streak Bonus!</h3>
+                                    <p class="text-gray-600">Congratulations! You've earned a 7-day streak bonus!</p>
+                                    <p class="text-lg font-bold text-green-600">+${BASE_POINTS_REWARDS.streak} Points!</p>
+                                </div>
+                            `, () => {
+                                setTimeout(hideModal, 4000);
+                            });
+                        }, 1000);
                     }
                     
                     userData.lastLogin = Date.now();
@@ -1585,6 +1615,7 @@
                         eduPoints: userData.eduPoints,
                         history: userData.history,
                         lastLogin: userData.lastLogin,
+                        streakBonusClaimed: userData.streakBonusClaimed,
                         updatedAt: Date.now()
                     });
                 }
@@ -1619,6 +1650,14 @@
                 showLoading(true);
                 const { signOut } = window.firebaseModules;
                 const auth = window.firebaseAuth;
+                
+                // Clean up listeners
+                if (state.leaderboardListener) {
+                    state.leaderboardListener();
+                }
+                if (state.achievementsListener) {
+                    state.achievementsListener();
+                }
                 
                 await signOut(auth);
                 state.firebaseUser = null;
@@ -1781,6 +1820,87 @@
                     render();
                 }
             });
+        }
+
+        // =====================================================
+        // REAL-TIME ACHIEVEMENTS AND LEADERBOARD SYSTEM
+        // =====================================================
+
+        async function setupLeaderboardListener() {
+            try {
+                const { collection, query, orderBy, limit, onSnapshot } = window.firebaseModules;
+                const db = window.firebaseDb;
+                
+                const leaderboardQuery = query(
+                    collection(db, FIRESTORE_COLLECTIONS.USERS),
+                    orderBy('eduPoints', 'desc'),
+                    limit(10)
+                );
+                
+                // Set up real-time listener
+                state.leaderboardListener = onSnapshot(leaderboardQuery, (snapshot) => {
+                    state.leaderboard = [];
+                    snapshot.forEach((doc) => {
+                        state.leaderboard.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    // Update UI if on leaderboard view
+                    if (state.currentView === 'leaderboard' || state.currentView === 'dashboard') {
+                        render();
+                    }
+                    
+                    console.log("Leaderboard updated in real-time");
+                });
+                
+            } catch (error) {
+                console.error("Error setting up leaderboard listener:", error);
+            }
+        }
+
+        async function setupAchievementsListener() {
+            try {
+                const { collection, onSnapshot } = window.firebaseModules;
+                const db = window.firebaseDb;
+                
+                // Set up real-time listener for achievements
+                state.achievementsListener = onSnapshot(collection(db, FIRESTORE_COLLECTIONS.ACHIEVEMENTS), (snapshot) => {
+                    state.achievements = [];
+                    snapshot.forEach((doc) => {
+                        state.achievements.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    // Update UI if on achievements view
+                    if (state.currentView === 'achievements' || state.currentView === 'dashboard') {
+                        render();
+                    }
+                    
+                    console.log("Achievements updated in real-time");
+                });
+                
+            } catch (error) {
+                console.error("Error setting up achievements listener:", error);
+            }
+        }
+
+        async function updateAchievementProgress(achievementType, progress) {
+            if (!state.user || !state.firebaseUser) return;
+            
+            try {
+                const { doc, updateDoc } = window.firebaseModules;
+                const db = window.firebaseDb;
+                
+                // Update user's achievement progress in Firestore
+                await updateDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, state.firebaseUser.uid), {
+                    [`achievementProgress.${achievementType}`]: progress,
+                    updatedAt: Date.now()
+                });
+                
+                // Check if achievement should be unlocked
+                await checkAchievements();
+                
+            } catch (error) {
+                console.error("Error updating achievement progress:", error);
+            }
         }
 
         // =====================================================
@@ -1958,6 +2078,9 @@
                 state.user.eduPoints = newPoints;
                 state.user.history = updatedHistory;
 
+                // Update achievement progress for points earned
+                await updateAchievementProgress('pointsEarned', state.user.eduPoints);
+
                 // Re-render the dashboard to reflect updated points
                 if (state.currentView === 'dashboard') {
                     render();
@@ -2005,6 +2128,9 @@
                 state.missions[missionType] = 0;
             }
             state.missions[missionType] += increment;
+            
+            // Update achievement progress
+            await updateAchievementProgress(missionType, state.missions[missionType]);
             
             // Check mission completion
             checkMissionCompletion();
@@ -2136,7 +2262,7 @@
                     `,
                     duration: 10,
                     difficulty: 'Beginner',
-                    points: 500,
+                    points: 2000, // Updated from 500 to 2000
                     order: 1
                 },
                 {
@@ -2154,7 +2280,7 @@
                     `,
                     duration: 15,
                     difficulty: 'Beginner',
-                    points: 500,
+                    points: 2000, // Updated from 500 to 2000
                     order: 2
                 }
             ];
@@ -2207,7 +2333,8 @@
                 { id: 'a2', name: 'Quiz Whiz', description: 'Complete 5 quizzes', icon: 'fas fa-brain', points: 1000, type: 'silver', condition: { type: 'quizzesCompleted', threshold: 5 } },
                 { id: 'a3', name: 'Learning Streak', description: 'Maintain a 7-day learning streak', icon: 'fas fa-fire', points: 1000, type: 'gold', condition: { type: 'streak', threshold: 7 } },
                 { id: 'a4', name: 'Ad Enthusiast', description: 'Watch 50 ads', icon: 'fas fa-ad', points: 1500, type: 'silver', condition: { type: 'adsWatched', threshold: 50 } },
-                { id: 'a5', name: 'Referral Master', description: 'Refer 10 friends', icon: 'fas fa-users', points: 2000, type: 'gold', condition: { type: 'referrals', threshold: 10 } }
+                { id: 'a5', name: 'Referral Master', description: 'Refer 10 friends', icon: 'fas fa-users', points: 2000, type: 'gold', condition: { type: 'referrals', threshold: 10 } },
+                { id: 'a6', name: 'Course Master', description: 'Complete 10 courses', icon: 'fas fa-graduation-cap', points: 2000, type: 'gold', condition: { type: 'coursesCompleted', threshold: 10 } }
             ];
         }
 
@@ -2221,6 +2348,10 @@
 
                 // Initialize mock data if needed
                 await initMockData();
+                
+                // SET UP REAL-TIME LISTENERS
+                await setupLeaderboardListener();
+                await setupAchievementsListener();
                 
                 resetDailyCourses();
                 resetDailyReading();
@@ -2301,10 +2432,13 @@
                         conditionMet = (state.user.streak || 0) >= achievement.condition.threshold;
                         break;
                     case 'adsWatched':
-                        conditionMet = (state.user.dailyAdCount || 0) >= achievement.condition.threshold;
+                        conditionMet = (state.missions.adsWatched || 0) >= achievement.condition.threshold;
                         break;
                     case 'referrals':
                         conditionMet = (state.user.referralCount || 0) >= achievement.condition.threshold;
+                        break;
+                    case 'coursesCompleted':
+                        conditionMet = (state.missions.coursesCompleted || 0) >= achievement.condition.threshold;
                         break;
                 }
                 
@@ -2744,6 +2878,7 @@
                                 <div class="flex items-center space-x-2">
                                     <i class="fas fa-fire text-orange-500 streak-flame"></i>
                                     <span>Streak: ${state.user.streak || 0} days</span>
+                                    ${state.user.streak >= 7 ? '<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">7-Day Bonus!</span>' : ''}
                                 </div>
                             </div>
                             <button onclick="handleFirebaseLogout()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition md:hidden">
@@ -2756,8 +2891,8 @@
                     <div class="promo-banner">
                         <div class="flex items-center justify-between">
                             <div>
-                                <h3 class="font-bold">🎉 Earn Double Points Today!</h3>
-                                <p class="text-sm opacity-90">Complete any course for 2x rewards</p>
+                                <h3 class="font-bold">🎉 Earn 2000 Points Per Course!</h3>
+                                <p class="text-sm opacity-90">Complete any course for massive rewards</p>
                             </div>
                             <button onclick="window.location.href='learn.html'" class="bg-white text-orange-600 px-3 py-1 rounded text-sm font-semibold">
                                 Learn Now
@@ -2775,6 +2910,12 @@
                                 <div class="bg-green-400 h-2 rounded-full" style="width: ${Math.min((earnedToday / DAILY_POINTS_LIMIT) * 100, 100)}%"></div>
                             </div>
                         </div>
+                        ${state.user.streak >= 7 ? `
+                            <div class="mt-3 bg-yellow-500 bg-opacity-20 rounded-lg p-2 border border-yellow-400">
+                                <p class="text-sm font-semibold">🔥 7-Day Streak Bonus Active!</p>
+                                <p class="text-xs opacity-90">You're earning bonus points for maintaining your streak!</p>
+                            </div>
+                        ` : ''}
                     </div>
                     
                     <!-- Stats Grid -->
@@ -2831,6 +2972,7 @@
                             <button onclick="window.location.href='learn.html'" class="bg-blue-50 hover:bg-blue-100 p-4 rounded-lg text-center transition flex flex-col items-center">
                                 <i class="fas fa-book text-blue-500 text-xl mb-2"></i>
                                 <p class="font-medium text-sm">Learn & Earn</p>
+                                <p class="text-xs text-green-600 font-bold">2000 pts/course</p>
                             </button>
                             
                             <button onclick="switchView('quiz')" class="bg-green-50 hover:bg-green-100 p-4 rounded-lg text-center transition flex flex-col items-center">
@@ -3016,14 +3158,14 @@
                         <h1 class="text-2xl font-bold text-gray-800">Learn & Earn</h1>
                         <div class="flex items-center space-x-2">
                             <i class="fas fa-book text-blue-500"></i>
-                            <span class="text-sm text-gray-600">Complete courses and earn 500 points each</span>
+                            <span class="text-sm text-gray-600">Complete courses and earn 2000 points each</span>
                         </div>
                     </div>
 
                     <div class="card p-6 text-center">
                         <i class="fas fa-external-link-alt text-6xl text-blue-500 mb-4"></i>
                         <h3 class="text-xl font-bold mb-2">Learn & Earn Portal</h3>
-                        <p class="text-gray-600 mb-6">Access our comprehensive learning platform where you can complete courses from Alison and earn 500 points per course after verification.</p>
+                        <p class="text-gray-600 mb-6">Access our comprehensive learning platform where you can complete courses from Alison and earn 2000 points per course after verification.</p>
                         
                         <a href="learn.html" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg text-lg transition transform hover:scale-105 inline-block">
                             <i class="fas fa-external-link-alt mr-2"></i>Open Learn & Earn Portal
@@ -3043,7 +3185,7 @@
                             <div class="text-center p-4 bg-purple-50 rounded-lg">
                                 <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">3</div>
                                 <h4 class="font-semibold mb-2">Upload & Verify</h4>
-                                <p class="text-sm text-gray-600">Submit for review and earn 500 points</p>
+                                <p class="text-sm text-gray-600">Submit for review and earn 2000 points</p>
                             </div>
                         </div>
                         
