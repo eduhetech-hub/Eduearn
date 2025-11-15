@@ -696,9 +696,9 @@
                     <i class="fas fa-book"></i>
                     <span>Learn & Earn</span>
                 </a>
-                <a href="quiz.html" class="mobile-sidebar-item">
-                    <i class="fas fa-brain"></i>
-                    <span>Quiz</span>
+                <a href="#blog" class="mobile-sidebar-item" data-view="blog" onclick="navigateAndCloseSidebar('blog')">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Read & Earn</span>
                 </a>
                 <a href="#ads" class="mobile-sidebar-item" data-view="ads" onclick="navigateAndCloseSidebar('ads')">
                     <i class="fas fa-ad"></i>
@@ -715,10 +715,6 @@
                 <a href="#missions" class="mobile-sidebar-item" data-view="missions" onclick="navigateAndCloseSidebar('missions')">
                     <i class="fas fa-tasks"></i>
                     <span>Daily Missions</span>
-                </a>
-                <a href="#blog" class="mobile-sidebar-item" data-view="blog" onclick="navigateAndCloseSidebar('blog')">
-                    <i class="fas fa-newspaper"></i>
-                    <span>Read & Earn</span>
                 </a>
                 <a href="#referral" class="mobile-sidebar-item" data-view="referral" onclick="navigateAndCloseSidebar('referral')">
                     <i class="fas fa-users"></i>
@@ -776,9 +772,9 @@
                 <i class="fas fa-book"></i>
                 <span>Learn & Earn</span>
             </a>
-            <a href="quiz.html" class="sidebar-item" data-view="quiz">
-                <i class="fas fa-brain"></i>
-                <span>Quiz</span>
+            <a href="#blog" class="sidebar-item" data-view="blog">
+                <i class="fas fa-newspaper"></i>
+                <span>Read & Earn</span>
             </a>
             <a href="#ads" class="sidebar-item" data-view="ads">
                 <i class="fas fa-ad"></i>
@@ -795,10 +791,6 @@
             <a href="#missions" class="sidebar-item" data-view="missions">
                 <i class="fas fa-tasks"></i>
                 <span>Daily Missions</span>
-            </a>
-            <a href="#blog" class="sidebar-item" data-view="blog">
-                <i class="fas fa-newspaper"></i>
-                <span>Read & Earn</span>
             </a>
             <a href="#referral" class="sidebar-item" data-view="referral">
                 <i class="fas fa-users"></i>
@@ -851,9 +843,9 @@
             <i class="fas fa-book"></i>
             <span>Learn</span>
         </a>
-        <a href="quiz.html" class="mobile-nav-item" data-view="quiz">
-            <i class="fas fa-brain"></i>
-            <span>Quiz</span>
+        <a href="#blog" class="mobile-nav-item" data-view="blog">
+            <i class="fas fa-newspaper"></i>
+            <span>Read & Earn</span>
         </a>
         <a href="#ads" class="mobile-nav-item" data-view="ads">
             <i class="fas fa-ad"></i>
@@ -1184,12 +1176,11 @@
             const viewTitles = {
                 'dashboard': 'Dashboard',
                 'learn': 'Learn & Earn',
-                'quiz': 'Quiz',
+                'blog': 'Read & Earn',
                 'ads': 'Watch Ads',
                 'spin': 'Spin Wheel',
                 'videos': 'Watch & Earn',
                 'missions': 'Daily Missions',
-                'blog': 'Read & Earn',
                 'referral': 'Refer & Earn',
                 'rewards': 'Withdraw',
                 'leaderboard': 'Leaderboard',
@@ -1205,12 +1196,6 @@
             if (view === 'learn') {
                 // Navigate to learn page
                 window.location.href = 'learn.html';
-                return;
-            }
-            
-            // Handle quiz navigation
-            if (view === 'quiz') {
-                window.open('quiz.html', '_blank');
                 return;
             }
             
@@ -2842,12 +2827,11 @@
             const views = {
                 dashboard: renderDashboard(),
                 learn: renderLearn(),
-                quiz: renderQuiz(),
+                blog: renderBlog(),
                 ads: renderAds(),
                 spin: renderSpinWheel(),
                 videos: renderVideoSection(),
                 missions: renderMissions(),
-                blog: renderBlog(),
                 referral: renderReferral(),
                 rewards: renderRewards(),
                 leaderboard: renderLeaderboard(),
@@ -2975,9 +2959,10 @@
                                 <p class="text-xs text-green-600 font-bold">2000 pts/course</p>
                             </button>
                             
-                            <button onclick="switchView('quiz')" class="bg-green-50 hover:bg-green-100 p-4 rounded-lg text-center transition flex flex-col items-center">
-                                <i class="fas fa-brain text-green-500 text-xl mb-2"></i>
-                                <p class="font-medium text-sm">Take Quiz</p>
+                            <button onclick="switchView('blog')" class="bg-green-50 hover:bg-green-100 p-4 rounded-lg text-center transition flex flex-col items-center">
+                                <i class="fas fa-newspaper text-green-500 text-xl mb-2"></i>
+                                <p class="font-medium text-sm">Read & Earn</p>
+                                <p class="text-xs text-green-600 font-bold">100 pts/article</p>
                             </button>
                             
                             <button onclick="switchView('ads')" class="bg-purple-50 hover:bg-purple-100 p-4 rounded-lg text-center transition flex flex-col items-center">
@@ -3195,27 +3180,175 @@
             `;
         }
 
-        function renderQuiz() {
+        function renderBlog() {
             return `
                 <div class="space-y-6">
                     <div class="flex justify-between items-center">
-                        <h1 class="text-2xl font-bold text-gray-800">Quizzes</h1>
+                        <h1 class="text-2xl font-bold text-gray-800">Read & Earn</h1>
                         <div class="flex items-center space-x-2">
-                            <i class="fas fa-brain text-green-500"></i>
-                            <span class="text-sm text-gray-600">Earn ${BASE_POINTS_REWARDS.quiz} points per quiz</span>
+                            <i class="fas fa-newspaper text-blue-500"></i>
+                            <span class="text-sm text-gray-600">Read blog articles and earn points</span>
                         </div>
                     </div>
 
+                    <!-- Read & Earn Instructions -->
+                    <div class="card p-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-semibold mb-2">How Read & Earn Works</h3>
+                                <p class="text-sm opacity-90 mb-4">Read articles on our official blog and earn points for learning!</p>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                                    <div>
+                                        <div class="text-2xl font-bold">3-10 min</div>
+                                        <div class="text-sm opacity-90">Reading Time</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-2xl font-bold">+100</div>
+                                        <div class="text-sm opacity-90">Points per Article</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-2xl font-bold">3/day</div>
+                                        <div class="text-sm opacity-90">Article Limit</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <i class="fas fa-external-link-alt text-3xl opacity-80"></i>
+                        </div>
+                    </div>
+
+                    <!-- Featured Blog Posts -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Featured Post 1 -->
+                        <div class="card overflow-hidden hover:shadow-lg transition">
+                            <div class="h-40 bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
+                                <i class="fas fa-lightbulb text-white text-4xl"></i>
+                            </div>
+                            <div class="p-4">
+                                <div class="flex items-center mb-2">
+                                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Featured</span>
+                                </div>
+                                <h3 class="font-bold text-lg mb-2">Maximize Your EduHeTech Earnings</h3>
+                                <p class="text-gray-600 text-sm mb-4">Proven strategies to increase your points and earnings through our platform.</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-yellow-600 font-semibold">+100 Points</span>
+                                    <button onclick="startBlogReading('maximize-earnings')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm">
+                                        Read & Earn
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Featured Post 2 -->
+                        <div class="card overflow-hidden hover:shadow-lg transition">
+                            <div class="h-40 bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
+                                <i class="fas fa-graduation-cap text-white text-4xl"></i>
+                            </div>
+                            <div class="p-4">
+                                <div class="flex items-center mb-2">
+                                    <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Trending</span>
+                                </div>
+                                <h3 class="font-bold text-lg mb-2">Future of Learn & Earn</h3>
+                                <p class="text-gray-600 text-sm mb-4">How educational platforms are revolutionizing learning and earning.</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-yellow-600 font-semibold">+100 Points</span>
+                                    <button onclick="startBlogReading('future-learn-earn')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm">
+                                        Read & Earn
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Featured Post 3 -->
+                        <div class="card overflow-hidden hover:shadow-lg transition">
+                            <div class="h-40 bg-gradient-to-r from-orange-400 to-red-500 flex items-center justify-center">
+                                <i class="fas fa-rocket text-white text-4xl"></i>
+                            </div>
+                            <div class="p-4">
+                                <div class="flex items-center mb-2">
+                                    <span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded">Popular</span>
+                                </div>
+                                <h3 class="font-bold text-lg mb-2">User Success Stories</h3>
+                                <p class="text-gray-600 text-sm mb-4">Real stories from EduHeTech users transforming their skills.</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-yellow-600 font-semibold">+100 Points</span>
+                                    <button onclick="startBlogReading('success-stories')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm">
+                                        Read & Earn
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Direct Blog Access -->
                     <div class="card p-6 text-center">
                         <i class="fas fa-external-link-alt text-6xl text-green-500 mb-4"></i>
-                        <h3 class="text-xl font-bold mb-2">Quiz Portal</h3>
-                        <p class="text-gray-600 mb-6">Take quizzes on our dedicated quiz platform to test your knowledge and earn rewards.</p>
+                        <h3 class="text-xl font-bold mb-2">Visit Our Official Blog</h3>
+                        <p class="text-gray-600 mb-6">Access our complete blog with more articles, tutorials, and earning tips.</p>
                         
-                        <a href="quiz.html" target="_blank" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg text-lg transition transform hover:scale-105 inline-block">
-                            <i class="fas fa-external-link-alt mr-2"></i>Open Quiz Portal
+                        <a href="https://eduhe-tech.blogspot.com" target="_blank" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg text-lg transition transform hover:scale-105 inline-block mb-4">
+                            <i class="fas fa-external-link-alt mr-2"></i>Open EduHeTech Blog
                         </a>
                         
-                        <p class="text-sm text-gray-500 mt-4">The quiz portal will open in a new tab where you can take quizzes and earn points.</p>
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
+                            <p class="text-sm text-yellow-800">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                <strong>Note:</strong> After reading any article on our blog, return here to claim your 100 points!
+                            </p>
+                        </div>
+
+                        <!-- Manual Claim Button -->
+                        <div class="mt-4">
+                            <button onclick="claimBlogPoints()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition">
+                                <i class="fas fa-coins mr-2"></i>Claim Reading Points
+                            </button>
+                            <p class="text-xs text-gray-500 mt-2">Click if you've already read an article on our blog</p>
+                        </div>
+                    </div>
+
+                    <!-- Daily Reading Progress -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Your Reading Progress</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-gray-600">Articles Read Today</span>
+                                    <span class="font-semibold">${state.readArticlesToday || 0}/3</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill bg-green-500" style="width: ${((state.readArticlesToday || 0) / 3) * 100}%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Read 3 articles daily to earn maximum points</p>
+                            </div>
+                            
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <p class="text-sm text-blue-700">
+                                    <i class="fas fa-trophy mr-1"></i>
+                                    <strong>Reading Bonus:</strong> Read 7 days in a row to unlock a 500-point streak bonus!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- How to Claim Points -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-4">How to Claim Your Points</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">1</div>
+                                <h4 class="font-semibold mb-2">Read Article</h4>
+                                <p class="text-sm text-gray-600">Click "Read & Earn" or visit our blog directly</p>
+                            </div>
+                            <div class="text-center p-4 bg-green-50 rounded-lg">
+                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">2</div>
+                                <h4 class="font-semibold mb-2">Spend 2+ Minutes</h4>
+                                <p class="text-sm text-gray-600">Read the article thoroughly (minimum 2 minutes)</p>
+                            </div>
+                            <div class="text-center p-4 bg-purple-50 rounded-lg">
+                                <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">3</div>
+                                <h4 class="font-semibold mb-2">Return & Claim</h4>
+                                <p class="text-sm text-gray-600">Return to this page and claim your 100 points</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
@@ -3523,180 +3656,6 @@
                     <div class="card p-6 bg-gradient-to-r from-green-500 to-blue-500 text-white">
                         <h3 class="text-lg font-semibold mb-2">Mission Completion Bonus</h3>
                         <p class="text-sm opacity-90">Complete all daily missions to unlock a special 500-point bonus!</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderBlog() {
-            return `
-                <div class="space-y-6">
-                    <div class="flex justify-between items-center">
-                        <h1 class="text-2xl font-bold text-gray-800">Read & Earn</h1>
-                        <div class="flex items-center space-x-2">
-                            <i class="fas fa-newspaper text-blue-500"></i>
-                            <span class="text-sm text-gray-600">Read blog articles and earn points</span>
-                        </div>
-                    </div>
-
-                    <!-- Read & Earn Instructions -->
-                    <div class="card p-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h3 class="text-lg font-semibold mb-2">How Read & Earn Works</h3>
-                                <p class="text-sm opacity-90 mb-4">Read articles on our official blog and earn points for learning!</p>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                                    <div>
-                                        <div class="text-2xl font-bold">3-10 min</div>
-                                        <div class="text-sm opacity-90">Reading Time</div>
-                                    </div>
-                                    <div>
-                                        <div class="text-2xl font-bold">+100</div>
-                                        <div class="text-sm opacity-90">Points per Article</div>
-                                    </div>
-                                    <div>
-                                        <div class="text-2xl font-bold">3/day</div>
-                                        <div class="text-sm opacity-90">Article Limit</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <i class="fas fa-external-link-alt text-3xl opacity-80"></i>
-                        </div>
-                    </div>
-
-                    <!-- Featured Blog Posts -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Featured Post 1 -->
-                        <div class="card overflow-hidden hover:shadow-lg transition">
-                            <div class="h-40 bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
-                                <i class="fas fa-lightbulb text-white text-4xl"></i>
-                            </div>
-                            <div class="p-4">
-                                <div class="flex items-center mb-2">
-                                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Featured</span>
-                                </div>
-                                <h3 class="font-bold text-lg mb-2">Maximize Your EduHeTech Earnings</h3>
-                                <p class="text-gray-600 text-sm mb-4">Proven strategies to increase your points and earnings through our platform.</p>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-yellow-600 font-semibold">+100 Points</span>
-                                    <button onclick="startBlogReading('maximize-earnings')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm">
-                                        Read & Earn
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Featured Post 2 -->
-                        <div class="card overflow-hidden hover:shadow-lg transition">
-                            <div class="h-40 bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
-                                <i class="fas fa-graduation-cap text-white text-4xl"></i>
-                            </div>
-                            <div class="p-4">
-                                <div class="flex items-center mb-2">
-                                    <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Trending</span>
-                                </div>
-                                <h3 class="font-bold text-lg mb-2">Future of Learn & Earn</h3>
-                                <p class="text-gray-600 text-sm mb-4">How educational platforms are revolutionizing learning and earning.</p>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-yellow-600 font-semibold">+100 Points</span>
-                                    <button onclick="startBlogReading('future-learn-earn')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm">
-                                        Read & Earn
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Featured Post 3 -->
-                        <div class="card overflow-hidden hover:shadow-lg transition">
-                            <div class="h-40 bg-gradient-to-r from-orange-400 to-red-500 flex items-center justify-center">
-                                <i class="fas fa-rocket text-white text-4xl"></i>
-                            </div>
-                            <div class="p-4">
-                                <div class="flex items-center mb-2">
-                                    <span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded">Popular</span>
-                                </div>
-                                <h3 class="font-bold text-lg mb-2">User Success Stories</h3>
-                                <p class="text-gray-600 text-sm mb-4">Real stories from EduHeTech users transforming their skills.</p>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-yellow-600 font-semibold">+100 Points</span>
-                                    <button onclick="startBlogReading('success-stories')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm">
-                                        Read & Earn
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Direct Blog Access -->
-                    <div class="card p-6 text-center">
-                        <i class="fas fa-external-link-alt text-6xl text-green-500 mb-4"></i>
-                        <h3 class="text-xl font-bold mb-2">Visit Our Official Blog</h3>
-                        <p class="text-gray-600 mb-6">Access our complete blog with more articles, tutorials, and earning tips.</p>
-                        
-                        <a href="https://eduhe-tech.blogspot.com" target="_blank" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg text-lg transition transform hover:scale-105 inline-block mb-4">
-                            <i class="fas fa-external-link-alt mr-2"></i>Open EduHeTech Blog
-                        </a>
-                        
-                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
-                            <p class="text-sm text-yellow-800">
-                                <i class="fas fa-info-circle mr-1"></i>
-                                <strong>Note:</strong> After reading any article on our blog, return here to claim your 100 points!
-                            </p>
-                        </div>
-
-                        <!-- Manual Claim Button -->
-                        <div class="mt-4">
-                            <button onclick="claimBlogPoints()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition">
-                                <i class="fas fa-coins mr-2"></i>Claim Reading Points
-                            </button>
-                            <p class="text-xs text-gray-500 mt-2">Click if you've already read an article on our blog</p>
-                        </div>
-                    </div>
-
-                    <!-- Daily Reading Progress -->
-                    <div class="card p-6">
-                        <h3 class="text-lg font-semibold mb-4">Your Reading Progress</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-gray-600">Articles Read Today</span>
-                                    <span class="font-semibold">${state.readArticlesToday || 0}/3</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill bg-green-500" style="width: ${((state.readArticlesToday || 0) / 3) * 100}%"></div>
-                                </div>
-                                <p class="text-xs text-gray-500 mt-1">Read 3 articles daily to earn maximum points</p>
-                            </div>
-                            
-                            <div class="bg-blue-50 p-4 rounded-lg">
-                                <p class="text-sm text-blue-700">
-                                    <i class="fas fa-trophy mr-1"></i>
-                                    <strong>Reading Bonus:</strong> Read 7 days in a row to unlock a 500-point streak bonus!
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- How to Claim Points -->
-                    <div class="card p-6">
-                        <h3 class="text-lg font-semibold mb-4">How to Claim Your Points</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="text-center p-4 bg-blue-50 rounded-lg">
-                                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">1</div>
-                                <h4 class="font-semibold mb-2">Read Article</h4>
-                                <p class="text-sm text-gray-600">Click "Read & Earn" or visit our blog directly</p>
-                            </div>
-                            <div class="text-center p-4 bg-green-50 rounded-lg">
-                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">2</div>
-                                <h4 class="font-semibold mb-2">Spend 2+ Minutes</h4>
-                                <p class="text-sm text-gray-600">Read the article thoroughly (minimum 2 minutes)</p>
-                            </div>
-                            <div class="text-center p-4 bg-purple-50 rounded-lg">
-                                <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">3</div>
-                                <h4 class="font-semibold mb-2">Return & Claim</h4>
-                                <p class="text-sm text-gray-600">Return to this page and claim your 100 points</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             `;
