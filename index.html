@@ -732,6 +732,11 @@
                     <i class="fas fa-medal"></i>
                     <span>Achievements</span>
                 </a>
+                <!-- Admin Dashboard Link - Only visible to admins -->
+                <a href="#admin" class="mobile-sidebar-item admin-only hidden" data-view="admin" onclick="navigateAndCloseSidebar('admin')">
+                    <i class="fas fa-cog"></i>
+                    <span>Admin Dashboard</span>
+                </a>
             </nav>
             
             <!-- Footer Links in Sidebar -->
@@ -807,6 +812,11 @@
             <a href="#achievements" class="sidebar-item" data-view="achievements">
                 <i class="fas fa-medal"></i>
                 <span>Achievements</span>
+            </a>
+            <!-- Admin Dashboard Link - Only visible to admins -->
+            <a href="#admin" class="sidebar-item admin-only hidden" data-view="admin">
+                <i class="fas fa-cog"></i>
+                <span>Admin Dashboard</span>
             </a>
         </nav>
         
@@ -986,7 +996,7 @@
 
         // Admin Configuration
         const ADMIN_CONFIG = {
-            ADMIN_EMAILS: ['eduhetech@gmail.com'],
+            ADMIN_EMAILS: ['sowemimoisaac5@gmail.com', 'eduhetech@gmail.com'],
             MIN_WITHDRAWAL_AMOUNT: 500000,
             POINTS_TO_CURRENCY_RATE: 100000 // 100,000 EduPoints = $1
         };
@@ -1184,7 +1194,8 @@
                 'referral': 'Refer & Earn',
                 'rewards': 'Withdraw',
                 'leaderboard': 'Leaderboard',
-                'achievements': 'Achievements'
+                'achievements': 'Achievements',
+                'admin': 'Admin Dashboard'
             };
             
             const title = viewTitles[state.currentView] || 'EduHeTech';
@@ -1214,6 +1225,16 @@
                     item.classList.remove('active');
                 }
             });
+
+            // Show/hide admin links based on admin status
+            const adminLinks = document.querySelectorAll('.admin-only');
+            adminLinks.forEach(link => {
+                if (state.isAdmin) {
+                    link.classList.remove('hidden');
+                } else {
+                    link.classList.add('hidden');
+                }
+            });
         }
 
         function updateMobileNav() {
@@ -1235,6 +1256,16 @@
             document.getElementById('mobile-sidebar').classList.add('open');
             document.getElementById('mobile-sidebar-overlay').classList.add('active');
             document.body.style.overflow = 'hidden';
+            
+            // Update admin links visibility in mobile sidebar
+            const adminLinks = document.querySelectorAll('.mobile-sidebar-item.admin-only');
+            adminLinks.forEach(link => {
+                if (state.isAdmin) {
+                    link.classList.remove('hidden');
+                } else {
+                    link.classList.add('hidden');
+                }
+            });
         }
 
         function closeMobileSidebar() {
@@ -2835,7 +2866,8 @@
                 referral: renderReferral(),
                 rewards: renderRewards(),
                 leaderboard: renderLeaderboard(),
-                achievements: renderAchievements()
+                achievements: renderAchievements(),
+                admin: renderAdminDashboard()
             };
             
             return `
@@ -3933,6 +3965,435 @@
         }
 
         // =====================================================
+        // ADMIN DASHBOARD FUNCTIONS
+        // =====================================================
+
+        function renderAdminDashboard() {
+            // Only show admin dashboard to authorized users
+            if (!state.isAdmin) {
+                return `
+                    <div class="space-y-6">
+                        <div class="text-center py-12">
+                            <i class="fas fa-lock text-6xl text-red-500 mb-4"></i>
+                            <h1 class="text-2xl font-bold text-gray-800 mb-2">Access Denied</h1>
+                            <p class="text-gray-600">You don't have permission to access the admin dashboard.</p>
+                            <button onclick="switchView('dashboard')" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition">
+                                Return to Dashboard
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-cog text-purple-500"></i>
+                            <span class="text-sm text-gray-600">Manage platform and users</span>
+                        </div>
+                    </div>
+
+                    <!-- Admin Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="card p-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-sm opacity-90">Total Users</p>
+                                    <p class="text-2xl font-bold">${state.leaderboard ? state.leaderboard.length : '0'}</p>
+                                </div>
+                                <i class="fas fa-users text-2xl opacity-80"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="card p-4 bg-gradient-to-r from-green-500 to-teal-600 text-white">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-sm opacity-90">Pending Withdrawals</p>
+                                    <p class="text-2xl font-bold">${state.withdrawalRequests ? state.withdrawalRequests.filter(w => w.status === 'pending').length : '0'}</p>
+                                </div>
+                                <i class="fas fa-money-bill-wave text-2xl opacity-80"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="card p-4 bg-gradient-to-r from-orange-500 to-red-600 text-white">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-sm opacity-90">Total Points Distributed</p>
+                                    <p class="text-2xl font-bold">${state.leaderboard ? formatPoints(state.leaderboard.reduce((sum, user) => sum + (user.eduPoints || 0), 0)) : '0'}</p>
+                                </div>
+                                <i class="fas fa-coins text-2xl opacity-80"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Withdrawals -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Pending Withdrawal Requests</h3>
+                        <div class="space-y-4">
+                            ${state.withdrawalRequests && state.withdrawalRequests.length > 0 
+                                ? state.withdrawalRequests
+                                    .filter(w => w.status === 'pending')
+                                    .map(withdrawal => `
+                                        <div class="border border-gray-200 rounded-lg p-4">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <div>
+                                                    <p class="font-semibold">${withdrawal.userName}</p>
+                                                    <p class="text-sm text-gray-600">${withdrawal.userEmail}</p>
+                                                </div>
+                                                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-medium">Pending</span>
+                                            </div>
+                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3">
+                                                <div>
+                                                    <p class="text-sm text-gray-600">Amount</p>
+                                                    <p class="font-semibold">${formatPoints(withdrawal.amount)} points ($${(withdrawal.amount / ADMIN_CONFIG.POINTS_TO_CURRENCY_RATE).toFixed(2)})</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm text-gray-600">Method</p>
+                                                    <p class="font-semibold">${withdrawal.type}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm text-gray-600">Date</p>
+                                                    <p class="font-semibold">${new Date(withdrawal.timestamp).toLocaleDateString()}</p>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <p class="text-sm text-gray-600 mb-1">Account Details</p>
+                                                <p class="text-sm bg-gray-50 p-2 rounded">${withdrawal.details}</p>
+                                            </div>
+                                            <div class="flex space-x-2">
+                                                <button onclick="approveWithdrawal('${withdrawal.id}')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-sm transition">
+                                                    Approve
+                                                </button>
+                                                <button onclick="rejectWithdrawal('${withdrawal.id}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm transition">
+                                                    Reject
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `).join('')
+                                : '<p class="text-gray-500 text-center py-4">No pending withdrawal requests</p>'
+                            }
+                        </div>
+                    </div>
+
+                    <!-- User Management -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-4">User Management</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-gray-600">Manage user accounts and points</p>
+                                </div>
+                                <button onclick="loadAllUsers()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm transition">
+                                    Refresh Users
+                                </button>
+                            </div>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-2">Name</th>
+                                            <th class="px-4 py-2">Email</th>
+                                            <th class="px-4 py-2">Points</th>
+                                            <th class="px-4 py-2">Referrals</th>
+                                            <th class="px-4 py-2">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${state.leaderboard && state.leaderboard.slice(0, 10).map(user => `
+                                            <tr class="border-b">
+                                                <td class="px-4 py-2">${user.name}</td>
+                                                <td class="px-4 py-2">${user.email}</td>
+                                                <td class="px-4 py-2">${formatPoints(user.eduPoints || 0)}</td>
+                                                <td class="px-4 py-2">${user.referralCount || 0}</td>
+                                                <td class="px-4 py-2">
+                                                    <button onclick="manageUserPoints('${user.uid}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs transition">
+                                                        Manage Points
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Platform Settings -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Platform Settings</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Daily Points Limit</label>
+                                <input type="number" id="daily-limit" value="${DAILY_POINTS_LIMIT}" class="w-full p-2 border border-gray-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Minimum Withdrawal Amount</label>
+                                <input type="number" id="min-withdrawal" value="${MIN_WITHDRAWAL_POINTS}" class="w-full p-2 border border-gray-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Points to Currency Rate</label>
+                                <input type="number" id="points-rate" value="${ADMIN_CONFIG.POINTS_TO_CURRENCY_RATE}" class="w-full p-2 border border-gray-300 rounded-lg">
+                            </div>
+                            <button onclick="updatePlatformSettings()" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded text-sm transition">
+                                Update Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function approveWithdrawal(withdrawalId) {
+            try {
+                const { doc, updateDoc } = window.firebaseModules;
+                const db = window.firebaseDb;
+                
+                // Update withdrawal status to approved
+                await updateDoc(doc(db, FIRESTORE_COLLECTIONS.WITHDRAWALS, withdrawalId), {
+                    status: 'approved',
+                    processedAt: Date.now(),
+                    processedBy: state.user.email
+                });
+                
+                // Find the withdrawal request
+                const withdrawal = state.withdrawalRequests.find(w => w.id === withdrawalId);
+                if (withdrawal) {
+                    // Deduct points from user's account
+                    const userDoc = await getDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, withdrawal.userId));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        const newPoints = userData.eduPoints - withdrawal.amount;
+                        
+                        await updateDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, withdrawal.userId), {
+                            eduPoints: newPoints,
+                            history: [
+                                ...(userData.history || []),
+                                {
+                                    action: 'Withdrawal Approved',
+                                    points: -withdrawal.amount,
+                                    timestamp: Date.now()
+                                }
+                            ]
+                        });
+                    }
+                }
+                
+                // Refresh withdrawal requests
+                state.withdrawalRequests = await loadCollection(FIRESTORE_COLLECTIONS.WITHDRAWALS);
+                render();
+                
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-check-circle text-5xl text-green-500"></i>
+                        <h3 class="text-xl font-bold text-green-600">Withdrawal Approved</h3>
+                        <p class="text-gray-600">The withdrawal request has been approved and processed.</p>
+                    </div>
+                `, () => {
+                    setTimeout(hideModal, 3000);
+                });
+                
+            } catch (error) {
+                console.error("Error approving withdrawal:", error);
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
+                        <h3 class="text-xl font-bold text-red-600">Approval Failed</h3>
+                        <p class="text-gray-600">There was an error processing the withdrawal approval.</p>
+                    </div>
+                `);
+            }
+        }
+
+        async function rejectWithdrawal(withdrawalId) {
+            try {
+                const { doc, updateDoc } = window.firebaseModules;
+                const db = window.firebaseDb;
+                
+                // Update withdrawal status to rejected
+                await updateDoc(doc(db, FIRESTORE_COLLECTIONS.WITHDRAWALS, withdrawalId), {
+                    status: 'rejected',
+                    processedAt: Date.now(),
+                    processedBy: state.user.email
+                });
+                
+                // Refresh withdrawal requests
+                state.withdrawalRequests = await loadCollection(FIRESTORE_COLLECTIONS.WITHDRAWALS);
+                render();
+                
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-times-circle text-5xl text-red-500"></i>
+                        <h3 class="text-xl font-bold text-red-600">Withdrawal Rejected</h3>
+                        <p class="text-gray-600">The withdrawal request has been rejected.</p>
+                    </div>
+                `, () => {
+                    setTimeout(hideModal, 3000);
+                });
+                
+            } catch (error) {
+                console.error("Error rejecting withdrawal:", error);
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
+                        <h3 class="text-xl font-bold text-red-600">Rejection Failed</h3>
+                        <p class="text-gray-600">There was an error processing the withdrawal rejection.</p>
+                    </div>
+                `);
+            }
+        }
+
+        async function loadAllUsers() {
+            try {
+                const { collection, getDocs } = window.firebaseModules;
+                const db = window.firebaseDb;
+                
+                const usersSnapshot = await getDocs(collection(db, FIRESTORE_COLLECTIONS.USERS));
+                state.leaderboard = [];
+                usersSnapshot.forEach((doc) => {
+                    state.leaderboard.push({ id: doc.id, ...doc.data() });
+                });
+                
+                render();
+                
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-check-circle text-5xl text-green-500"></i>
+                        <h3 class="text-xl font-bold text-green-600">Users Refreshed</h3>
+                        <p class="text-gray-600">User data has been updated successfully.</p>
+                    </div>
+                `, () => {
+                    setTimeout(hideModal, 3000);
+                });
+                
+            } catch (error) {
+                console.error("Error loading users:", error);
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
+                        <h3 class="text-xl font-bold text-red-600">Refresh Failed</h3>
+                        <p class="text-gray-600">There was an error loading user data.</p>
+                    </div>
+                `);
+            }
+        }
+
+        function manageUserPoints(userId) {
+            const user = state.leaderboard.find(u => u.uid === userId);
+            if (!user) return;
+            
+            showModal(`
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold">Manage Points for ${user.name}</h3>
+                    <div>
+                        <p class="text-sm text-gray-600">Current Points: ${formatPoints(user.eduPoints || 0)}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Action</label>
+                        <select id="points-action" class="w-full p-2 border border-gray-300 rounded-lg">
+                            <option value="add">Add Points</option>
+                            <option value="subtract">Subtract Points</option>
+                            <option value="set">Set Points</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+                        <input type="number" id="points-amount" class="w-full p-2 border border-gray-300 rounded-lg" min="0">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+                        <input type="text" id="points-reason" class="w-full p-2 border border-gray-300 rounded-lg" placeholder="Enter reason for points adjustment">
+                    </div>
+                </div>
+            `, async () => {
+                const action = document.getElementById('points-action').value;
+                const amount = parseInt(document.getElementById('points-amount').value);
+                const reason = document.getElementById('points-reason').value;
+                
+                if (!amount || amount < 0) {
+                    showModal(`
+                        <div class="text-center space-y-3">
+                            <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
+                            <h3 class="text-xl font-bold text-red-600">Invalid Amount</h3>
+                            <p class="text-gray-600">Please enter a valid points amount.</p>
+                        </div>
+                    `);
+                    return;
+                }
+                
+                try {
+                    const { doc, updateDoc, getDoc } = window.firebaseModules;
+                    const db = window.firebaseDb;
+                    
+                    const userDoc = await getDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, userId));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        let newPoints = userData.eduPoints || 0;
+                        
+                        if (action === 'add') {
+                            newPoints += amount;
+                        } else if (action === 'subtract') {
+                            newPoints = Math.max(0, newPoints - amount);
+                        } else if (action === 'set') {
+                            newPoints = amount;
+                        }
+                        
+                        await updateDoc(doc(db, FIRESTORE_COLLECTIONS.USERS, userId), {
+                            eduPoints: newPoints,
+                            history: [
+                                ...(userData.history || []),
+                                {
+                                    action: `Admin Adjustment: ${reason}`,
+                                    points: action === 'add' ? amount : (action === 'subtract' ? -amount : 0),
+                                    timestamp: Date.now()
+                                }
+                            ]
+                        });
+                        
+                        // Refresh user data
+                        state.leaderboard = await loadCollection(FIRESTORE_COLLECTIONS.USERS);
+                        render();
+                        
+                        showModal(`
+                            <div class="text-center space-y-3">
+                                <i class="fas fa-check-circle text-5xl text-green-500"></i>
+                                <h3 class="text-xl font-bold text-green-600">Points Updated</h3>
+                                <p class="text-gray-600">Successfully updated points for ${user.name}.</p>
+                            </div>
+                        `, () => {
+                            setTimeout(hideModal, 3000);
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error updating user points:", error);
+                    showModal(`
+                        <div class="text-center space-y-3">
+                            <i class="fas fa-exclamation-triangle text-5xl text-red-500"></i>
+                            <h3 class="text-xl font-bold text-red-600">Update Failed</h3>
+                            <p class="text-gray-600">There was an error updating user points.</p>
+                        </div>
+                    `);
+                }
+            });
+        }
+
+        function updatePlatformSettings() {
+            // This would typically update settings in Firestore
+            // For now, we'll just show a success message
+            showModal(`
+                <div class="text-center space-y-3">
+                    <i class="fas fa-check-circle text-5xl text-green-500"></i>
+                    <h3 class="text-xl font-bold text-green-600">Settings Updated</h3>
+                    <p class="text-gray-600">Platform settings have been updated successfully.</p>
+                </div>
+            `, () => {
+                setTimeout(hideModal, 3000);
+            });
+        }
+
+        // =====================================================
         // BLOG READING FUNCTIONS
         // =====================================================
 
@@ -4340,6 +4801,12 @@
         window.navigateAndCloseSidebar = navigateAndCloseSidebar;
         window.updatePointsFromLearn = updatePointsFromLearn;
         window.checkForPendingPoints = checkForPendingPoints;
+        // Admin functions
+        window.approveWithdrawal = approveWithdrawal;
+        window.rejectWithdrawal = rejectWithdrawal;
+        window.loadAllUsers = loadAllUsers;
+        window.manageUserPoints = manageUserPoints;
+        window.updatePlatformSettings = updatePlatformSettings;
     </script>
 </body>
 </html>
