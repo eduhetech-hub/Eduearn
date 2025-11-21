@@ -101,6 +101,11 @@
             border-radius: 4px;
             transition: width 0.5s ease;
         }
+        
+        .ai-verification-badge {
+            background: linear-gradient(45deg, #8b5cf6, #a855f7);
+            color: white;
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -120,7 +125,7 @@
                         <i class="fas fa-coins text-yellow-500"></i>
                         <span class="font-semibold" id="user-points">0</span>
                     </div>
-                    <span class="text-sm text-gray-600">Earn 500 points per course</span>
+                    <span class="text-sm text-gray-600">Earn 2000 points per course</span>
                 </div>
             </div>
         </div>
@@ -132,9 +137,13 @@
         <div class="text-center mb-12">
             <h1 class="text-4xl font-bold text-gray-800 mb-4">Learn & Earn Portal</h1>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                Complete courses on Alison and earn 500 EduPoints for each verified completion. 
+                Complete courses on Alison and earn 2000 EduPoints for each verified completion. 
                 Expand your skills while earning rewards!
             </p>
+            <div class="mt-4 flex items-center justify-center space-x-2">
+                <i class="fas fa-robot text-purple-500"></i>
+                <span class="text-sm text-purple-600 font-medium">Powered by DeepSeek AI Certificate Verification</span>
+            </div>
         </div>
 
         <!-- Progress Section -->
@@ -144,7 +153,7 @@
                     <i class="fas fa-book-open"></i>
                 </div>
                 <h3 class="text-lg font-semibold mb-2">Courses Available</h3>
-                <p class="text-3xl font-bold text-blue-600" id="total-courses">30</p>
+                <p class="text-3xl font-bold text-blue-600" id="total-courses">50</p>
             </div>
             
             <div class="card p-6 text-center">
@@ -167,7 +176,7 @@
         <!-- How It Works -->
         <div class="card p-6 mb-8">
             <h2 class="text-2xl font-bold mb-6">How It Works</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div class="text-center p-4">
                     <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">1</div>
                     <h4 class="font-semibold mb-2">Complete Course</h4>
@@ -180,8 +189,13 @@
                 </div>
                 <div class="text-center p-4">
                     <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">3</div>
-                    <h4 class="font-semibold mb-2">Upload & Earn</h4>
-                    <p class="text-sm text-gray-600">Submit screenshot for verification and get 500 points</p>
+                    <h4 class="font-semibold mb-2">AI Verification</h4>
+                    <p class="text-sm text-gray-600">DeepSeek AI analyzes your certificate for authenticity</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="w-12 h-12 bg-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">4</div>
+                    <h4 class="font-semibold mb-2">Get Rewarded</h4>
+                    <p class="text-sm text-gray-600">Receive 2000 points after successful verification</p>
                 </div>
             </div>
         </div>
@@ -208,6 +222,12 @@
                 <button class="category-filter px-4 py-2 bg-gray-200 text-gray-700 rounded-lg transition hover:bg-gray-300" data-category="marketing">
                     Marketing
                 </button>
+                <button class="category-filter px-4 py-2 bg-gray-200 text-gray-700 rounded-lg transition hover:bg-gray-300" data-category="design">
+                    Design
+                </button>
+                <button class="category-filter px-4 py-2 bg-gray-200 text-gray-700 rounded-lg transition hover:bg-gray-300" data-category="finance">
+                    Finance
+                </button>
             </div>
         </div>
 
@@ -227,7 +247,7 @@
                 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Upload Screenshot</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Upload Certificate Screenshot</label>
                         <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition" id="upload-area">
                             <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
                             <p class="text-sm text-gray-600">Click to upload screenshot of your certificate</p>
@@ -246,6 +266,16 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">Completion Date</label>
                         <input type="date" id="completion-date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                     </div>
+                    
+                    <div id="ai-verification-status" class="hidden">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fas fa-robot text-purple-500 mr-2"></i>
+                                <span class="text-sm font-medium">AI Verification</span>
+                            </div>
+                            <div id="verification-result" class="text-sm"></div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="flex justify-end space-x-2 pt-4">
@@ -259,15 +289,84 @@
             </div>
         </div>
 
+        <!-- AI Verification Modal -->
+        <div id="ai-verification-modal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4 z-50">
+            <div class="card w-full max-w-md p-6 space-y-4 slide-in">
+                <div class="text-center">
+                    <i class="fas fa-robot text-4xl text-purple-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">AI Certificate Verification</h3>
+                    <p class="text-gray-600">DeepSeek AI is analyzing your certificate...</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex justify-center">
+                        <div class="loader"></div>
+                    </div>
+                    
+                    <div id="verification-steps" class="space-y-2">
+                        <div class="flex items-center text-sm">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span>Certificate image uploaded</span>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <i class="fas fa-spinner text-blue-500 mr-2"></i>
+                            <span>Extracting text from certificate</span>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <i class="fas fa-circle text-gray-300 mr-2"></i>
+                            <span>Verifying certificate authenticity</span>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <i class="fas fa-circle text-gray-300 mr-2"></i>
+                            <span>Cross-referencing with course data</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Success Modal -->
         <div id="success-modal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4 z-50">
             <div class="card w-full max-w-sm p-6 space-y-4 text-center slide-in">
                 <i class="fas fa-check-circle text-5xl text-green-500 mb-2"></i>
-                <h3 class="text-xl font-bold text-green-600">Verification Submitted!</h3>
-                <p class="text-gray-600">Your course completion has been submitted for verification.</p>
-                <p class="text-sm text-green-600">You'll receive 500 points once verified!</p>
+                <h3 class="text-xl font-bold text-green-600">Verification Successful!</h3>
+                <p class="text-gray-600">Your course completion has been verified by DeepSeek AI.</p>
+                <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-robot text-purple-500"></i>
+                    <span class="text-sm text-purple-600">AI Verified Certificate</span>
+                </div>
+                <p class="text-sm text-green-600">You've earned 2000 points!</p>
                 <button onclick="hideSuccessModal()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg transition">
                     Continue Learning
+                </button>
+            </div>
+        </div>
+
+        <!-- Verification Failed Modal -->
+        <div id="verification-failed-modal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4 z-50">
+            <div class="card w-full max-w-sm p-6 space-y-4 text-center slide-in">
+                <i class="fas fa-times-circle text-5xl text-red-500 mb-2"></i>
+                <h3 class="text-xl font-bold text-red-600">Verification Failed</h3>
+                <p class="text-gray-600" id="verification-failed-reason">The certificate could not be verified.</p>
+                <div class="text-sm text-red-500">
+                    <p>Possible reasons:</p>
+                    <ul class="mt-2 text-left">
+                        <li class="flex items-center mb-1">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            Certificate image is unclear
+                        </li>
+                        <li class="flex items-center mb-1">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            Certificate details don't match
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            Unable to verify authenticity
+                        </li>
+                    </ul>
+                </div>
+                <button onclick="hideVerificationFailedModal()" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition">
+                    Try Again
                 </button>
             </div>
         </div>
@@ -282,8 +381,13 @@
     </div>
 
     <script>
-        // Course Data
+        // DeepSeek API Configuration
+        const DEEPSEEK_API_KEY = 'YOUR_DEEPSEEK_API_KEY'; // Replace with your actual API key
+        const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
+        
+        // Course Data - 50 courses with 2000 points each
         const COURSES = [
+            // Business Courses
             {
                 id: 'project-management',
                 title: 'Diploma in Project Management',
@@ -292,8 +396,80 @@
                 description: 'Learn essential project management skills and methodologies.',
                 duration: '10-15 hours',
                 level: 'Intermediate',
-                points: 500
+                points: 2000
             },
+            {
+                id: 'business-administration',
+                title: 'Diploma in Business Administration',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-business-administration?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Comprehensive business administration fundamentals and practices.',
+                duration: '15-20 hours',
+                level: 'Intermediate',
+                points: 2000
+            },
+            {
+                id: 'human-resources',
+                title: 'Diploma in Human Resources',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-human-resources?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Master HR management, recruitment, and employee relations.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 2000
+            },
+            {
+                id: 'operations-management',
+                title: 'Diploma in Operations Management',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-operations-management-ops?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn operations management principles and supply chain optimization.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 2000
+            },
+            {
+                id: 'strategic-management',
+                title: 'Strategic Management',
+                category: 'business',
+                url: 'https://alison.com/course/strategic-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Develop strategic thinking and business planning skills.',
+                duration: '8-10 hours',
+                level: 'Advanced',
+                points: 2000
+            },
+            {
+                id: 'services-management',
+                title: 'Services Management',
+                category: 'business',
+                url: 'https://alison.com/course/services-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn to manage service-based businesses effectively.',
+                duration: '8-10 hours',
+                level: 'Intermediate',
+                points: 2000
+            },
+            {
+                id: 'supply-chain-management',
+                title: 'Supply Chain Management',
+                category: 'business',
+                url: 'https://alison.com/course/supply-chain-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Master supply chain logistics and inventory management.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 2000
+            },
+            {
+                id: 'applied-operations-management',
+                title: 'Applied Operations Management',
+                category: 'business',
+                url: 'https://alison.com/course/applied-operations-management-inventory-models?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Advanced operations management with inventory models.',
+                duration: '12-15 hours',
+                level: 'Advanced',
+                points: 2000
+            },
+
+            // Technology Courses
             {
                 id: 'ethical-hacking',
                 title: 'Diploma in Ethical Hacking',
@@ -302,8 +478,50 @@
                 description: 'Master the skills needed to become an ethical hacker and cybersecurity expert.',
                 duration: '15-20 hours',
                 level: 'Advanced',
-                points: 500
+                points: 2000
             },
+            {
+                id: 'cryptocurrency',
+                title: 'Diploma in Cryptocurrency',
+                category: 'technology',
+                url: 'https://alison.com/course/diploma-in-cryptocurrency?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Comprehensive understanding of cryptocurrency and blockchain technology.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 2000
+            },
+            {
+                id: 'python-pentesters',
+                title: 'Python for Pentesters',
+                category: 'technology',
+                url: 'https://alison.com/course/python-for-pentesters?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn Python programming for penetration testing and security.',
+                duration: '12-15 hours',
+                level: 'Advanced',
+                points: 2000
+            },
+            {
+                id: 'autocad-training',
+                title: 'AutoCAD Beginner to Professional',
+                category: 'technology',
+                url: 'https://alison.com/course/autocad-beginner-to-professional-training?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Complete AutoCAD training from basics to professional level.',
+                duration: '15-20 hours',
+                level: 'All Levels',
+                points: 2000
+            },
+            {
+                id: 'electrical-engineering',
+                title: 'Electrical Transformer Components',
+                category: 'technology',
+                url: 'https://alison.com/course/electrical-engineering-electrical-transformer-components?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn about electrical transformer components and operations.',
+                duration: '8-10 hours',
+                level: 'Intermediate',
+                points: 2000
+            },
+
+            // Health & Safety Courses
             {
                 id: 'cpr-first-aid',
                 title: 'CPR, AED and First Aid',
@@ -312,57 +530,7 @@
                 description: 'Learn life-saving techniques including CPR and automated external defibrillator use.',
                 duration: '6-8 hours',
                 level: 'Beginner',
-                points: 500
-            },
-            {
-                id: 'business-administration',
-                title: 'Diploma in Business Administration',
-                category: 'business',
-                url: 'https://alison.com/course/diploma-in-business-administration?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Comprehensive business administration principles and practices.',
-                duration: '12-15 hours',
-                level: 'Intermediate',
-                points: 500
-            },
-            {
-                id: 'human-resources',
-                title: 'Diploma in Human Resources',
-                category: 'business',
-                url: 'https://alison.com/course/diploma-in-human-resources?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Essential HR management skills and best practices.',
-                duration: '10-12 hours',
-                level: 'Intermediate',
-                points: 500
-            },
-            {
-                id: 'cryptocurrency',
-                title: 'Diploma in Cryptocurrency',
-                category: 'technology',
-                url: 'https://alison.com/course/diploma-in-cryptocurrency?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Understand cryptocurrency, blockchain technology, and digital assets.',
-                duration: '8-10 hours',
-                level: 'Intermediate',
-                points: 500
-            },
-            {
-                id: 'operations-management',
-                title: 'Diploma in Operations Management',
-                category: 'business',
-                url: 'https://alison.com/course/diploma-in-operations-management-ops?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Learn operations management principles and supply chain optimization.',
-                duration: '12-15 hours',
-                level: 'Intermediate',
-                points: 500
-            },
-            {
-                id: 'facebook-marketing',
-                title: 'Facebook Marketing and Marketplace',
-                category: 'marketing',
-                url: 'https://alison.com/course/foundations-of-facebook-marketing-and-marketplace?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Master Facebook marketing strategies and Marketplace selling.',
-                duration: '6-8 hours',
-                level: 'Beginner',
-                points: 500
+                points: 2000
             },
             {
                 id: 'caregiving',
@@ -370,209 +538,111 @@
                 category: 'health',
                 url: 'https://alison.com/course/diploma-in-caregiving?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
                 description: 'Professional caregiving skills for various healthcare settings.',
-                duration: '10-12 hours',
+                duration: '12-15 hours',
                 level: 'Intermediate',
-                points: 500
+                points: 2000
             },
             {
                 id: 'elderly-care',
-                title: 'Elderly Care and Disability Care',
+                title: 'Elderly Care and Caring for the Disabled',
                 category: 'health',
                 url: 'https://alison.com/course/elderly-care-and-caring-for-the-disabled?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
                 description: 'Specialized care techniques for elderly and disabled individuals.',
-                duration: '8-10 hours',
-                level: 'Intermediate',
-                points: 500
-            },
-            {
-                id: 'japanese-language',
-                title: 'Diploma in Japanese Language',
-                category: 'language',
-                url: 'https://alison.com/course/diploma-in-japanese-language?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Comprehensive Japanese language learning from basics to advanced.',
-                duration: '15-20 hours',
-                level: 'Beginner to Advanced',
-                points: 500
-            },
-            {
-                id: 'sales-techniques',
-                title: 'Sales Techniques and Strategies',
-                category: 'business',
-                url: 'https://alison.com/course/sales-techniques-using-competitive-sales-strategies?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Advanced sales techniques and competitive strategies.',
-                duration: '6-8 hours',
-                level: 'Intermediate',
-                points: 500
-            },
-            {
-                id: 'python-pentesters',
-                title: 'Python for Pentesters',
-                category: 'technology',
-                url: 'https://alison.com/course/python-for-pentesters?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Python programming for penetration testing and cybersecurity.',
                 duration: '10-12 hours',
-                level: 'Advanced',
-                points: 500
+                level: 'Intermediate',
+                points: 2000
             },
             {
-                id: 'autocad-training',
-                title: 'AutoCAD Beginner to Professional',
-                category: 'technology',
-                url: 'https://alison.com/course/autocad-beginner-to-professional-training?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Complete AutoCAD training from beginner to professional level.',
-                duration: '15-20 hours',
-                level: 'Beginner to Advanced',
-                points: 500
-            },
-            {
-                id: 'accounting-basics',
-                title: 'Accounting Basics',
-                category: 'business',
-                url: 'https://alison.com/course/accounting-basics?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Fundamental accounting principles and practices.',
-                duration: '8-10 hours',
-                level: 'Beginner',
-                points: 500
-            },
-            {
-                id: 'online-marketing',
-                title: 'Online Marketing Strategies',
-                category: 'marketing',
-                url: 'https://alison.com/course/introduction-to-online-marketing-strategies?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Comprehensive online marketing strategies and implementation.',
-                duration: '6-8 hours',
-                level: 'Beginner',
-                points: 500
-            },
-            {
-                id: 'cardiac-life-support',
-                title: 'Advanced Cardiac Life Support',
+                id: 'advanced-cardiac-life-support',
+                title: 'Advanced Cardiac Life Support (ACLS)',
                 category: 'health',
                 url: 'https://alison.com/course/advanced-cardiac-life-support-acls?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
                 description: 'Advanced life support techniques for cardiac emergencies.',
                 duration: '8-10 hours',
                 level: 'Advanced',
-                points: 500
+                points: 2000
             },
             {
                 id: 'pediatric-life-support',
-                title: 'Pediatric Advanced Life Support',
+                title: 'Pediatric Advanced Life Support (PALS)',
                 category: 'health',
                 url: 'https://alison.com/course/pediatric-advanced-life-support-pals?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Specialized life support for pediatric patients.',
+                description: 'Specialized life support techniques for pediatric patients.',
                 duration: '8-10 hours',
                 level: 'Advanced',
-                points: 500
+                points: 2000
             },
             {
                 id: 'construction-safety',
                 title: 'Construction Safety and Health',
                 category: 'health',
                 url: 'https://alison.com/course/construction-safety-and-health?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Safety protocols and health standards in construction.',
+                description: 'Safety protocols and health standards for construction sites.',
                 duration: '6-8 hours',
                 level: 'Beginner',
-                points: 500
-            },
-            {
-                id: 'quickbooks-pro',
-                title: 'Getting Started in QuickBooks Pro',
-                category: 'business',
-                url: 'https://alison.com/course/getting-started-in-quickbooks-pro?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Complete QuickBooks Pro training for business accounting.',
-                duration: '10-12 hours',
-                level: 'Beginner',
-                points: 500
-            },
-            {
-                id: 'digital-advertising',
-                title: 'Digital Advertising and Marketing',
-                category: 'marketing',
-                url: 'https://alison.com/course/digital-advertising-and-marketing-201?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Advanced digital advertising strategies and platforms.',
-                duration: '8-10 hours',
-                level: 'Intermediate',
-                points: 500
-            },
-            {
-                id: 'sales-funnel',
-                title: 'Basics of the Sales Funnel',
-                category: 'marketing',
-                url: 'https://alison.com/course/basics-of-the-sales-funnel?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Understanding and optimizing sales funnels.',
-                duration: '4-6 hours',
-                level: 'Beginner',
-                points: 500
-            },
-            {
-                id: 'operations-management-inventory',
-                title: 'Applied Operations Management',
-                category: 'business',
-                url: 'https://alison.com/course/applied-operations-management-inventory-models?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Inventory management models and operations optimization.',
-                duration: '6-8 hours',
-                level: 'Intermediate',
-                points: 500
-            },
-            {
-                id: 'digital-photography',
-                title: 'Introduction to Digital Photography',
-                category: 'technology',
-                url: 'https://alison.com/course/introduction-to-digital-photography?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Fundamentals of digital photography and camera techniques.',
-                duration: '6-8 hours',
-                level: 'Beginner',
-                points: 500
-            },
-            {
-                id: 'supply-chain-management',
-                title: 'Supply Chain Management',
-                category: 'business',
-                url: 'https://alison.com/course/supply-chain-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Comprehensive supply chain management principles.',
-                duration: '8-10 hours',
-                level: 'Intermediate',
-                points: 500
-            },
-            {
-                id: 'strategic-management',
-                title: 'Strategic Management',
-                category: 'business',
-                url: 'https://alison.com/course/strategic-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Strategic planning and business management techniques.',
-                duration: '10-12 hours',
-                level: 'Advanced',
-                points: 500
-            },
-            {
-                id: 'services-management',
-                title: 'Services Management',
-                category: 'business',
-                url: 'https://alison.com/course/services-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Management principles for service-based businesses.',
-                duration: '8-10 hours',
-                level: 'Intermediate',
-                points: 500
+                points: 2000
             },
             {
                 id: 'anger-management',
                 title: 'Anger Management and Conflict Resolution',
                 category: 'health',
                 url: 'https://alison.com/course/anger-management-and-conflict-resolution?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Techniques for managing anger and resolving conflicts.',
-                duration: '4-6 hours',
+                description: 'Techniques for managing anger and resolving conflicts effectively.',
+                duration: '6-8 hours',
                 level: 'Beginner',
-                points: 500
+                points: 2000
+            },
+
+            // Marketing Courses
+            {
+                id: 'facebook-marketing',
+                title: 'Foundations of Facebook Marketing',
+                category: 'marketing',
+                url: 'https://alison.com/course/foundations-of-facebook-marketing-and-marketplace?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Master Facebook marketing strategies and marketplace techniques.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 2000
             },
             {
-                id: 'electrical-engineering',
-                title: 'Electrical Transformer Components',
-                category: 'technology',
-                url: 'https://alison.com/course/electrical-engineering-electrical-transformer-components?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Electrical engineering focusing on transformer technology.',
-                duration: '6-8 hours',
+                id: 'sales-techniques',
+                title: 'Sales Techniques Using Competitive Strategies',
+                category: 'marketing',
+                url: 'https://alison.com/course/sales-techniques-using-competitive-sales-strategies?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Advanced sales techniques and competitive strategy implementation.',
+                duration: '10-12 hours',
                 level: 'Intermediate',
-                points: 500
+                points: 2000
+            },
+            {
+                id: 'online-marketing',
+                title: 'Introduction to Online Marketing Strategies',
+                category: 'marketing',
+                url: 'https://alison.com/course/introduction-to-online-marketing-strategies?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fundamental online marketing strategies and digital advertising.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'digital-advertising',
+                title: 'Digital Advertising and Marketing 201',
+                category: 'marketing',
+                url: 'https://alison.com/course/digital-advertising-and-marketing-201?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Advanced digital advertising concepts and marketing techniques.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 2000
+            },
+            {
+                id: 'sales-funnel',
+                title: 'Basics of the Sales Funnel',
+                category: 'marketing',
+                url: 'https://alison.com/course/basics-of-the-sales-funnel?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Understanding and optimizing sales funnels for business growth.',
+                duration: '6-8 hours',
+                level: 'Beginner',
+                points: 2000
             },
             {
                 id: 'affiliate-marketing',
@@ -580,9 +650,257 @@
                 category: 'marketing',
                 url: 'https://alison.com/course/master-affiliate-marketing-with-this-step-by-step-guide?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
                 description: 'Step-by-step guide to successful affiliate marketing.',
+                duration: '10-12 hours',
+                level: 'All Levels',
+                points: 2000
+            },
+
+            // Language Courses
+            {
+                id: 'japanese-language',
+                title: 'Diploma in Japanese Language',
+                category: 'language',
+                url: 'https://alison.com/course/diploma-in-japanese-language?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Comprehensive Japanese language learning from beginner to intermediate.',
+                duration: '15-20 hours',
+                level: 'All Levels',
+                points: 2000
+            },
+
+            // Design Courses
+            {
+                id: 'digital-photography',
+                title: 'Introduction to Digital Photography',
+                category: 'design',
+                url: 'https://alison.com/course/introduction-to-digital-photography?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fundamentals of digital photography and camera techniques.',
                 duration: '8-10 hours',
-                level: 'Beginner to Advanced',
-                points: 500
+                level: 'Beginner',
+                points: 2000
+            },
+
+            // Finance Courses
+            {
+                id: 'accounting-basics',
+                title: 'Accounting Basics',
+                category: 'finance',
+                url: 'https://alison.com/course/accounting-basics?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fundamental accounting principles and bookkeeping practices.',
+                duration: '10-12 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'quickbooks-pro',
+                title: 'Getting Started in QuickBooks Pro',
+                category: 'finance',
+                url: 'https://alison.com/course/getting-started-in-quickbooks-pro?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Complete guide to using QuickBooks Pro for business accounting.',
+                duration: '12-15 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+
+            // Additional Courses to reach 50
+            {
+                id: 'social-media-management',
+                title: 'Social Media Management',
+                category: 'marketing',
+                url: 'https://alison.com/course/social-media-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn to manage and optimize social media presence for businesses.',
+                duration: '8-10 hours',
+                level: 'Intermediate',
+                points: 2000
+            },
+            {
+                id: 'data-analysis',
+                title: 'Introduction to Data Analysis',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-data-analysis?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fundamental data analysis techniques and tools.',
+                duration: '10-12 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'web-design',
+                title: 'Web Design Fundamentals',
+                category: 'design',
+                url: 'https://alison.com/course/web-design-fundamentals?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn the basics of web design and user experience principles.',
+                duration: '10-12 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'personal-finance',
+                title: 'Personal Finance Management',
+                category: 'finance',
+                url: 'https://alison.com/course/personal-finance-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Strategies for managing personal finances and investments.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'leadership-development',
+                title: 'Leadership Development',
+                category: 'business',
+                url: 'https://alison.com/course/leadership-development?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Develop essential leadership skills for management roles.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 2000
+            },
+            {
+                id: 'cybersecurity-fundamentals',
+                title: 'Cybersecurity Fundamentals',
+                category: 'technology',
+                url: 'https://alison.com/course/cybersecurity-fundamentals?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Basic cybersecurity principles and protection methods.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'nutrition-basics',
+                title: 'Nutrition Basics',
+                category: 'health',
+                url: 'https://alison.com/course/nutrition-basics?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fundamental principles of nutrition and healthy eating.',
+                duration: '6-8 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'english-business-communication',
+                title: 'English for Business Communication',
+                category: 'language',
+                url: 'https://alison.com/course/english-for-business-communication?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Improve English communication skills for business contexts.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 2000
+            },
+            {
+                id: 'graphic-design',
+                title: 'Graphic Design Fundamentals',
+                category: 'design',
+                url: 'https://alison.com/course/graphic-design-fundamentals?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn basic graphic design principles and software tools.',
+                duration: '12-15 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'entrepreneurship-fundamentals',
+                title: 'Entrepreneurship Fundamentals',
+                category: 'business',
+                url: 'https://alison.com/course/entrepreneurship-fundamentals?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Essential knowledge for starting and running a business.',
+                duration: '10-12 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'mobile-app-development',
+                title: 'Mobile App Development Basics',
+                category: 'technology',
+                url: 'https://alison.com/course/mobile-app-development-basics?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Introduction to mobile app development for beginners.',
+                duration: '12-15 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'mental-health-first-aid',
+                title: 'Mental Health First Aid',
+                category: 'health',
+                url: 'https://alison.com/course/mental-health-first-aid?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn to provide initial support for mental health issues.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'spanish-beginners',
+                title: 'Spanish for Beginners',
+                category: 'language',
+                url: 'https://alison.com/course/spanish-for-beginners?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Basic Spanish language skills for everyday communication.',
+                duration: '12-15 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'content-writing',
+                title: 'Content Writing Fundamentals',
+                category: 'marketing',
+                url: 'https://alison.com/course/content-writing-fundamentals?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn professional content writing techniques and strategies.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'financial-planning',
+                title: 'Financial Planning Basics',
+                category: 'finance',
+                url: 'https://alison.com/course/financial-planning-basics?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fundamental financial planning principles for individuals.',
+                duration: '10-12 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'python-programming',
+                title: 'Python Programming for Beginners',
+                category: 'technology',
+                url: 'https://alison.com/course/python-programming-for-beginners?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn Python programming from scratch.',
+                duration: '12-15 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'time-management',
+                title: 'Effective Time Management',
+                category: 'business',
+                url: 'https://alison.com/course/effective-time-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Strategies for better time management and productivity.',
+                duration: '6-8 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'public-speaking',
+                title: 'Public Speaking Skills',
+                category: 'business',
+                url: 'https://alison.com/course/public-speaking-skills?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Develop confidence and skills for effective public speaking.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'customer-service',
+                title: 'Customer Service Excellence',
+                category: 'business',
+                url: 'https://alison.com/course/customer-service-excellence?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn to deliver outstanding customer service experiences.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 2000
+            },
+            {
+                id: 'digital-literacy',
+                title: 'Digital Literacy Fundamentals',
+                category: 'technology',
+                url: 'https://alison.com/course/digital-literacy-fundamentals?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Essential digital skills for the modern workplace.',
+                duration: '6-8 hours',
+                level: 'Beginner',
+                points: 2000
             }
         ];
 
@@ -591,18 +909,23 @@
             userPoints: 0,
             completedCourses: [],
             currentCourse: null,
-            uploadedScreenshot: null
+            uploadedScreenshot: null,
+            aiVerificationInProgress: false
         };
 
         // DOM Elements
         const coursesContainer = document.getElementById('courses-container');
         const verificationModal = document.getElementById('verification-modal');
+        const aiVerificationModal = document.getElementById('ai-verification-modal');
         const successModal = document.getElementById('success-modal');
+        const verificationFailedModal = document.getElementById('verification-failed-modal');
         const uploadArea = document.getElementById('upload-area');
         const screenshotUpload = document.getElementById('screenshot-upload');
         const uploadPreview = document.getElementById('upload-preview');
         const previewImage = document.getElementById('preview-image');
         const submitVerificationBtn = document.getElementById('submit-verification');
+        const aiVerificationStatus = document.getElementById('ai-verification-status');
+        const verificationResult = document.getElementById('verification-result');
 
         // Initialize the application
         function init() {
@@ -731,6 +1054,16 @@
             resetVerificationForm();
         }
 
+        // Show AI verification modal
+        function showAIVerificationModal() {
+            aiVerificationModal.classList.remove('hidden');
+        }
+
+        // Hide AI verification modal
+        function hideAIVerificationModal() {
+            aiVerificationModal.classList.add('hidden');
+        }
+
         // Show success modal
         function showSuccessModal() {
             successModal.classList.remove('hidden');
@@ -741,6 +1074,17 @@
             successModal.classList.add('hidden');
         }
 
+        // Show verification failed modal
+        function showVerificationFailedModal(reason) {
+            document.getElementById('verification-failed-reason').textContent = reason;
+            verificationFailedModal.classList.remove('hidden');
+        }
+
+        // Hide verification failed modal
+        function hideVerificationFailedModal() {
+            verificationFailedModal.classList.add('hidden');
+        }
+
         // Reset verification form
         function resetVerificationForm() {
             uploadPreview.classList.add('hidden');
@@ -748,6 +1092,7 @@
             document.getElementById('completion-date').value = '';
             submitVerificationBtn.disabled = true;
             state.uploadedScreenshot = null;
+            aiVerificationStatus.classList.add('hidden');
         }
 
         // Setup event listeners
@@ -804,6 +1149,9 @@
                 uploadPreview.classList.remove('hidden');
                 state.uploadedScreenshot = file;
                 validateForm();
+                
+                // Run AI verification on upload
+                runAIVerification(file);
             };
             reader.readAsDataURL(file);
         }
@@ -814,6 +1162,7 @@
             screenshotUpload.value = '';
             state.uploadedScreenshot = null;
             validateForm();
+            aiVerificationStatus.classList.add('hidden');
         }
 
         // Validate verification form
@@ -824,33 +1173,227 @@
             submitVerificationBtn.disabled = !(hasScreenshot && hasDate);
         }
 
+        // Run AI verification on the uploaded certificate
+        async function runAIVerification(file) {
+            // Show AI verification status
+            aiVerificationStatus.classList.remove('hidden');
+            verificationResult.innerHTML = '<span class="text-blue-500">Analyzing certificate...</span>';
+            
+            try {
+                // Convert image to base64 for API
+                const base64Image = await fileToBase64(file);
+                
+                // Prepare the prompt for DeepSeek
+                const prompt = `
+                    Analyze this certificate image and verify its authenticity. 
+                    Check for:
+                    1. Certificate title/name
+                    2. Issuing organization (should be Alison)
+                    3. Student/recipient name
+                    4. Completion date
+                    5. Any security features or authenticity markers
+                    
+                    Please provide a verification result with:
+                    - Overall authenticity confidence (0-100%)
+                    - Key findings
+                    - Any red flags or inconsistencies
+                    - Final verification decision (verified/not verified)
+                    
+                    Format your response as JSON:
+                    {
+                        "authenticity_confidence": number,
+                        "verified": boolean,
+                        "key_findings": string[],
+                        "red_flags": string[],
+                        "recommendation": string
+                    }
+                `;
+                
+                // Call DeepSeek API
+                const verificationResult = await callDeepSeekAPI(prompt, base64Image);
+                
+                // Display the result
+                displayVerificationResult(verificationResult);
+                
+            } catch (error) {
+                console.error('AI Verification Error:', error);
+                verificationResult.innerHTML = `
+                    <span class="text-red-500">
+                        <i class="fas fa-exclamation-triangle mr-1"></i>Verification failed
+                    </span>
+                `;
+            }
+        }
+
+        // Convert file to base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    // Remove the data:image/...;base64, prefix
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // Call DeepSeek API for certificate verification
+        async function callDeepSeekAPI(prompt, base64Image) {
+            const response = await fetch(DEEPSEEK_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: "deepseek-chat",
+                    messages: [
+                        {
+                            role: "user",
+                            content: [
+                                {
+                                    type: "text",
+                                    text: prompt
+                                },
+                                {
+                                    type: "image_url",
+                                    image_url: {
+                                        url: `data:image/jpeg;base64,${base64Image}`
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    max_tokens: 1000,
+                    temperature: 0.1
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`API call failed: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            
+            // Extract and parse the JSON response
+            const content = data.choices[0].message.content;
+            
+            try {
+                // Try to parse the JSON response
+                const jsonMatch = content.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    return JSON.parse(jsonMatch[0]);
+                } else {
+                    // Fallback: create a structured response from the text
+                    return {
+                        authenticity_confidence: content.toLowerCase().includes('verified') ? 85 : 30,
+                        verified: content.toLowerCase().includes('verified'),
+                        key_findings: ['Certificate analysis completed'],
+                        red_flags: content.toLowerCase().includes('suspicious') ? ['Potential authenticity issues'] : [],
+                        recommendation: content
+                    };
+                }
+            } catch (parseError) {
+                console.error('JSON Parse Error:', parseError);
+                // Fallback response
+                return {
+                    authenticity_confidence: 50,
+                    verified: false,
+                    key_findings: ['Unable to parse verification result'],
+                    red_flags: ['Analysis incomplete'],
+                    recommendation: 'Please try again with a clearer certificate image'
+                };
+            }
+        }
+
+        // Display verification result
+        function displayVerificationResult(result) {
+            if (result.verified && result.authenticity_confidence > 70) {
+                verificationResult.innerHTML = `
+                    <span class="text-green-500">
+                        <i class="fas fa-check-circle mr-1"></i>Certificate Verified
+                    </span>
+                    <span class="text-xs text-gray-500 ml-2">${result.authenticity_confidence}% confidence</span>
+                `;
+            } else {
+                verificationResult.innerHTML = `
+                    <span class="text-red-500">
+                        <i class="fas fa-exclamation-triangle mr-1"></i>Verification Failed
+                    </span>
+                    <span class="text-xs text-gray-500 ml-2">${result.authenticity_confidence}% confidence</span>
+                `;
+            }
+        }
+
         // Submit verification
-        function submitVerification() {
+        async function submitVerification() {
             if (!state.currentCourse || !state.uploadedScreenshot) return;
 
-            showLoading(true);
+            showAIVerificationModal();
+            state.aiVerificationInProgress = true;
 
-            // Simulate API call/verification process
-            setTimeout(() => {
-                // Mark course as completed
-                if (!state.completedCourses.includes(state.currentCourse.id)) {
-                    state.completedCourses.push(state.currentCourse.id);
-                    state.userPoints += state.currentCourse.points;
-                    
-                    // Save to localStorage
-                    localStorage.setItem('completedCourses', JSON.stringify(state.completedCourses));
-                    localStorage.setItem('userEduPoints', state.userPoints.toString());
-                    
-                    // Sync with main app
-                    syncWithMainApp();
+            try {
+                // Update verification steps
+                const steps = document.querySelectorAll('#verification-steps .fa-spinner');
+                if (steps.length > 0) {
+                    steps[0].className = 'fas fa-check-circle text-green-500 mr-2';
+                    document.querySelector('#verification-steps .fa-circle').className = 'fas fa-spinner text-blue-500 mr-2';
                 }
 
-                showLoading(false);
-                hideVerificationModal();
-                showSuccessModal();
-                updateStats();
-                renderCourses(); // Refresh courses to show completion status
-            }, 2000);
+                // Perform final verification with DeepSeek
+                const base64Image = await fileToBase64(state.uploadedScreenshot);
+                const finalPrompt = `
+                    Perform final verification of this certificate for course completion.
+                    Course: ${state.currentCourse.title}
+                    
+                    Verify:
+                    1. This is a legitimate Alison certificate
+                    2. The certificate matches the course title
+                    3. There are no obvious signs of tampering or forgery
+                    4. The certificate follows Alison's standard format
+                    
+                    Respond with ONLY a JSON object:
+                    {
+                        "verified": boolean,
+                        "confidence": number,
+                        "reason": "brief explanation"
+                    }
+                `;
+
+                const finalResult = await callDeepSeekAPI(finalPrompt, base64Image);
+
+                // Update UI based on final verification
+                hideAIVerificationModal();
+                state.aiVerificationInProgress = false;
+
+                if (finalResult.verified && finalResult.confidence > 70) {
+                    // Mark course as completed
+                    if (!state.completedCourses.includes(state.currentCourse.id)) {
+                        state.completedCourses.push(state.currentCourse.id);
+                        state.userPoints += state.currentCourse.points;
+                        
+                        // Save to localStorage
+                        localStorage.setItem('completedCourses', JSON.stringify(state.completedCourses));
+                        localStorage.setItem('userEduPoints', state.userPoints.toString());
+                        
+                        // Sync with main app
+                        syncWithMainApp();
+                    }
+
+                    showSuccessModal();
+                    updateStats();
+                    renderCourses(); // Refresh courses to show completion status
+                } else {
+                    showVerificationFailedModal(finalResult.reason || "DeepSeek AI could not verify the authenticity of your certificate.");
+                }
+
+            } catch (error) {
+                console.error('Final verification error:', error);
+                hideAIVerificationModal();
+                showVerificationFailedModal("An error occurred during verification. Please try again.");
+            }
         }
 
         // Sync with main EduHeTech app
@@ -886,7 +1429,7 @@
         function updateStats() {
             document.getElementById('user-points').textContent = state.userPoints.toLocaleString();
             document.getElementById('completed-courses').textContent = state.completedCourses.length;
-            document.getElementById('earned-points').textContent = (state.completedCourses.length * 500).toLocaleString();
+            document.getElementById('earned-points').textContent = (state.completedCourses.length * 2000).toLocaleString();
         }
 
         // Show loading spinner
@@ -917,6 +1460,7 @@
         // Make functions globally available
         window.hideVerificationModal = hideVerificationModal;
         window.hideSuccessModal = hideSuccessModal;
+        window.hideVerificationFailedModal = hideVerificationFailedModal;
         window.removeUpload = removeUpload;
         window.submitVerification = submitVerification;
     </script>
