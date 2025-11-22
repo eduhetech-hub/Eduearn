@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequently Asked Questions - EduHeTech</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .faq-item {
+            border-bottom: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        .faq-question {
+            cursor: pointer;
+            padding: 1.5rem 0;
+            transition: all 0.3s ease;
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .faq-answer.open {
+            max-height: 500px;
+        }
+        .faq-icon {
+            transition: transform 0.3s ease;
+        }
+        .faq-icon.rotate {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-xl font-bold text-blue-600">EduHeTech</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition">
+                        <i class="fas fa-home mr-1"></i> Back to App
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- FAQ Content -->
+    <div class="max-w-4xl mx-auto px-4 py-12">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h1>
+            <p class="text-xl text-gray-600">Find answers to common questions about EduHeTech</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="max-w-2xl mx-auto mb-12">
+            <div class="relative">
+                <input 
+                    type="text" 
+                    id="faq-search"
+                    placeholder="Search for questions..."
+                    class="w-full p-4 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                >
+                <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+        </div>
+
+        <!-- FAQ Categories -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
+            <button class="category-btn bg-blue-500 text-white px-4 py-3 rounded-lg font-semibold transition hover:bg-blue-600" data-category="all">
+                All Questions
+            </button>
+            <button class="category-btn bg-white border border-gray-300 px-4 py-3 rounded-lg font-semibold transition hover:bg-gray-50" data-category="earning">
+                Earning Points
+            </button>
+            <button class="category-btn bg-white border border-gray-300 px-4 py-3 rounded-lg font-semibold transition hover:bg-gray-50" data-category="withdrawal">
+                Withdrawals
+            </button>
+            <button class="category-btn bg-white border border-gray-300 px-4 py-3 rounded-lg font-semibold transition hover:bg-gray-50" data-category="account">
+                Account Issues
+            </button>
+        </div>
+
+        <!-- FAQ Items -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <!-- Earning Points Category -->
+            <div class="faq-category" data-category="earning">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-coins text-yellow-500 mr-3"></i>
+                    Earning Points
+                </h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">How do I earn points on EduHeTech?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>You can earn points through multiple activities:</p>
+                        <ul class="list-disc pl-5 mt-2 space-y-1">
+                            <li>Complete courses: 2000 points each</li>
+                            <li>Watch ads: 50-200 points per ad</li>
+                            <li>Read blog articles: 100 points each</li>
+                            <li>Refer friends: 1000 points per referral</li>
+                            <li>Spin daily wheel: 50-500 points</li>
+                            <li>Daily login bonus: 100 points</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">Is there a daily limit on how many points I can earn?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>Yes, there's a daily limit of 10,000 points from regular activities. However, referral bonuses do NOT count toward this limit, so you can earn unlimited points through referrals!</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">How often can I spin the daily wheel?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>You can spin the wheel once every 24 hours. The timer resets at midnight local time.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">Do I need to watch the entire ad to get points?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>Yes, you must watch the entire ad duration to receive points. Closing the ad early or navigating away will result in no points being awarded.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Withdrawals Category -->
+            <div class="faq-category" data-category="withdrawal">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center mt-12">
+                    <i class="fas fa-wallet text-green-500 mr-3"></i>
+                    Withdrawals & Payments
+                </h2>
+
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">What is the minimum withdrawal amount?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>The minimum withdrawal amount is 500,000 points, which equals $5. This ensures processing fees don't significantly impact your earnings.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">How long do withdrawals take to process?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>Withdrawals typically process within 24-48 hours. During high volume periods, it may take up to 72 hours. You'll receive a notification once processed.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">What payment methods do you support?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>We currently support:</p>
+                        <ul class="list-disc pl-5 mt-2 space-y-1">
+                            <li>Bank Transfer</li>
+                            <li>PayPal</li>
+                            <li>Mobile Money (various providers)</li>
+                            <li>Gift Cards (selected retailers)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">Why was my withdrawal request rejected?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>Common reasons for rejection include:</p>
+                        <ul class="list-disc pl-5 mt-2 space-y-1">
+                            <li>Insufficient points balance</li>
+                            <li>Incorrect payment details</li>
+                            <li>Suspicious activity detected</li>
+                            <li>Violation of terms of service</li>
+                        </ul>
+                        <p class="mt-2">Contact support if you believe your rejection was in error.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Issues Category -->
+            <div class="faq-category" data-category="account">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center mt-12">
+                    <i class="fas fa-user-circle text-blue-500 mr-3"></i>
+                    Account & Technical Issues
+                </h2>
+
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">I forgot my password. How can I reset it?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>Click on "Forgot Password" on the login page. Enter your email address, and we'll send you a password reset link. Check your spam folder if you don't see the email.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">Can I use multiple devices with one account?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>Yes, you can access your account from multiple devices. However, you cannot be logged in on multiple devices simultaneously for security reasons.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">Why are my points not updating after completing a course?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>Points may take a few minutes to update. If points haven't appeared after 15 minutes:</p>
+                        <ul class="list-disc pl-5 mt-2 space-y-1">
+                            <li>Refresh the page</li>
+                            <li>Check your internet connection</li>
+                            <li>Ensure you completed all course requirements</li>
+                            <li>Contact support with course details</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">How do I delete my account?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>To delete your account, please contact our support team. Note that account deletion is permanent and will result in loss of all points and earnings.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- General Questions -->
+            <div class="faq-category" data-category="general">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center mt-12">
+                    <i class="fas fa-question-circle text-purple-500 mr-3"></i>
+                    General Questions
+                </h2>
+
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">Is EduHeTech completely free to use?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>Yes! EduHeTech is completely free to use. We offer a premium option that removes daily limits and provides additional features, but the basic platform remains free.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">Can I use EduHeTech outside of Nigeria?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>Yes, EduHeTech is available worldwide. However, payment methods and currency conversion rates may vary by country.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">How do I contact customer support?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>You can contact our support team through:</p>
+                        <ul class="list-disc pl-5 mt-2 space-y-1">
+                            <li>Email: support@eduhetech.com</li>
+                            <li>In-app chat support</li>
+                            <li>Social media channels</li>
+                            <li>Contact form on our website</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">Are the courses on EduHeTech certified?</h3>
+                        <i class="fas fa-chevron-down faq-icon text-gray-400"></i>
+                    </div>
+                    <div class="faq-answer pb-4 text-gray-600">
+                        <p>Many of our courses are from certified platforms and provide completion certificates. However, the certification depends on the specific course provider. Check individual course details for certification information.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Support Section -->
+        <div class="bg-blue-50 rounded-xl p-8 mt-12 text-center">
+            <h2 class="text-2xl font-bold text-blue-800 mb-4">Still Need Help?</h2>
+            <p class="text-blue-700 mb-6">Can't find the answer you're looking for? Our support team is here to help!</p>
+            <a href="mailto:support@eduhetech.com" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition inline-block">
+                <i class="fas fa-envelope mr-2"></i>Contact Support
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">EduHeTech</h3>
+                    <p class="text-gray-400">Learn valuable skills while earning real rewards. Education meets opportunity.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition">Home</a></li>
+                        <li><a href="blog.html" class="text-gray-400 hover:text-white transition">Blog</a></li>
+                        <li><a href="terms.html" class="text-gray-400 hover:text-white transition">Terms</a></li>
+                        <li><a href="privacy.html" class="text-gray-400 hover:text-white transition">Privacy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 EduHeTech. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ Accordion Functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const icon = question.querySelector('.faq-icon');
+                
+                // Toggle current question
+                answer.classList.toggle('open');
+                icon.classList.toggle('rotate');
+                
+                // Close other open questions
+                document.querySelectorAll('.faq-answer').forEach(otherAnswer => {
+                    if (otherAnswer !== answer && otherAnswer.classList.contains('open')) {
+                        otherAnswer.classList.remove('open');
+                        otherAnswer.previousElementSibling.querySelector('.faq-icon').classList.remove('rotate');
+                    }
+                });
+            });
+        });
+
+        // Category Filtering
+        document.querySelectorAll('.category-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const category = button.getAttribute('data-category');
+                
+                // Update active button
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.classList.remove('bg-blue-500', 'text-white');
+                    btn.classList.add('bg-white', 'border', 'border-gray-300');
+                });
+                button.classList.remove('bg-white', 'border', 'border-gray-300');
+                button.classList.add('bg-blue-500', 'text-white');
+                
+                // Show/hide categories
+                document.querySelectorAll('.faq-category').forEach(cat => {
+                    if (category === 'all' || cat.getAttribute('data-category') === category) {
+                        cat.style.display = 'block';
+                    } else {
+                        cat.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Search Functionality
+        document.getElementById('faq-search').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            document.querySelectorAll('.faq-item').forEach(item => {
+                const question = item.querySelector('.faq-question h3').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+                
+                if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                    item.style.display = 'block';
+                    // Open matching questions
+                    if (searchTerm.length > 2) {
+                        item.querySelector('.faq-answer').classList.add('open');
+                        item.querySelector('.faq-icon').classList.add('rotate');
+                    }
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Open first question by default
+        document.querySelector('.faq-question').click();
+    </script>
+</body>
+</html>
