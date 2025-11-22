@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - EduHeTech</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .stat-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .team-card {
+            transition: transform 0.3s ease;
+        }
+        .team-card:hover {
+            transform: translateY(-8px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-xl font-bold text-blue-600">EduHeTech</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition">
+                        <i class="fas fa-home mr-1"></i> Back to App
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-20">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <h1 class="text-5xl font-bold mb-6">Transforming Education Through Innovation</h1>
+            <p class="text-xl opacity-90 mb-8 max-w-3xl mx-auto">
+                EduHeTech is revolutionizing how people learn and earn by combining quality education 
+                with real financial rewards. We believe everyone deserves access to education that pays.
+            </p>
+            <div class="flex justify-center space-x-4">
+                <a href="index.html" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+                    Start Learning & Earning
+                </a>
+                <a href="#mission" class="border border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition">
+                    Learn More
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 bg-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="stat-card text-center p-6 bg-blue-50 rounded-xl">
+                    <div class="text-3xl font-bold text-blue-600 mb-2">50,000+</div>
+                    <div class="text-gray-600">Active Learners</div>
+                </div>
+                <div class="stat-card text-center p-6 bg-green-50 rounded-xl">
+                    <div class="text-3xl font-bold text-green-600 mb-2">₦25M+</div>
+                    <div class="text-gray-600">Paid to Users</div>
+                </div>
+                <div class="stat-card text-center p-6 bg-purple-50 rounded-xl">
+                    <div class="text-3xl font-bold text-purple-600 mb-2">500+</div>
+                    <div class="text-gray-600">Courses Available</div>
+                </div>
+                <div class="stat-card text-center p-6 bg-orange-50 rounded-xl">
+                    <div class="text-3xl font-bold text-orange-600 mb-2">15+</div>
+                    <div class="text-gray-600">Countries Served</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Vision -->
+    <section id="mission" class="py-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-4xl font-bold text-gray-900 mb-6">Our Mission & Vision</h2>
+                    <div class="space-y-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fas fa-bullseye text-blue-600 text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold">Our Mission</h3>
+                            </div>
+                            <p class="text-gray-600">
+                                To democratize education by making learning accessible, engaging, and financially rewarding 
+                                for everyone, regardless of their background or location.
+                            </p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fas fa-eye text-green-600 text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold">Our Vision</h3>
+                            </div>
+                            <p class="text-gray-600">
+                                To create a world where education is not just a cost but an investment that pays immediate 
+                                returns, empowering millions to learn, earn, and grow simultaneously.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-8 text-white">
+                    <h3 class="text-2xl font-bold mb-4">Why We're Different</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle mr-3 text-green-300"></i>
+                            <span>Real financial rewards for learning</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle mr-3 text-green-300"></i>
+                            <span>No upfront costs or hidden fees</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle mr-3 text-green-300"></i>
+                            <span>Quality courses from verified providers</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle mr-3 text-green-300"></i>
+                            <span>Multiple earning opportunities</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle mr-3 text-green-300"></i>
+                            <span>Global accessibility</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Story -->
+    <section class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Our Story</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    From a simple idea to a platform transforming thousands of lives
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="bg-gray-100 rounded-2xl p-8">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">The Beginning</h3>
+                        <p class="text-gray-600 mb-4">
+                            EduHeTech was founded in 2023 by a team of educators, technologists, and entrepreneurs 
+                            who recognized a fundamental problem: millions of people wanted to learn new skills but 
+                            couldn't afford the time or money investment.
+                        </p>
+                        <p class="text-gray-600">
+                            We asked ourselves: "What if learning could pay for itself? What if every minute spent 
+                            studying could also generate income?" This simple question led to the creation of 
+                            EduHeTech - a platform where education meets earning.
+                        </p>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <div class="bg-blue-50 p-6 rounded-xl">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-4">1</div>
+                            <h4 class="text-lg font-semibold">Identify the Problem</h4>
+                        </div>
+                        <p class="text-gray-600">Recognized the financial barriers to quality education</p>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-xl">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold mr-4">2</div>
+                            <h4 class="text-lg font-semibold">Develop the Solution</h4>
+                        </div>
+                        <p class="text-gray-600">Created a platform that rewards learning with real income</p>
+                    </div>
+                    <div class="bg-purple-50 p-6 rounded-xl">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold mr-4">3</div>
+                            <h4 class="text-lg font-semibold">Launch & Grow</h4>
+                        </div>
+                        <p class="text-gray-600">Expanded to serve thousands of users across multiple countries</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Meet Our Team</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Passionate individuals dedicated to making education accessible and rewarding for all
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="team-card bg-white rounded-xl p-6 text-center shadow-sm">
+                    <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-2xl font-bold mx-auto mb-4">
+                        SI
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Isaac Sowemimo</h3>
+                    <p class="text-blue-600 font-medium mb-3">Founder & CEO</p>
+                    <p class="text-gray-600 text-sm">
+                        Education technology enthusiast with a vision to make learning financially rewarding for everyone.
+                    </p>
+                </div>
+
+                <div class="team-card bg-white rounded-xl p-6 text-center shadow-sm">
+                    <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-2xl font-bold mx-auto mb-4">
+                        ET
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">EduHeTech Team</h3>
+                    <p class="text-green-600 font-medium mb-3">Development & Support</p>
+                    <p class="text-gray-600 text-sm">
+                        Dedicated professionals working tirelessly to improve the platform and support our growing community.
+                    </p>
+                </div>
+
+                <div class="team-card bg-white rounded-xl p-6 text-center shadow-sm">
+                    <div class="w-24 h-24 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 text-2xl font-bold mx-auto mb-4">
+                        CP
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Content Partners</h3>
+                    <p class="text-purple-600 font-medium mb-3">Educational Providers</p>
+                    <p class="text-gray-600 text-sm">
+                        Leading educational institutions and content creators providing quality learning materials.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Our Values</h2>
+                <p class="text-xl text-gray-600">The principles that guide everything we do</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center p-6">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-600 text-xl mx-auto mb-4">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-3">Accessibility</h3>
+                    <p class="text-gray-600">Education should be available to everyone, regardless of financial situation.</p>
+                </div>
+
+                <div class="text-center p-6">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xl mx-auto mb-4">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-3">Quality</h3>
+                    <p class="text-gray-600">We maintain high standards for all courses and learning materials.</p>
+                </div>
+
+                <div class="text-center p-6">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-xl mx-auto mb-4">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-3">Transparency</h3>
+                    <p class="text-gray-600">Clear earning structures and honest communication with our users.</p>
+                </div>
+
+                <div class="text-center p-6">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 text-xl mx-auto mb-4">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-3">Community</h3>
+                    <p class="text-gray-600">Building a supportive network of learners and earners worldwide.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="gradient-bg text-white py-16">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Ready to Start Your Learning Journey?</h2>
+            <p class="text-xl opacity-90 mb-8">
+                Join thousands of users who are already learning valuable skills and earning real money.
+            </p>
+            <div class="flex justify-center space-x-4">
+                <a href="index.html" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+                    Get Started Now
+                </a>
+                <a href="contact.html" class="border border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition">
+                    Contact Us
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">EduHeTech</h3>
+                    <p class="text-gray-400">Learn valuable skills while earning real rewards. Education meets opportunity.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition">Home</a></li>
+                        <li><a href="blog.html" class="text-gray-400 hover:text-white transition">Blog</a></li>
+                        <li><a href="faq.html" class="text-gray-400 hover:text-white transition">FAQ</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="terms.html" class="text-gray-400 hover:text-white transition">Terms of Service</a></li>
+                        <li><a href="privacy.html" class="text-gray-400 hover:text-white transition">Privacy Policy</a></li>
+                        <li><a href="cookies.html" class="text-gray-400 hover:text-white transition">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 EduHeTech. All rights reserved. Learn • Earn • Grow</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple animation for stats counter (optional enhancement)
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        // Observe stat cards for animation
+        document.querySelectorAll('.stat-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
