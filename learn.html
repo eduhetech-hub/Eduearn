@@ -125,7 +125,7 @@
                         <i class="fas fa-coins text-yellow-500"></i>
                         <span class="font-semibold" id="user-points">0</span>
                     </div>
-                    <span class="text-sm text-gray-600">Earn 2000 points per course</span>
+                    <span class="text-sm text-gray-600">Earn 5000 points per course</span>
                 </div>
             </div>
         </div>
@@ -137,7 +137,7 @@
         <div class="text-center mb-12">
             <h1 class="text-4xl font-bold text-gray-800 mb-4">Learn & Earn Portal</h1>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                Complete courses on Alison and earn 2000 EduPoints for each verified completion. 
+                Complete courses on Alison and earn 5000 EduPoints for each verified completion. 
                 Expand your skills while earning rewards!
             </p>
             <div class="mt-4 flex items-center justify-center space-x-2">
@@ -153,7 +153,7 @@
                     <i class="fas fa-book-open"></i>
                 </div>
                 <h3 class="text-lg font-semibold mb-2">Courses Available</h3>
-                <p class="text-3xl font-bold text-blue-600" id="total-courses">50</p>
+                <p class="text-3xl font-bold text-blue-600" id="total-courses">156</p>
             </div>
             
             <div class="card p-6 text-center">
@@ -195,7 +195,7 @@
                 <div class="text-center p-4">
                     <div class="w-12 h-12 bg-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">4</div>
                     <h4 class="font-semibold mb-2">Get Rewarded</h4>
-                    <p class="text-sm text-gray-600">Receive 2000 points after successful verification</p>
+                    <p class="text-sm text-gray-600">Receive 5000 points after successful verification</p>
                 </div>
             </div>
         </div>
@@ -227,6 +227,15 @@
                 </button>
                 <button class="category-filter px-4 py-2 bg-gray-200 text-gray-700 rounded-lg transition hover:bg-gray-300" data-category="finance">
                     Finance
+                </button>
+                <button class="category-filter px-4 py-2 bg-gray-200 text-gray-700 rounded-lg transition hover:bg-gray-300" data-category="science">
+                    Science
+                </button>
+                <button class="category-filter px-4 py-2 bg-gray-200 text-gray-700 rounded-lg transition hover:bg-gray-300" data-category="arts">
+                    Arts & Music
+                </button>
+                <button class="category-filter px-4 py-2 bg-gray-200 text-gray-700 rounded-lg transition hover:bg-gray-300" data-category="personal">
+                    Personal Development
                 </button>
             </div>
         </div>
@@ -335,7 +344,7 @@
                     <i class="fas fa-robot text-purple-500"></i>
                     <span class="text-sm text-purple-600">AI Verified Certificate</span>
                 </div>
-                <p class="text-sm text-green-600">You've earned 2000 points!</p>
+                <p class="text-sm text-green-600">You've earned 5000 points!</p>
                 <button onclick="hideSuccessModal()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg transition">
                     Continue Learning
                 </button>
@@ -385,9 +394,29 @@
         const DEEPSEEK_API_KEY = 'YOUR_DEEPSEEK_API_KEY'; // Replace with your actual API key
         const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
         
-        // Course Data - 50 courses with 2000 points each
+        // Course Data - 156 courses with 5000 points each
         const COURSES = [
-            // Business Courses
+            // Health & Safety Courses
+            {
+                id: 'asbestos-awareness',
+                title: 'Asbestos Awareness',
+                category: 'health',
+                url: 'https://alison.com/course/asbestos-awareness?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn about asbestos risks and safety procedures.',
+                duration: '3-5 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'cryptocurrency',
+                title: 'Diploma in Cryptocurrency',
+                category: 'finance',
+                url: 'https://alison.com/course/diploma-in-cryptocurrency?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Comprehensive understanding of cryptocurrency and blockchain technology.',
+                duration: '10-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
             {
                 id: 'project-management',
                 title: 'Diploma in Project Management',
@@ -396,17 +425,37 @@
                 description: 'Learn essential project management skills and methodologies.',
                 duration: '10-15 hours',
                 level: 'Intermediate',
-                points: 2000
+                points: 5000
             },
             {
-                id: 'business-administration',
-                title: 'Diploma in Business Administration',
-                category: 'business',
-                url: 'https://alison.com/course/diploma-in-business-administration?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Comprehensive business administration fundamentals and practices.',
+                id: 'digital-marketing',
+                title: 'Diploma in Digital Marketing',
+                category: 'marketing',
+                url: 'https://alison.com/course/diploma-in-digital-marketing?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Master digital marketing strategies and online advertising.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'psychology',
+                title: 'Diploma in Psychology',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-psychology?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Comprehensive introduction to psychology principles and theories.',
                 duration: '15-20 hours',
                 level: 'Intermediate',
-                points: 2000
+                points: 5000
+            },
+            {
+                id: 'business-management',
+                title: 'Diploma in Business Management and Entrepreneurship',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-business-management-and-entrepreneurship?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn business management fundamentals and entrepreneurial skills.',
+                duration: '15-20 hours',
+                level: 'Intermediate',
+                points: 5000
             },
             {
                 id: 'human-resources',
@@ -416,121 +465,97 @@
                 description: 'Master HR management, recruitment, and employee relations.',
                 duration: '12-15 hours',
                 level: 'Intermediate',
-                points: 2000
+                points: 5000
             },
             {
-                id: 'operations-management',
-                title: 'Diploma in Operations Management',
-                category: 'business',
-                url: 'https://alison.com/course/diploma-in-operations-management-ops?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Learn operations management principles and supply chain optimization.',
-                duration: '10-12 hours',
+                id: 'mental-health',
+                title: 'Diploma in Mental Health',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-mental-health?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Understanding mental health issues and support strategies.',
+                duration: '12-15 hours',
                 level: 'Intermediate',
-                points: 2000
+                points: 5000
             },
             {
-                id: 'strategic-management',
-                title: 'Strategic Management',
-                category: 'business',
-                url: 'https://alison.com/course/strategic-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Develop strategic thinking and business planning skills.',
-                duration: '8-10 hours',
-                level: 'Advanced',
-                points: 2000
-            },
-            {
-                id: 'services-management',
-                title: 'Services Management',
-                category: 'business',
-                url: 'https://alison.com/course/services-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Learn to manage service-based businesses effectively.',
-                duration: '8-10 hours',
+                id: 'nursing-studies',
+                title: 'Diploma in Nursing Studies',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-nursing-studies?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fundamental nursing principles and patient care techniques.',
+                duration: '15-20 hours',
                 level: 'Intermediate',
-                points: 2000
+                points: 5000
+            },
+            {
+                id: 'cybersecurity',
+                title: 'Diploma in Cybersecurity',
+                category: 'technology',
+                url: 'https://alison.com/course/diploma-in-cybersecurity?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Comprehensive cybersecurity principles and protection methods.',
+                duration: '15-20 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'web-design',
+                title: 'Diploma in Web Design',
+                category: 'design',
+                url: 'https://alison.com/course/diploma-in-web-design?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn web design principles and development techniques.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
             },
             {
                 id: 'supply-chain-management',
-                title: 'Supply Chain Management',
+                title: 'Diploma in Supply Chain Management',
                 category: 'business',
-                url: 'https://alison.com/course/supply-chain-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                url: 'https://alison.com/course/diploma-in-supply-chain-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
                 description: 'Master supply chain logistics and inventory management.',
                 duration: '10-12 hours',
                 level: 'Intermediate',
-                points: 2000
+                points: 5000
             },
             {
-                id: 'applied-operations-management',
-                title: 'Applied Operations Management',
-                category: 'business',
-                url: 'https://alison.com/course/applied-operations-management-inventory-models?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Advanced operations management with inventory models.',
-                duration: '12-15 hours',
-                level: 'Advanced',
-                points: 2000
-            },
-
-            // Technology Courses
-            {
-                id: 'ethical-hacking',
-                title: 'Diploma in Ethical Hacking',
-                category: 'technology',
-                url: 'https://alison.com/course/diploma-in-ethical-hacking?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Master the skills needed to become an ethical hacker and cybersecurity expert.',
-                duration: '15-20 hours',
-                level: 'Advanced',
-                points: 2000
-            },
-            {
-                id: 'cryptocurrency',
-                title: 'Diploma in Cryptocurrency',
-                category: 'technology',
-                url: 'https://alison.com/course/diploma-in-cryptocurrency?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Comprehensive understanding of cryptocurrency and blockchain technology.',
-                duration: '10-12 hours',
-                level: 'Intermediate',
-                points: 2000
-            },
-            {
-                id: 'python-pentesters',
-                title: 'Python for Pentesters',
-                category: 'technology',
-                url: 'https://alison.com/course/python-for-pentesters?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Learn Python programming for penetration testing and security.',
-                duration: '12-15 hours',
-                level: 'Advanced',
-                points: 2000
-            },
-            {
-                id: 'autocad-training',
-                title: 'AutoCAD Beginner to Professional',
-                category: 'technology',
-                url: 'https://alison.com/course/autocad-beginner-to-professional-training?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Complete AutoCAD training from basics to professional level.',
-                duration: '15-20 hours',
-                level: 'All Levels',
-                points: 2000
-            },
-            {
-                id: 'electrical-engineering',
-                title: 'Electrical Transformer Components',
-                category: 'technology',
-                url: 'https://alison.com/course/electrical-engineering-electrical-transformer-components?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Learn about electrical transformer components and operations.',
+                id: 'food-safety',
+                title: 'Diploma in Food Safety',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-food-safety?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Food safety standards and hygiene practices.',
                 duration: '8-10 hours',
                 level: 'Intermediate',
-                points: 2000
+                points: 5000
             },
-
-            // Health & Safety Courses
             {
-                id: 'cpr-first-aid',
-                title: 'CPR, AED and First Aid',
-                category: 'health',
-                url: 'https://alison.com/course/cpr-aed-and-first-aid?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Learn life-saving techniques including CPR and automated external defibrillator use.',
+                id: 'customer-service',
+                title: 'Diploma in Customer Service',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-customer-service?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn to deliver outstanding customer service experiences.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'leadership-management',
+                title: 'Diploma in Leadership and Management',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-leadership-and-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Develop essential leadership skills for management roles.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'blockchain-cryptocurrency',
+                title: 'Introduction to Blockchain and Cryptocurrency',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-blockchain-and-cryptocurrency?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fundamentals of blockchain technology and cryptocurrencies.',
                 duration: '6-8 hours',
                 level: 'Beginner',
-                points: 2000
+                points: 5000
             },
             {
                 id: 'caregiving',
@@ -540,367 +565,1397 @@
                 description: 'Professional caregiving skills for various healthcare settings.',
                 duration: '12-15 hours',
                 level: 'Intermediate',
-                points: 2000
+                points: 5000
             },
             {
-                id: 'elderly-care',
-                title: 'Elderly Care and Caring for the Disabled',
-                category: 'health',
-                url: 'https://alison.com/course/elderly-care-and-caring-for-the-disabled?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Specialized care techniques for elderly and disabled individuals.',
-                duration: '10-12 hours',
+                id: 'educational-psychology',
+                title: 'Diploma in Educational Psychology',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-educational-psychology?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Psychology principles applied to educational settings.',
+                duration: '12-15 hours',
                 level: 'Intermediate',
-                points: 2000
+                points: 5000
             },
             {
-                id: 'advanced-cardiac-life-support',
-                title: 'Advanced Cardiac Life Support (ACLS)',
-                category: 'health',
-                url: 'https://alison.com/course/advanced-cardiac-life-support-acls?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Advanced life support techniques for cardiac emergencies.',
-                duration: '8-10 hours',
-                level: 'Advanced',
-                points: 2000
-            },
-            {
-                id: 'pediatric-life-support',
-                title: 'Pediatric Advanced Life Support (PALS)',
-                category: 'health',
-                url: 'https://alison.com/course/pediatric-advanced-life-support-pals?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Specialized life support techniques for pediatric patients.',
-                duration: '8-10 hours',
-                level: 'Advanced',
-                points: 2000
-            },
-            {
-                id: 'construction-safety',
-                title: 'Construction Safety and Health',
-                category: 'health',
-                url: 'https://alison.com/course/construction-safety-and-health?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Safety protocols and health standards for construction sites.',
-                duration: '6-8 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'anger-management',
-                title: 'Anger Management and Conflict Resolution',
-                category: 'health',
-                url: 'https://alison.com/course/anger-management-and-conflict-resolution?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Techniques for managing anger and resolving conflicts effectively.',
-                duration: '6-8 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-
-            // Marketing Courses
-            {
-                id: 'facebook-marketing',
-                title: 'Foundations of Facebook Marketing',
-                category: 'marketing',
-                url: 'https://alison.com/course/foundations-of-facebook-marketing-and-marketplace?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Master Facebook marketing strategies and marketplace techniques.',
-                duration: '8-10 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'sales-techniques',
-                title: 'Sales Techniques Using Competitive Strategies',
-                category: 'marketing',
-                url: 'https://alison.com/course/sales-techniques-using-competitive-sales-strategies?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Advanced sales techniques and competitive strategy implementation.',
-                duration: '10-12 hours',
-                level: 'Intermediate',
-                points: 2000
-            },
-            {
-                id: 'online-marketing',
-                title: 'Introduction to Online Marketing Strategies',
-                category: 'marketing',
-                url: 'https://alison.com/course/introduction-to-online-marketing-strategies?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Fundamental online marketing strategies and digital advertising.',
-                duration: '8-10 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'digital-advertising',
-                title: 'Digital Advertising and Marketing 201',
-                category: 'marketing',
-                url: 'https://alison.com/course/digital-advertising-and-marketing-201?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Advanced digital advertising concepts and marketing techniques.',
-                duration: '10-12 hours',
-                level: 'Intermediate',
-                points: 2000
-            },
-            {
-                id: 'sales-funnel',
-                title: 'Basics of the Sales Funnel',
-                category: 'marketing',
-                url: 'https://alison.com/course/basics-of-the-sales-funnel?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Understanding and optimizing sales funnels for business growth.',
-                duration: '6-8 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'affiliate-marketing',
-                title: 'Master Affiliate Marketing',
-                category: 'marketing',
-                url: 'https://alison.com/course/master-affiliate-marketing-with-this-step-by-step-guide?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Step-by-step guide to successful affiliate marketing.',
-                duration: '10-12 hours',
+                id: 'microsoft-office',
+                title: 'Diploma in Microsoft Office 2019',
+                category: 'technology',
+                url: 'https://alison.com/course/diploma-in-microsoft-office-2019?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Complete Microsoft Office suite training.',
+                duration: '15-20 hours',
                 level: 'All Levels',
-                points: 2000
+                points: 5000
             },
-
-            // Language Courses
+            {
+                id: 'workplace-safety',
+                title: 'Diploma in Workplace Safety and Health',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-workplace-safety-and-health?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Workplace safety protocols and health standards.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'artificial-intelligence',
+                title: 'Introduction to Artificial Intelligence',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-artificial-intelligence?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fundamentals of AI and machine learning concepts.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'social-media-marketing',
+                title: 'Diploma in Social Media Marketing',
+                category: 'marketing',
+                url: 'https://alison.com/course/diploma-in-social-media-marketing?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Strategies for effective social media marketing.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'accounting-basic',
+                title: 'Diploma in Accounting Basic',
+                category: 'finance',
+                url: 'https://alison.com/course/diploma-in-accounting-basic?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fundamental accounting principles and practices.',
+                duration: '10-12 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'english-language',
+                title: 'Diploma in English Language and Literature',
+                category: 'language',
+                url: 'https://alison.com/course/diploma-in-english-language-and-literature?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Advanced English language and literary studies.',
+                duration: '15-20 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'tourism-studies',
+                title: 'Diploma in Tourism Studies',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-tourism-studies?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Tourism industry fundamentals and management.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'health-safety-level2',
+                title: 'Health and Safety in the Workplace Level 2',
+                category: 'health',
+                url: 'https://alison.com/course/health-and-safety-in-the-workplace-level-2?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Advanced workplace health and safety training.',
+                duration: '8-10 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'six-sigma',
+                title: 'Diploma in Six Sigma',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-six-sigma?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Six Sigma methodologies for process improvement.',
+                duration: '12-15 hours',
+                level: 'Advanced',
+                points: 5000
+            },
+            {
+                id: 'data-science-python',
+                title: 'Diploma in Data Science with Python',
+                category: 'technology',
+                url: 'https://alison.com/course/diploma-in-data-science-with-python?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Data science techniques using Python programming.',
+                duration: '15-20 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'event-management',
+                title: 'Diploma in Event Management',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-event-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Professional event planning and management skills.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'health-social-care',
+                title: 'Fundamentals of Health and Social Care',
+                category: 'health',
+                url: 'https://alison.com/course/fundamentals-of-health-and-social-care?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Basic principles of health and social care services.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'human-nutrition',
+                title: 'Diploma in Human Nutrition',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-human-nutrition?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Comprehensive study of human nutrition and dietetics.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'cpr-first-aid',
+                title: 'CPR, AED and First Aid',
+                category: 'health',
+                url: 'https://alison.com/course/cpr-aed-and-first-aid?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn life-saving techniques including CPR and AED use.',
+                duration: '6-8 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'graphic-design',
+                title: 'Diploma in Graphic Design',
+                category: 'design',
+                url: 'https://alison.com/course/diploma-in-graphic-design?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn graphic design principles and software tools.',
+                duration: '12-15 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'python-programming',
+                title: 'Introduction to Programming with Python',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-programming-with-python?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn Python programming from scratch.',
+                duration: '12-15 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'financial-accounting',
+                title: 'Diploma in Financial Accounting',
+                category: 'finance',
+                url: 'https://alison.com/course/diploma-in-financial-accounting?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Advanced financial accounting principles and practices.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'teaching-english',
+                title: 'Diploma in Teaching English as a Second Language',
+                category: 'language',
+                url: 'https://alison.com/course/diploma-in-teaching-english-as-a-second-language?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Methods for teaching English to non-native speakers.',
+                duration: '15-20 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'sustainable-development',
+                title: 'Diploma in Sustainable Development',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-sustainable-development?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Principles of sustainable development and environmental protection.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'introduction-sales',
+                title: 'Introduction to Sales',
+                category: 'business',
+                url: 'https://alison.com/course/introduction-to-sales?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fundamental sales techniques and strategies.',
+                duration: '6-8 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'entrepreneurship',
+                title: 'Diploma in Entrepreneurship',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-entrepreneurship?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Essential knowledge for starting and running a business.',
+                duration: '10-12 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'e-commerce',
+                title: 'Diploma in E-commerce',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-e-commerce?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'E-commerce business models and online store management.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'health-safety-work',
+                title: 'Diploma in Health and Safety at Work',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-health-and-safety-at-work?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Workplace health and safety regulations and practices.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'html-intro',
+                title: 'Introduction to HTML',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-html?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn HTML for web development.',
+                duration: '6-8 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'child-psychology',
+                title: 'Diploma in Child Psychology',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-child-psychology?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Understanding child development and psychological principles.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'logistics',
+                title: 'Diploma in Logistics',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-logistics?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Logistics management and supply chain operations.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'excel',
+                title: 'Diploma in Excel',
+                category: 'technology',
+                url: 'https://alison.com/course/diploma-in-excel?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Advanced Excel skills for data analysis.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'cloud-computing',
+                title: 'Introduction to Cloud Computing',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-cloud-computing?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fundamentals of cloud computing technologies.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'journalism',
+                title: 'Diploma in Journalism',
+                category: 'arts',
+                url: 'https://alison.com/course/diploma-in-journalism?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Journalism principles and news reporting techniques.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'personal-development',
+                title: 'Diploma in Personal Development',
+                category: 'personal',
+                url: 'https://alison.com/course/diploma-in-personal-development?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Strategies for personal growth and self-improvement.',
+                duration: '10-12 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'medical-administration',
+                title: 'Diploma in Medical Administration',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-medical-administration?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Healthcare administration and medical office management.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'big-data',
+                title: 'Introduction to Big Data',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-big-data?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Big data concepts and analytics techniques.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'lean-six-sigma',
+                title: 'Diploma in Lean Six Sigma',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-lean-six-sigma?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Lean Six Sigma methodologies for process improvement.',
+                duration: '12-15 hours',
+                level: 'Advanced',
+                points: 5000
+            },
+            {
+                id: 'real-estate',
+                title: 'Diploma in Real Estate',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-real-estate?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Real estate principles and property management.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'pharmacology',
+                title: 'Diploma in Pharmacology',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-pharmacology?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Study of drugs and their effects on the body.',
+                duration: '15-20 hours',
+                level: 'Advanced',
+                points: 5000
+            },
+            {
+                id: 'java-programming',
+                title: 'Introduction to Java Programming',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-java-programming?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn Java programming fundamentals.',
+                duration: '12-15 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'interior-design',
+                title: 'Diploma in Interior Design',
+                category: 'design',
+                url: 'https://alison.com/course/diploma-in-interior-design?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Interior design principles and space planning.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'sports-nutrition',
+                title: 'Diploma in Sports Nutrition',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-sports-nutrition?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Nutrition strategies for athletes and active individuals.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'agile-project-management',
+                title: 'Diploma in Agile Project Management',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-agile-project-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Agile methodologies for project management.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'css-intro',
+                title: 'Introduction to CSS',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-css?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn CSS for web design and styling.',
+                duration: '6-8 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'counseling',
+                title: 'Diploma in Counseling',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-counseling?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Counseling techniques and therapeutic approaches.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'hospitality-management',
+                title: 'Diploma in Hospitality Management',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-hospitality-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Hotel and hospitality industry management.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'operations-management',
+                title: 'Diploma in Operations Management',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-operations-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Operations management principles and supply chain optimization.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'javascript-intro',
+                title: 'Introduction to JavaScript',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-javascript?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Learn JavaScript for web development.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'environmental-management',
+                title: 'Diploma in Environmental Management',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-environmental-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Environmental protection and sustainable management practices.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'public-relations',
+                title: 'Diploma in Public Relations',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-public-relations?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'PR strategies and communication management.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'quality-management',
+                title: 'Diploma in Quality Management',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-quality-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Quality control and assurance methodologies.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'networking-intro',
+                title: 'Introduction to Networking',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-networking?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Computer networking fundamentals.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'criminal-psychology',
+                title: 'Diploma in Criminal Psychology',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-criminal-psychology?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Psychological principles in criminal behavior analysis.',
+                duration: '12-15 hours',
+                level: 'Advanced',
+                points: 5000
+            },
+            {
+                id: 'fashion-design',
+                title: 'Diploma in Fashion Design',
+                category: 'design',
+                url: 'https://alison.com/course/diploma-in-fashion-design?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fashion design principles and garment construction.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'risk-management',
+                title: 'Diploma in Risk Management',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-risk-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Risk assessment and management strategies.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'sql-intro',
+                title: 'Introduction to SQL',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-sql?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Database management with SQL.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'coaching',
+                title: 'Diploma in Coaching',
+                category: 'personal',
+                url: 'https://alison.com/course/diploma-in-coaching?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Coaching techniques and leadership development.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'international-relations',
+                title: 'Diploma in International Relations',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-international-relations?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Global politics and international affairs.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'purchasing-supply-chain',
+                title: 'Diploma in Purchasing and Supply Chain Management',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-purchasing-and-supply-chain-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Procurement and supply chain management.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'photography-intro',
+                title: 'Introduction to Photography',
+                category: 'arts',
+                url: 'https://alison.com/course/introduction-to-photography?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fundamentals of photography and camera techniques.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'diet-nutrition',
+                title: 'Diploma in Diet and Nutrition',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-diet-and-nutrition?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Nutritional science and dietary planning.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'human-anatomy',
+                title: 'Diploma in Human Anatomy',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-human-anatomy?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Study of human body structure and systems.',
+                duration: '15-20 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'lean-manufacturing',
+                title: 'Diploma in Lean Manufacturing',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-lean-manufacturing?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Lean manufacturing principles and techniques.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'video-editing-intro',
+                title: 'Introduction to Video Editing',
+                category: 'arts',
+                url: 'https://alison.com/course/introduction-to-video-editing?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Video editing techniques and software skills.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'forensic-psychology',
+                title: 'Diploma in Forensic Psychology',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-forensic-psychology?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Psychology applied to legal and criminal investigations.',
+                duration: '12-15 hours',
+                level: 'Advanced',
+                points: 5000
+            },
+            {
+                id: 'retail-management',
+                title: 'Diploma in Retail Management',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-retail-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Retail operations and store management.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'occupational-health-safety',
+                title: 'Diploma in Occupational Health and Safety',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-occupational-health-and-safety?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Workplace safety standards and regulations.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'ux-design-intro',
+                title: 'Introduction to UX Design',
+                category: 'design',
+                url: 'https://alison.com/course/introduction-to-ux-design?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'User experience design principles.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'corporate-finance',
+                title: 'Diploma in Corporate Finance',
+                category: 'finance',
+                url: 'https://alison.com/course/diploma-in-corporate-finance?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Corporate financial management and investment strategies.',
+                duration: '12-15 hours',
+                level: 'Advanced',
+                points: 5000
+            },
+            {
+                id: 'childcare',
+                title: 'Diploma in Childcare',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-childcare?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Child development and care techniques.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'investment-trading',
+                title: 'Diploma in Investment and Trading',
+                category: 'finance',
+                url: 'https://alison.com/course/diploma-in-investment-and-trading?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Investment strategies and trading techniques.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'digital-photography-intro',
+                title: 'Introduction to Digital Photography',
+                category: 'arts',
+                url: 'https://alison.com/course/introduction-to-digital-photography?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Digital photography techniques and equipment.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'physiology',
+                title: 'Diploma in Physiology',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-physiology?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Study of human body functions and systems.',
+                duration: '15-20 hours',
+                level: 'Advanced',
+                points: 5000
+            },
+            {
+                id: 'business-law',
+                title: 'Diploma in Business Law',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-business-law?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Legal principles for business operations.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'machine-learning-intro',
+                title: 'Introduction to Machine Learning',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-machine-learning?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Machine learning algorithms and applications.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'creative-writing',
+                title: 'Diploma in Creative Writing',
+                category: 'arts',
+                url: 'https://alison.com/course/diploma-in-creative-writing?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Creative writing techniques and storytelling.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'inventory-management',
+                title: 'Diploma in Inventory Management',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-inventory-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Inventory control and management systems.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'social-work',
+                title: 'Diploma in Social Work',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-social-work?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Social work principles and community services.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'devops-intro',
+                title: 'Introduction to DevOps',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-devops?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'DevOps practices and tools.',
+                duration: '8-10 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'marketing-management',
+                title: 'Diploma in Marketing Management',
+                category: 'marketing',
+                url: 'https://alison.com/course/diploma-in-marketing-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Marketing strategy and campaign management.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'biotechnology',
+                title: 'Diploma in Biotechnology',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-biotechnology?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Biotechnology principles and applications.',
+                duration: '15-20 hours',
+                level: 'Advanced',
+                points: 5000
+            },
+            {
+                id: 'ethereum-intro',
+                title: 'Introduction to Ethereum',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-ethereum?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Ethereum blockchain and smart contracts.',
+                duration: '8-10 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'architecture',
+                title: 'Diploma in Architecture',
+                category: 'design',
+                url: 'https://alison.com/course/diploma-in-architecture?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Architectural design and building principles.',
+                duration: '15-20 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'human-physiology',
+                title: 'Diploma in Human Physiology',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-human-physiology?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Human body functions and biological systems.',
+                duration: '15-20 hours',
+                level: 'Advanced',
+                points: 5000
+            },
+            {
+                id: 'react-intro',
+                title: 'Introduction to React',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-react?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'React.js for web development.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'strategic-management',
+                title: 'Diploma in Strategic Management',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-strategic-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Strategic planning and business development.',
+                duration: '12-15 hours',
+                level: 'Advanced',
+                points: 5000
+            },
+            {
+                id: 'veterinary-nursing',
+                title: 'Diploma in Veterinary Nursing',
+                category: 'health',
+                url: 'https://alison.com/course/diploma-in-veterinary-nursing?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Veterinary care and animal nursing.',
+                duration: '15-20 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'construction-management',
+                title: 'Diploma in Construction Management',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-construction-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Construction project management and planning.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'angular-intro',
+                title: 'Introduction to Angular',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-angular?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Angular framework for web development.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'sociology',
+                title: 'Diploma in Sociology',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-sociology?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Study of society and social behavior.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'anthropology',
+                title: 'Diploma in Anthropology',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-anthropology?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Study of human societies and cultures.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'vue-js-intro',
+                title: 'Introduction to Vue.js',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-vue-js?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Vue.js framework for web development.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'philosophy',
+                title: 'Diploma in Philosophy',
+                category: 'arts',
+                url: 'https://alison.com/course/diploma-in-philosophy?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Philosophical theories and critical thinking.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'history',
+                title: 'Diploma in History',
+                category: 'arts',
+                url: 'https://alison.com/course/diploma-in-history?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Historical studies and research methods.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'node-js-intro',
+                title: 'Introduction to Node.js',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-node_js?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Node.js for server-side JavaScript development.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'political-science',
+                title: 'Diploma in Political Science',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-political-science?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Political systems and government structures.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'economics',
+                title: 'Diploma in Economics',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-economics?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Economic principles and market analysis.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'mongodb-intro',
+                title: 'Introduction to MongoDB',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-mongodb?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'MongoDB database management.',
+                duration: '8-10 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'geography',
+                title: 'Diploma in Geography',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-geography?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Geographical studies and spatial analysis.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'astronomy',
+                title: 'Diploma in Astronomy',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-astronomy?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Astronomical principles and celestial studies.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'postgresql-intro',
+                title: 'Introduction to PostgreSQL',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-postgresql?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'PostgreSQL database management.',
+                duration: '8-10 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'physics',
+                title: 'Diploma in Physics',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-physics?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Physics principles and scientific methods.',
+                duration: '15-20 hours',
+                level: 'Advanced',
+                points: 5000
+            },
+            {
+                id: 'chemistry',
+                title: 'Diploma in Chemistry',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-chemistry?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Chemical principles and laboratory techniques.',
+                duration: '15-20 hours',
+                level: 'Advanced',
+                points: 5000
+            },
+            {
+                id: 'mysql-intro',
+                title: 'Introduction to MySQL',
+                category: 'technology',
+                url: 'https://alison.com/course/introduction-to-mysql?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'MySQL database management.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'biology',
+                title: 'Diploma in Biology',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-biology?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Biological sciences and life processes.',
+                duration: '15-20 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'mathematics',
+                title: 'Diploma in Mathematics',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-mathematics?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Mathematical principles and problem-solving.',
+                duration: '15-20 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'statistics-intro',
+                title: 'Introduction to Statistics',
+                category: 'science',
+                url: 'https://alison.com/course/introduction-to-statistics?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Statistical analysis and data interpretation.',
+                duration: '10-12 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'calculus',
+                title: 'Diploma in Calculus',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-calculus?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Calculus principles and mathematical analysis.',
+                duration: '15-20 hours',
+                level: 'Advanced',
+                points: 5000
+            },
+            {
+                id: 'algebra-intro',
+                title: 'Introduction to Algebra',
+                category: 'science',
+                url: 'https://alison.com/course/introduction-to-algebra?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Algebraic concepts and equations.',
+                duration: '10-12 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'geometry',
+                title: 'Diploma in Geometry',
+                category: 'science',
+                url: 'https://alison.com/course/diploma-in-geometry?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Geometric principles and spatial reasoning.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'trigonometry-intro',
+                title: 'Introduction to Trigonometry',
+                category: 'science',
+                url: 'https://alison.com/course/introduction-to-trigonometry?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Trigonometric functions and applications.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'spanish-language',
+                title: 'Diploma in Spanish Language',
+                category: 'language',
+                url: 'https://alison.com/course/diploma-in-spanish-language?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Spanish language proficiency and communication.',
+                duration: '15-20 hours',
+                level: 'All Levels',
+                points: 5000
+            },
+            {
+                id: 'french-language',
+                title: 'Diploma in French Language',
+                category: 'language',
+                url: 'https://alison.com/course/diploma-in-french-language?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'French language proficiency and communication.',
+                duration: '15-20 hours',
+                level: 'All Levels',
+                points: 5000
+            },
+            {
+                id: 'german-language-intro',
+                title: 'Introduction to German Language',
+                category: 'language',
+                url: 'https://alison.com/course/introduction-to-german-language?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Basic German language skills.',
+                duration: '12-15 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'italian-language',
+                title: 'Diploma in Italian Language',
+                category: 'language',
+                url: 'https://alison.com/course/diploma-in-italian-language?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Italian language proficiency and communication.',
+                duration: '15-20 hours',
+                level: 'All Levels',
+                points: 5000
+            },
+            {
+                id: 'portuguese-language-intro',
+                title: 'Introduction to Portuguese Language',
+                category: 'language',
+                url: 'https://alison.com/course/introduction-to-portuguese-language?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Basic Portuguese language skills.',
+                duration: '12-15 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'chinese-language',
+                title: 'Diploma in Chinese Language',
+                category: 'language',
+                url: 'https://alison.com/course/diploma-in-chinese-language?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Chinese language proficiency and communication.',
+                duration: '15-20 hours',
+                level: 'All Levels',
+                points: 5000
+            },
             {
                 id: 'japanese-language',
                 title: 'Diploma in Japanese Language',
                 category: 'language',
                 url: 'https://alison.com/course/diploma-in-japanese-language?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Comprehensive Japanese language learning from beginner to intermediate.',
+                description: 'Japanese language proficiency and communication.',
                 duration: '15-20 hours',
                 level: 'All Levels',
-                points: 2000
-            },
-
-            // Design Courses
-            {
-                id: 'digital-photography',
-                title: 'Introduction to Digital Photography',
-                category: 'design',
-                url: 'https://alison.com/course/introduction-to-digital-photography?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Fundamentals of digital photography and camera techniques.',
-                duration: '8-10 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-
-            // Finance Courses
-            {
-                id: 'accounting-basics',
-                title: 'Accounting Basics',
-                category: 'finance',
-                url: 'https://alison.com/course/accounting-basics?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Fundamental accounting principles and bookkeeping practices.',
-                duration: '10-12 hours',
-                level: 'Beginner',
-                points: 2000
+                points: 5000
             },
             {
-                id: 'quickbooks-pro',
-                title: 'Getting Started in QuickBooks Pro',
-                category: 'finance',
-                url: 'https://alison.com/course/getting-started-in-quickbooks-pro?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Complete guide to using QuickBooks Pro for business accounting.',
-                duration: '12-15 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-
-            // Additional Courses to reach 50
-            {
-                id: 'social-media-management',
-                title: 'Social Media Management',
-                category: 'marketing',
-                url: 'https://alison.com/course/social-media-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Learn to manage and optimize social media presence for businesses.',
-                duration: '8-10 hours',
-                level: 'Intermediate',
-                points: 2000
-            },
-            {
-                id: 'data-analysis',
-                title: 'Introduction to Data Analysis',
-                category: 'technology',
-                url: 'https://alison.com/course/introduction-to-data-analysis?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Fundamental data analysis techniques and tools.',
-                duration: '10-12 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'web-design',
-                title: 'Web Design Fundamentals',
-                category: 'design',
-                url: 'https://alison.com/course/web-design-fundamentals?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Learn the basics of web design and user experience principles.',
-                duration: '10-12 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'personal-finance',
-                title: 'Personal Finance Management',
-                category: 'finance',
-                url: 'https://alison.com/course/personal-finance-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Strategies for managing personal finances and investments.',
-                duration: '8-10 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'leadership-development',
-                title: 'Leadership Development',
-                category: 'business',
-                url: 'https://alison.com/course/leadership-development?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Develop essential leadership skills for management roles.',
-                duration: '10-12 hours',
-                level: 'Intermediate',
-                points: 2000
-            },
-            {
-                id: 'cybersecurity-fundamentals',
-                title: 'Cybersecurity Fundamentals',
-                category: 'technology',
-                url: 'https://alison.com/course/cybersecurity-fundamentals?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Basic cybersecurity principles and protection methods.',
-                duration: '8-10 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'nutrition-basics',
-                title: 'Nutrition Basics',
-                category: 'health',
-                url: 'https://alison.com/course/nutrition-basics?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Fundamental principles of nutrition and healthy eating.',
-                duration: '6-8 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'english-business-communication',
-                title: 'English for Business Communication',
+                id: 'arabic-language-intro',
+                title: 'Introduction to Arabic Language',
                 category: 'language',
-                url: 'https://alison.com/course/english-for-business-communication?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Improve English communication skills for business contexts.',
+                url: 'https://alison.com/course/introduction-to-arabic-language?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Basic Arabic language skills.',
+                duration: '12-15 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'russian-language',
+                title: 'Diploma in Russian Language',
+                category: 'language',
+                url: 'https://alison.com/course/diploma-in-russian-language?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Russian language proficiency and communication.',
+                duration: '15-20 hours',
+                level: 'All Levels',
+                points: 5000
+            },
+            {
+                id: 'hindi-language-intro',
+                title: 'Introduction to Hindi Language',
+                category: 'language',
+                url: 'https://alison.com/course/introduction-to-hindi-language?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Basic Hindi language skills.',
+                duration: '12-15 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'music-theory',
+                title: 'Diploma in Music Theory',
+                category: 'arts',
+                url: 'https://alison.com/course/diploma-in-music-theory?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Music theory and composition principles.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'guitar-playing',
+                title: 'Diploma in Guitar Playing',
+                category: 'arts',
+                url: 'https://alison.com/course/diploma-in-guitar-playing?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Guitar playing techniques and music performance.',
+                duration: '12-15 hours',
+                level: 'All Levels',
+                points: 5000
+            },
+            {
+                id: 'piano-playing-intro',
+                title: 'Introduction to Piano Playing',
+                category: 'arts',
+                url: 'https://alison.com/course/introduction-to-piano-playing?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Basic piano playing skills.',
+                duration: '10-12 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'singing-techniques',
+                title: 'Diploma in Singing Techniques',
+                category: 'arts',
+                url: 'https://alison.com/course/diploma-in-singing-techniques?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Vocal techniques and singing performance.',
+                duration: '12-15 hours',
+                level: 'All Levels',
+                points: 5000
+            },
+            {
+                id: 'drumming-intro',
+                title: 'Introduction to Drumming',
+                category: 'arts',
+                url: 'https://alison.com/course/introduction-to-drumming?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Basic drumming techniques and rhythms.',
+                duration: '10-12 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'drawing-skills',
+                title: 'Diploma in Drawing Skills',
+                category: 'arts',
+                url: 'https://alison.com/course/diploma-in-drawing-skills?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Drawing techniques and artistic expression.',
+                duration: '12-15 hours',
+                level: 'All Levels',
+                points: 5000
+            },
+            {
+                id: 'painting-techniques',
+                title: 'Diploma in Painting Techniques',
+                category: 'arts',
+                url: 'https://alison.com/course/diploma-in-painting-techniques?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Painting methods and color theory.',
+                duration: '12-15 hours',
+                level: 'All Levels',
+                points: 5000
+            },
+            {
+                id: 'sculpture-intro',
+                title: 'Introduction to Sculpture',
+                category: 'arts',
+                url: 'https://alison.com/course/introduction-to-sculpture?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Sculpture techniques and 3D art creation.',
+                duration: '10-12 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'pottery-making',
+                title: 'Diploma in Pottery Making',
+                category: 'arts',
+                url: 'https://alison.com/course/diploma-in-pottery-making?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Pottery techniques and ceramic art.',
+                duration: '12-15 hours',
+                level: 'All Levels',
+                points: 5000
+            },
+            {
+                id: 'jewelry-design-intro',
+                title: 'Introduction to Jewelry Design',
+                category: 'arts',
+                url: 'https://alison.com/course/introduction-to-jewelry-design?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Jewelry design principles and creation.',
+                duration: '10-12 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'yoga-instruction',
+                title: 'Diploma in Yoga Instruction',
+                category: 'personal',
+                url: 'https://alison.com/course/diploma-in-yoga-instruction?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Yoga techniques and teaching methods.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'fitness-training',
+                title: 'Diploma in Fitness Training',
+                category: 'personal',
+                url: 'https://alison.com/course/diploma-in-fitness-training?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Fitness training principles and exercise programming.',
+                duration: '12-15 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'meditation-intro',
+                title: 'Introduction to Meditation',
+                category: 'personal',
+                url: 'https://alison.com/course/introduction-to-meditation?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Meditation techniques and mindfulness practices.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'weight-management',
+                title: 'Diploma in Weight Management',
+                category: 'personal',
+                url: 'https://alison.com/course/diploma-in-weight-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Weight management strategies and healthy living.',
                 duration: '10-12 hours',
                 level: 'Intermediate',
-                points: 2000
+                points: 5000
             },
             {
-                id: 'graphic-design',
-                title: 'Graphic Design Fundamentals',
-                category: 'design',
-                url: 'https://alison.com/course/graphic-design-fundamentals?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Learn basic graphic design principles and software tools.',
-                duration: '12-15 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'entrepreneurship-fundamentals',
-                title: 'Entrepreneurship Fundamentals',
-                category: 'business',
-                url: 'https://alison.com/course/entrepreneurship-fundamentals?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Essential knowledge for starting and running a business.',
-                duration: '10-12 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'mobile-app-development',
-                title: 'Mobile App Development Basics',
-                category: 'technology',
-                url: 'https://alison.com/course/mobile-app-development-basics?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Introduction to mobile app development for beginners.',
-                duration: '12-15 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'mental-health-first-aid',
-                title: 'Mental Health First Aid',
-                category: 'health',
-                url: 'https://alison.com/course/mental-health-first-aid?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Learn to provide initial support for mental health issues.',
+                id: 'mindfulness-intro',
+                title: 'Introduction to Mindfulness',
+                category: 'personal',
+                url: 'https://alison.com/course/introduction-to-mindfulness?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Mindfulness practices and stress reduction.',
                 duration: '8-10 hours',
                 level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'spanish-beginners',
-                title: 'Spanish for Beginners',
-                category: 'language',
-                url: 'https://alison.com/course/spanish-for-beginners?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Basic Spanish language skills for everyday communication.',
-                duration: '12-15 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'content-writing',
-                title: 'Content Writing Fundamentals',
-                category: 'marketing',
-                url: 'https://alison.com/course/content-writing-fundamentals?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Learn professional content writing techniques and strategies.',
-                duration: '8-10 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'financial-planning',
-                title: 'Financial Planning Basics',
-                category: 'finance',
-                url: 'https://alison.com/course/financial-planning-basics?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Fundamental financial planning principles for individuals.',
-                duration: '10-12 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'python-programming',
-                title: 'Python Programming for Beginners',
-                category: 'technology',
-                url: 'https://alison.com/course/python-programming-for-beginners?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Learn Python programming from scratch.',
-                duration: '12-15 hours',
-                level: 'Beginner',
-                points: 2000
+                points: 5000
             },
             {
                 id: 'time-management',
-                title: 'Effective Time Management',
-                category: 'business',
-                url: 'https://alison.com/course/effective-time-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Strategies for better time management and productivity.',
-                duration: '6-8 hours',
-                level: 'Beginner',
-                points: 2000
-            },
-            {
-                id: 'public-speaking',
-                title: 'Public Speaking Skills',
-                category: 'business',
-                url: 'https://alison.com/course/public-speaking-skills?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Develop confidence and skills for effective public speaking.',
+                title: 'Diploma in Time Management',
+                category: 'personal',
+                url: 'https://alison.com/course/diploma-in-time-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Time management strategies and productivity techniques.',
                 duration: '8-10 hours',
                 level: 'Beginner',
-                points: 2000
+                points: 5000
             },
             {
-                id: 'customer-service',
-                title: 'Customer Service Excellence',
-                category: 'business',
-                url: 'https://alison.com/course/customer-service-excellence?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Learn to deliver outstanding customer service experiences.',
+                id: 'stress-management',
+                title: 'Diploma in Stress Management',
+                category: 'personal',
+                url: 'https://alison.com/course/diploma-in-stress-management?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Stress management techniques and coping strategies.',
                 duration: '8-10 hours',
                 level: 'Beginner',
-                points: 2000
+                points: 5000
             },
             {
-                id: 'digital-literacy',
-                title: 'Digital Literacy Fundamentals',
-                category: 'technology',
-                url: 'https://alison.com/course/digital-literacy-fundamentals?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
-                description: 'Essential digital skills for the modern workplace.',
+                id: 'goal-setting-intro',
+                title: 'Introduction to Goal Setting',
+                category: 'personal',
+                url: 'https://alison.com/course/introduction-to-goal-setting?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Goal setting techniques and achievement strategies.',
                 duration: '6-8 hours',
                 level: 'Beginner',
-                points: 2000
+                points: 5000
+            },
+            {
+                id: 'motivational-skills',
+                title: 'Diploma in Motivational Skills',
+                category: 'personal',
+                url: 'https://alison.com/course/diploma-in-motivational-skills?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Motivational techniques and personal development.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
+            },
+            {
+                id: 'public-speaking-intro',
+                title: 'Introduction to Public Speaking',
+                category: 'personal',
+                url: 'https://alison.com/course/introduction-to-public-speaking?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Public speaking skills and presentation techniques.',
+                duration: '8-10 hours',
+                level: 'Beginner',
+                points: 5000
+            },
+            {
+                id: 'negotiation-skills',
+                title: 'Diploma in Negotiation Skills',
+                category: 'business',
+                url: 'https://alison.com/course/diploma-in-negotiation-skills?utm_source=alison_user&utm_medium=affiliates&utm_campaign=17125669',
+                description: 'Negotiation techniques and conflict resolution.',
+                duration: '10-12 hours',
+                level: 'Intermediate',
+                points: 5000
             }
         ];
 
@@ -1429,7 +2484,7 @@
         function updateStats() {
             document.getElementById('user-points').textContent = state.userPoints.toLocaleString();
             document.getElementById('completed-courses').textContent = state.completedCourses.length;
-            document.getElementById('earned-points').textContent = (state.completedCourses.length * 2000).toLocaleString();
+            document.getElementById('earned-points').textContent = (state.completedCourses.length * 5000).toLocaleString();
         }
 
         // Show loading spinner
