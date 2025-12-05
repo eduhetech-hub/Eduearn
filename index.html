@@ -555,6 +555,97 @@
             background-color: #1DA1F2;
         }
         
+        /* Ads Container Styles - NEW */
+        .ads-container {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            margin: 1rem 0;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .ads-header {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .ads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .ad-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .ad-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .ad-card-header {
+            background: #f8fafc;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .ad-card-body {
+            padding: 1.5rem;
+        }
+        
+        .ad-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .ad-badge-premium {
+            background: linear-gradient(45deg, #f59e0b, #f97316);
+            color: white;
+        }
+        
+        .ad-badge-standard {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+        
+        .ad-badge-quick {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .ad-timer-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3b82f6;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .ad-progress-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .ad-progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            transition: width 0.3s ease;
+        }
+        
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .mobile-nav {
@@ -585,6 +676,10 @@
             
             .achievement-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .ads-grid {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -1021,7 +1116,9 @@
             readArticlesToday: 0,
             lastReadingReset: null,
             leaderboardListener: null,
-            achievementsListener: null
+            achievementsListener: null,
+            activeAdInstance: null, // Track active ad instance
+            adContainer: null // Container for ad display
         };
 
         // =====================================================
@@ -1627,6 +1724,16 @@
                     state.achievementsListener();
                 }
                 
+                // Clean up ad instances
+                if (state.activeAdInstance) {
+                    clearInterval(state.activeAdInstance);
+                    state.activeAdInstance = null;
+                }
+                if (state.adContainer) {
+                    state.adContainer.remove();
+                    state.adContainer = null;
+                }
+                
                 await signOut(auth);
                 state.firebaseUser = null;
                 state.user = null;
@@ -1872,7 +1979,7 @@
         }
 
         // =====================================================
-        // MONETAG SMART LINK FUNCTIONS
+        // MONETAG SMART LINK FUNCTIONS - IMPROVED FOR SAME PAGE
         // =====================================================
 
         function getRandomMonetagLink() {
@@ -1884,54 +1991,146 @@
             state.currentMonetagLink = getRandomMonetagLink();
         }
 
-        function startAdTimer(duration = 30, points = BASE_POINTS_REWARDS.ad) {
+        function startAdTimer(duration = 30, points = BASE_POINTS_REWARDS.ad, adType = 'standard') {
+            // Clear any existing ad instance
+            if (state.activeAdInstance) {
+                clearInterval(state.activeAdInstance);
+                state.activeAdInstance = null;
+            }
+            
+            // Clear any existing ad container
+            if (state.adContainer) {
+                state.adContainer.remove();
+                state.adContainer = null;
+            }
+            
             state.adTimerSeconds = duration;
             state.adTimerActive = true;
             
-            // Show timer modal
-            showModal(`
-                <div class="text-center space-y-4">
-                    <i class="fas fa-ad text-5xl text-purple-500 mb-2"></i>
-                    <h3 class="text-xl font-bold">Watch Ad to Earn Points</h3>
-                    <p class="text-gray-600">Please watch the ad for <span id="ad-timer-seconds">${duration}</span> seconds to earn ${points} points.</p>
-                    <div class="bg-purple-50 p-4 rounded-lg">
-                        <p class="text-sm font-semibold text-purple-800">Important:</p>
-                        <p class="text-sm text-purple-700">Do not close this window or navigate away, or you won't receive points!</p>
-                    </div>
-                    <div class="flex justify-center">
-                        <div class="bg-gray-200 rounded-full h-4 w-full">
-                            <div id="ad-timer-progress" class="bg-purple-500 h-4 rounded-full" style="width: 100%"></div>
+            // Create ad container in the same page
+            state.adContainer = document.createElement('div');
+            state.adContainer.className = 'fixed inset-0 bg-white z-50 overflow-hidden';
+            state.adContainer.innerHTML = `
+                <div class="h-full flex flex-col">
+                    <!-- Ad Header -->
+                    <div class="flex justify-between items-center p-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-ad"></i>
+                            <span class="font-semibold">Earning Ad - ${adType.toUpperCase()}</span>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xl font-bold" id="ad-timer-display">${duration}s</div>
+                            <div class="text-xs">Remaining</div>
                         </div>
                     </div>
-                    <button id="ad-complete-btn" class="w-full bg-gray-400 text-white font-semibold py-3 rounded-lg transition" disabled>
-                        Please wait... (<span id="ad-timer">${duration}</span>s)
-                    </button>
+                    
+                    <!-- Ad Content Area -->
+                    <div class="flex-1 overflow-hidden">
+                        <div id="ad-frame-container" class="w-full h-full">
+                            <!-- Ad will be loaded here -->
+                            <div class="w-full h-full flex items-center justify-center bg-gray-100">
+                                <div class="text-center">
+                                    <i class="fas fa-sync fa-spin text-4xl text-blue-500 mb-4"></i>
+                                    <p class="text-gray-600">Loading ad content...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="p-4 bg-gray-50">
+                        <div class="ad-progress-bar">
+                            <div id="ad-progress-fill" class="ad-progress-fill" style="width: 100%"></div>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-sm text-gray-600">Watch ad to earn ${points} points</span>
+                            <span class="text-sm font-semibold text-blue-600" id="ad-status">Active</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Warning Message -->
+                    <div class="p-3 bg-yellow-50 border-t border-yellow-200 text-center">
+                        <p class="text-sm text-yellow-700">
+                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                            Do not close this window or navigate away, or you won't receive points!
+                        </p>
+                    </div>
                 </div>
-            `);
+            `;
             
-            // Update timer every second
-            state.adTimer = setInterval(() => {
+            document.body.appendChild(state.adContainer);
+            
+            // Load ad content in iframe on the same page
+            setTimeout(() => {
+                const adFrameContainer = document.getElementById('ad-frame-container');
+                if (adFrameContainer) {
+                    updateMonetagLink();
+                    if (state.currentMonetagLink) {
+                        adFrameContainer.innerHTML = `
+                            <iframe 
+                                src="${state.currentMonetagLink}" 
+                                class="w-full h-full border-0"
+                                sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                                title="Ad Content"
+                            ></iframe>
+                        `;
+                    }
+                }
+            }, 1000);
+            
+            // Start timer
+            state.activeAdInstance = setInterval(() => {
                 state.adTimerSeconds--;
                 
-                // Update UI
-                document.getElementById('ad-timer').textContent = state.adTimerSeconds;
-                document.getElementById('ad-timer-seconds').textContent = state.adTimerSeconds;
+                // Update timer display
+                const timerDisplay = document.getElementById('ad-timer-display');
+                if (timerDisplay) {
+                    timerDisplay.textContent = `${state.adTimerSeconds}s`;
+                }
                 
                 // Update progress bar
-                const progressPercent = (state.adTimerSeconds / duration) * 100;
-                document.getElementById('ad-timer-progress').style.width = `${progressPercent}%`;
+                const progressFill = document.getElementById('ad-progress-fill');
+                if (progressFill) {
+                    const progressPercent = (state.adTimerSeconds / duration) * 100;
+                    progressFill.style.width = `${progressPercent}%`;
+                }
+                
+                // Update status
+                const statusElement = document.getElementById('ad-status');
+                if (statusElement) {
+                    if (state.adTimerSeconds <= 5) {
+                        statusElement.textContent = 'Almost Done';
+                        statusElement.className = 'text-sm font-semibold text-green-600';
+                    } else if (state.adTimerSeconds <= 10) {
+                        statusElement.textContent = 'Finishing Soon';
+                        statusElement.className = 'text-sm font-semibold text-yellow-600';
+                    }
+                }
                 
                 // Check if timer is complete
                 if (state.adTimerSeconds <= 0) {
-                    clearInterval(state.adTimer);
+                    clearInterval(state.activeAdInstance);
+                    state.activeAdInstance = null;
                     state.adTimerActive = false;
                     
-                    // Enable the complete button
-                    const completeBtn = document.getElementById('ad-complete-btn');
-                    completeBtn.disabled = false;
-                    completeBtn.textContent = 'Complete & Earn Points';
-                    completeBtn.className = 'w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 rounded-lg transition';
-                    completeBtn.onclick = () => completeAdView(points);
+                    // Show completion message
+                    if (state.adContainer) {
+                        const adFrameContainer = document.getElementById('ad-frame-container');
+                        if (adFrameContainer) {
+                            adFrameContainer.innerHTML = `
+                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
+                                    <div class="text-center p-8">
+                                        <i class="fas fa-check-circle text-6xl text-green-500 mb-4"></i>
+                                        <h3 class="text-2xl font-bold text-green-600 mb-2">Ad Completed!</h3>
+                                        <p class="text-gray-600 mb-6">You earned ${points} EduPoints for watching the ad</p>
+                                        <button onclick="completeAdView(${points})" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-8 rounded-lg transition">
+                                            Claim ${points} Points
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
                 }
             }, 1000);
         }
@@ -1939,44 +2138,66 @@
         function completeAdView(points = BASE_POINTS_REWARDS.ad) {
             if (!state.user) return;
             
+            // Remove ad container
+            if (state.adContainer) {
+                state.adContainer.remove();
+                state.adContainer = null;
+            }
+            
+            // Clear timer
+            if (state.activeAdInstance) {
+                clearInterval(state.activeAdInstance);
+                state.activeAdInstance = null;
+            }
+            
             // Update missions
             updateMissions('adsWatched', 1);
             
             // Add points for watching ad
             addPoints('Watch Ad', points, true);
             
-            hideModal();
-            
             showModal(`
                 <div class="text-center space-y-3">
                     <i class="fas fa-check-circle text-5xl text-green-500"></i>
                     <h3 class="text-xl font-bold text-green-600">Ad Completed!</h3>
                     <p class="text-gray-600">You earned ${points} EduPoints for watching the ad.</p>
+                    <div class="bg-green-50 p-3 rounded-lg mt-2">
+                        <p class="text-sm text-green-700">
+                            <i class="fas fa-lightbulb mr-1"></i>
+                            Watch more ads to earn more points!
+                        </p>
+                    </div>
                 </div>
             `, () => {
                 setTimeout(hideModal, 3000);
             });
         }
 
-        function openMonetagAd(points = BASE_POINTS_REWARDS.ad, duration = 30) {
+        function openMonetagAd(points = BASE_POINTS_REWARDS.ad, duration = 30, adType = 'standard') {
             if (!state.user) return;
             
-            updateMonetagLink();
-            if (state.currentMonetagLink) {
-                // Start the timer
-                startAdTimer(duration, points);
-                
-                // Open the monetag link in a new tab
-                window.open(state.currentMonetagLink, '_blank');
+            // Check daily limit
+            if (hasReachedDailyLimit(state.user)) {
+                showModal(`
+                    <div class="text-center space-y-3">
+                        <i class="fas fa-exclamation-triangle text-5xl text-yellow-500"></i>
+                        <h3 class="text-xl font-bold text-yellow-600">Daily Limit Reached</h3>
+                        <p class="text-gray-600">You have reached your daily earning limit. Come back tomorrow!</p>
+                    </div>
+                `);
+                return;
             }
+            
+            // Start the timer with ad display on same page
+            startAdTimer(duration, points, adType);
         }
 
         function watchQuickAd() {
-            openMonetagAd(BASE_POINTS_REWARDS.quickAd, 15);
+            openMonetagAd(BASE_POINTS_REWARDS.quickAd, 15, 'quick');
         }
 
         function watchPremiumAd() {
-            openMonetagAd(BASE_POINTS_REWARDS.premiumAd, 60);
+            openMonetagAd(BASE_POINTS_REWARDS.premiumAd, 60, 'premium');
         }
 
         // =====================================================
@@ -2581,7 +2802,7 @@
         }
 
         // =====================================================
-        // RENDER FUNCTIONS - OPTIMIZED
+        // RENDER FUNCTIONS - OPTIMIZED WITH IMPROVED ADS SECTION
         // =====================================================
 
         function render() {
@@ -3349,7 +3570,7 @@
                         <h1 class="text-2xl font-bold text-gray-800">Watch Ads & Earn</h1>
                         <div class="flex items-center space-x-2">
                             <i class="fas fa-ad text-purple-500"></i>
-                            <span class="text-sm text-gray-600">Multiple ad options available</span>
+                            <span class="text-sm text-gray-600">Watch ads directly on this page to earn points</span>
                         </div>
                     </div>
 
@@ -3365,52 +3586,108 @@
                         <p class="text-xs mt-1 text-white text-opacity-90">${formatPoints(remainingPoints)} points remaining today</p>
                     </div>
 
-                    <!-- Quick Ads -->
-                    <div class="card p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <h3 class="text-lg font-semibold">Quick Ads</h3>
-                                <p class="text-sm text-gray-600">5-15 second ads</p>
-                            </div>
-                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
-                                +${BASE_POINTS_REWARDS.quickAd} Points
-                            </span>
+                    <!-- Ad Categories -->
+                    <div class="ads-container">
+                        <div class="ads-header">
+                            <h3 class="text-xl font-bold">Available Ads</h3>
+                            <p class="text-sm opacity-90 mt-1">Watch ads directly on this page - no external links!</p>
                         </div>
-                        <button onclick="watchQuickAd()" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold">
-                            Watch Quick Ad
-                        </button>
+                        
+                        <div class="ads-grid">
+                            <!-- Quick Ads -->
+                            <div class="ad-card">
+                                <div class="ad-card-header">
+                                    <span class="ad-badge ad-badge-quick">QUICK AD</span>
+                                    <h4 class="font-semibold text-lg">Quick Ads</h4>
+                                    <p class="text-sm text-gray-600">5-15 second ads for quick points</p>
+                                </div>
+                                <div class="ad-card-body">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <div>
+                                            <p class="text-gray-600">Duration</p>
+                                            <p class="font-semibold">15 seconds</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-gray-600">Reward</p>
+                                            <p class="text-xl font-bold text-green-600">+${BASE_POINTS_REWARDS.quickAd}</p>
+                                        </div>
+                                    </div>
+                                    <button onclick="watchQuickAd()" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition">
+                                        <i class="fas fa-play mr-2"></i>Watch Quick Ad
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Standard Ads -->
+                            <div class="ad-card">
+                                <div class="ad-card-header">
+                                    <span class="ad-badge ad-badge-standard">STANDARD AD</span>
+                                    <h4 class="font-semibold text-lg">Standard Ads</h4>
+                                    <p class="text-sm text-gray-600">30 second ads for good rewards</p>
+                                </div>
+                                <div class="ad-card-body">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <div>
+                                            <p class="text-gray-600">Duration</p>
+                                            <p class="font-semibold">30 seconds</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-gray-600">Reward</p>
+                                            <p class="text-xl font-bold text-green-600">+${BASE_POINTS_REWARDS.ad}</p>
+                                        </div>
+                                    </div>
+                                    <button onclick="openMonetagAd()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold transition">
+                                        <i class="fas fa-play mr-2"></i>Watch Standard Ad
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Premium Ads -->
+                            <div class="ad-card">
+                                <div class="ad-card-header">
+                                    <span class="ad-badge ad-badge-premium">PREMIUM AD</span>
+                                    <h4 class="font-semibold text-lg">Premium Ads</h4>
+                                    <p class="text-sm text-gray-600">60 second ads for maximum rewards</p>
+                                </div>
+                                <div class="ad-card-body">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <div>
+                                            <p class="text-gray-600">Duration</p>
+                                            <p class="font-semibold">60 seconds</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-gray-600">Reward</p>
+                                            <p class="text-xl font-bold text-green-600">+${BASE_POINTS_REWARDS.premiumAd}</p>
+                                        </div>
+                                    </div>
+                                    <button onclick="watchPremiumAd()" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-3 rounded-lg font-semibold transition">
+                                        <i class="fas fa-play mr-2"></i>Watch Premium Ad
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Standard Ads -->
+                    <!-- How It Works -->
                     <div class="card p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <h3 class="text-lg font-semibold">Standard Ads</h3>
-                                <p class="text-sm text-gray-600">30 second ads</p>
+                        <h3 class="text-lg font-semibold mb-4">How It Works</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">1</div>
+                                <h4 class="font-semibold mb-2">Choose Ad Type</h4>
+                                <p class="text-sm text-gray-600">Select quick, standard or premium ad</p>
                             </div>
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">
-                                +${BASE_POINTS_REWARDS.ad} Points
-                            </span>
-                        </div>
-                        <button onclick="openMonetagAd()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold">
-                            Watch Standard Ad
-                        </button>
-                    </div>
-
-                    <!-- Premium Ads -->
-                    <div class="card p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <h3 class="text-lg font-semibold">Premium Ads</h3>
-                                <p class="text-sm text-gray-600">60 second ads</p>
+                            <div class="text-center p-4 bg-green-50 rounded-lg">
+                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">2</div>
+                                <h4 class="font-semibold mb-2">Watch Ad</h4>
+                                <p class="text-sm text-gray-600">Watch the ad on this page for required duration</p>
                             </div>
-                            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-semibold">
-                                +${BASE_POINTS_REWARDS.premiumAd} Points
-                            </span>
+                            <div class="text-center p-4 bg-purple-50 rounded-lg">
+                                <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">3</div>
+                                <h4 class="font-semibold mb-2">Get Points</h4>
+                                <p class="text-sm text-gray-600">Claim your points after watching completely</p>
+                            </div>
                         </div>
-                        <button onclick="watchPremiumAd()" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-3 rounded-lg font-semibold">
-                            Watch Premium Ad
-                        </button>
                     </div>
 
                     <!-- Daily Limit Info -->
@@ -3423,6 +3700,34 @@
                         </div>
                         <div class="w-full bg-white bg-opacity-30 rounded-full h-2 mt-2">
                             <div class="bg-green-400 h-2 rounded-full" style="width: ${Math.min((earnedToday / DAILY_POINTS_LIMIT) * 100, 100)}%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ad Watching Tips -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Tips for Maximum Earnings</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start">
+                                <i class="fas fa-lightbulb text-yellow-500 mt-1 mr-3"></i>
+                                <div>
+                                    <p class="font-medium">Watch during off-peak hours</p>
+                                    <p class="text-sm text-gray-600">Ads load faster and have better completion rates</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-lightbulb text-yellow-500 mt-1 mr-3"></i>
+                                <div>
+                                    <p class="font-medium">Use a stable internet connection</p>
+                                    <p class="text-sm text-gray-600">Prevent interruptions for smooth ad watching</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-lightbulb text-yellow-500 mt-1 mr-3"></i>
+                                <div>
+                                    <p class="font-medium">Don't navigate away</p>
+                                    <p class="text-sm text-gray-600">Stay on the ad page to ensure points are awarded</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -4195,7 +4500,7 @@
 
         async function approveWithdrawal(withdrawalId) {
             try {
-                const { doc, updateDoc } = window.firebaseModules;
+                const { doc, updateDoc, getDoc } = window.firebaseModules;
                 const db = window.firebaseDb;
                 
                 // Update withdrawal status to approved
@@ -4853,6 +5158,8 @@
         window.loadAllUsers = loadAllUsers;
         window.manageUserPoints = manageUserPoints;
         window.updatePlatformSettings = updatePlatformSettings;
+        // New ad function
+        window.completeAdView = completeAdView;
     </script>
 </body>
 </html>
